@@ -1,0 +1,202 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Home Page</title>
+    <link rel="stylesheet" href="css/simple.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+</head>
+<body>
+<nav>
+    <img class="logo" src="/images/logo-removebg-preview.png" th:src="@{/images/logo-removebg-preview.png}" alt="Hanze Logo">
+    <ul class="nav__links">
+        <li><a id="panelButtons" class="fileButton" onclick="openPanel('list-panel')">New Files</a></li>
+        <li><a id="panelButtons" class="projectButton" onclick="openPanel('project-panel')">Projects</a></li>
+        <li><a id="logoutButton">Logout</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <div id="list-panel" class="newFiles">
+        <div class="tooltip selected-files">
+            <div class="tooltipBox">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="17" x2="12" y2="17.01" />
+                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
+                </svg>
+                <span>Dit zijn je geselecteerde bestanden. Voor dit project</span>
+            </div>
+        </div>
+        <div class="tooltip new-files">
+            <div class="tooltipBox">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="17" x2="12" y2="17.01" />
+                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
+                </svg>
+                <span>Dit zijn alle nieuwe bestanden. Dubbel klik op een om deze in een project te zetten.</span>
+            </div>
+        </div>
+        <div class="fileList">
+            <h3>New Files</h3>
+            <ul id="current-files" class="files">
+                <li th:each="files : ${checkMap}" th:inline="text">[[${files.fileName}]] <span style="float: right;">[[${files.date}]]</span></li>
+            </ul>
+        </div>
+
+        <div class="chosen-content">
+            <div class="chosenList" id="chosenlist">
+                <div class="inputs">
+                    <h3>New Project</h3>
+                    <div class="form-group">
+                        <label for="projectname">Project name*</label>
+                        <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
+                    </div>
+                    <div class="reads">
+                    </div>
+                </div>
+                <div class="addButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="48" height="48" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <line x1="9" y1="12" x2="15" y2="12"></line>
+                        <line x1="12" y1="9" x2="12" y2="15"></line>
+                    </svg>
+                    <h3>Add project to your account</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="projects" id="project-panel">
+        <h2>Projects</h2>
+        <div class="project-card">
+            <div class="box">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160,160,160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+            </div>
+            <h3>Experiment Name</h3>
+            <div class="reads">
+                <div class="read">
+                    <p>Paired-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                    <p>placeholdertext_R2.fastq</p>
+                </div>
+                <div class="read">
+                    <p>Paired-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                    <p>placeholdertext_R2.fastq</p>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="box">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160,160,160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+            </div>
+            <h3>Experiment Name</h3>
+            <div class="reads">
+                <div class="read">
+                    <p>Single-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                </div>
+                <div class="read">
+                    <p>Paired-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                    <p>placeholdertext_R2.fastq</p>
+                </div>
+            </div>
+        </div>
+        <div class="project-card">
+            <div class="box">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160,160,160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+            </div>
+            <h3>Experiment Name</h3>
+            <div class="reads">
+                <div class="read">
+                    <p>Single-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                </div>
+                <div class="read">
+                    <p>Paired-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                    <p>placeholdertext_R2.fastq</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="box">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160,160,160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                </svg>
+            </div>
+            <h3>Experiment Name</h3>
+            <div class="reads">
+                <div class="read">
+                    <p>Single-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                </div>
+                <div class="read">
+                    <p>Paired-End Reads</p>
+                    <p>placeholdertext_R1.fastq</p>
+                    <p>placeholdertext_R2.fastq</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var del = "<span id='readDelete'><svg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
+    $("#project-panel").hide();
+    $(document).ready(function(){
+        $('.fileButton').click(function() {
+            $('#list-panel').show();
+            $('#project-panel').hide();
+        });
+        $('.projectButton').click(function() {
+            $('#project-panel').show();
+            $('#list-panel').hide();
+        });
+        $(document).on("dblclick", "#current-files li", function(e) {
+            var innertext = $(this).html().substring(0, $(this).html().indexOf('<span'));
+            $('.reads').append('<p>' + innertext + del + "</p>");
+        });
+        $(document).on('click','#readDelete', function(){
+            $(this).parent().remove();
+        });
+        $(document).on('click','.project-card .box', function(){
+            $(this).parent().remove();
+        });
+    });
+</script>
+
+</body>
+</html>
