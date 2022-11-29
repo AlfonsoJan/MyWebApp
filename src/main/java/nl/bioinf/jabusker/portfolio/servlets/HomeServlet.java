@@ -1,6 +1,7 @@
 package nl.bioinf.jabusker.portfolio.servlets;
 
 import nl.bioinf.jabusker.portfolio.config.WebConfig;
+import nl.bioinf.jabusker.portfolio.model.FileWithDate;
 import nl.bioinf.jabusker.portfolio.model.FilesSorter;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -27,19 +28,22 @@ public class HomeServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
         ArrayList<FilesSorter> fsList = new ArrayList<>();
-        try {
-            for (int i = 0; i < 50; i++) {
-                int year = ThreadLocalRandom.current().nextInt(2014, 2022 + 1);
-                int month = ThreadLocalRandom.current().nextInt(1, 12 + 1);
-                int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
-                String date = year + "-" + month + "-" + day;
-                fsList.add(new FilesSorter("placeholder_filename.fastq", date));
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Collections.sort(fsList, Collections.reverseOrder());
-        ctx.setVariable("checkMap", fsList);
+        FileWithDate f = new FileWithDate();
+        // System.out.println(f.getFiles());
+//        try {
+//            for (int i = 0; i < 50; i++) {
+//                int year = ThreadLocalRandom.current().nextInt(2014, 2022 + 1);
+//                int month = ThreadLocalRandom.current().nextInt(1, 12 + 1);
+//                int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
+//                String date = year + "-" + month + "-" + day;
+//                fsList.add(new FilesSorter("placeholder_filename.fastq", date));
+//            }
+//        } catch (ParseException e) {
+//            throw new RuntimeException(e);
+//        }
+        Collections.sort(f.getFiles(), Collections.reverseOrder());
+        ctx.setVariable("checkMap", f.getFiles());
+        System.out.println(f.getFiles());
         templateEngine.process("home/index", ctx, response.getWriter());
     }
 }
