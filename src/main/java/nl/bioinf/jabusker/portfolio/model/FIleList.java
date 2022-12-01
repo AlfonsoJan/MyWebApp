@@ -15,7 +15,7 @@ public class FIleList implements Comparable<FIleList> {
     public FIleList(String fileName, Date stringDate) throws ParseException {
         String[] tmp = fileName.split("/");
         this.fullPath = fileName;
-        this.fileName = Arrays.toString(Arrays.copyOfRange(tmp, 5, tmp.length));
+        this.fileName = String.join("/", Arrays.copyOfRange(tmp, 5, tmp.length));
         this.date = stringDate;
     };
 

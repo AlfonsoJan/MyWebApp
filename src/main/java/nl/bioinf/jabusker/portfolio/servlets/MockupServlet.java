@@ -41,6 +41,6 @@ public class MockupServlet extends HttpServlet {
         }
         Collections.sort(fsList, Collections.reverseOrder());
         ctx.setVariable("checkMap", fsList);
-        templateEngine.process("home/simple", ctx, response.getWriter());
+        templateEngine.process("home/index", ctx, response.getWriter());
     }
 }

@@ -14,7 +14,7 @@ public class FileWithDate {
 
     public ArrayList<FIleList> data = new ArrayList<>();
     public void listOfFiles(File dirPath){
-        File filesList[] = dirPath.listFiles();
+        File[] filesList = dirPath.listFiles();
         for(File file : filesList) {
             if(file.isFile()) {
                 try {
@@ -35,6 +35,13 @@ public class FileWithDate {
     }
 
     public ArrayList<FIleList> getFiles() throws IOException {
+        // make temporary dummy data - remove when no longer needed
+        new File(System.getProperty("user.home")+ "/Desktop/Data/").mkdirs();
+        for (int i = 0; i < 50; i++){
+            String newFile = String.format("/Desktop/Data/dummydata_%d.txt",i);
+            new File(System.getProperty("user.home")+ newFile).createNewFile();
+        }
+
         File file = new File(System.getProperty("user.home")+ "/Desktop/Data/");
         listOfFiles(file);
         return this.data;
