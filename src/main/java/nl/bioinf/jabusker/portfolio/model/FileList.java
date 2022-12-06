@@ -1,18 +1,16 @@
 package nl.bioinf.jabusker.portfolio.model;
 
-import org.thymeleaf.util.ArrayUtils;
-
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
-public class FIleList implements Comparable<FIleList> {
+public class FileList implements Comparable<FileList> {
 
     private String fullPath;
     private String fileName;
     private Date date;
 
-    public FIleList(String fileName, Date stringDate) throws ParseException {
+    public FileList(String fileName, Date stringDate) throws ParseException {
         String[] tmp = fileName.split("/");
         this.fullPath = fileName;
         this.fileName = String.join("/", Arrays.copyOfRange(tmp, 5, tmp.length));
@@ -23,10 +21,15 @@ public class FIleList implements Comparable<FIleList> {
     public String getFileName() {
         return fileName;
     }
-    public Date getDate() { return date; }
+    public Date getDate() {
+        return date;
+    }
+    public String getFullPath() {
+        return fullPath;
+    }
 
     @Override
-    public int compareTo(FIleList fIleList) {
+    public int compareTo(FileList fIleList) {
         return getDate().compareTo(fIleList.getDate());
     }
 }

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FileWithDate {
 
-    public ArrayList<FIleList> data = new ArrayList<>();
+    public ArrayList<FileList> data = new ArrayList<>();
     public void listOfFiles(File dirPath){
         File[] filesList = dirPath.listFiles();
         for(File file : filesList) {
@@ -23,7 +23,7 @@ public class FileWithDate {
                     String pattern = "hh:mm:ss dd-MM-yyyy";
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                     String date = simpleDateFormat.format(creationDate);
-                    data.add(new FIleList(file.toPath().toString(), creationDate));
+                    data.add(new FileList(file.toPath().toString(), creationDate));
                 } catch (IOException | ParseException e) {
                     throw new RuntimeException(e);
                 }
@@ -34,7 +34,7 @@ public class FileWithDate {
         }
     }
 
-    public ArrayList<FIleList> getFiles() throws IOException {
+    public ArrayList<FileList> getFiles() throws IOException {
         // make temporary dummy data - remove when no longer needed
         new File(System.getProperty("user.home")+ "/Desktop/Data/").mkdirs();
         for (int i = 0; i < 50; i++){
