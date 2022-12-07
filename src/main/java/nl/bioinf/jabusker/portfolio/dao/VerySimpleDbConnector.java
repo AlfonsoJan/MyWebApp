@@ -65,7 +65,6 @@ public class VerySimpleDbConnector {
         }
     }
 
-
     public User getUser(int id) throws SQLException {
         // prepare query statement
         String fetchQuery = "SELECT * FROM users WHERE id = ?";
