@@ -11,6 +11,18 @@ public class LabeledFile {
         this.fullPath = fullPath;
     }
 
+    public LabeledFile(int id, String label, String fullPath, int projectId) {
+        this.fileId = id;
+        this.label = label;
+        this.fullPath = fullPath;
+        this.projectId = projectId;
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(fileId) + ";" + label + ";" + fullPath + ";" + String.valueOf(projectId);
+    }
+
     public int getId() {
         return fileId;
     }
