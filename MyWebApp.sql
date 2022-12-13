@@ -16,7 +16,7 @@ create table users
 );
 
 /*
-Creates the table probjects, to keep track of every project.
+Creates the table projects, to keep track of every project.
 And which user it belongs to with his user id.
 */
 create table projects
@@ -34,12 +34,12 @@ create table projects
 Creates the table for all the labeled files, to keep track of 
 which files belong to certain projects and or users.
 */
-create table label_files
+create table labeled_files
 (
     id int auto_increment not null,
     label varchar(100) not null,
     path varchar(100) not null,
-    project int not null,
+    project_id int not null,
     primary key(id),
     foreign key(project)
         references projects(id)
