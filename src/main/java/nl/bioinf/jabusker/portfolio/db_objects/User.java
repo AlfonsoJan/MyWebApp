@@ -1,4 +1,4 @@
-package nl.bioinf.jabusker.portfolio.model;
+package nl.bioinf.jabusker.portfolio.db_objects;
 
 public class User {
     private final int userId;
