@@ -2,12 +2,17 @@ package nl.bioinf.jabusker.portfolio.dao;
 
 import nl.bioinf.jabusker.portfolio.db_utils.DbCredentials;
 import nl.bioinf.jabusker.portfolio.db_utils.DbUser;
+import nl.bioinf.jabusker.portfolio.model.LabeledFile;
+import nl.bioinf.jabusker.portfolio.model.Project;
 import nl.bioinf.jabusker.portfolio.model.User;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class VerySimpleDbConnector {
     private final String url;
@@ -45,6 +50,8 @@ public class VerySimpleDbConnector {
             //print username
             System.out.println(someUser.getName());
 
+            System.out.println(connector.getProjectsFrom(2));
+
             //a catch-all for database interaction exceptions
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
             e.printStackTrace();
@@ -78,6 +85,52 @@ public class VerySimpleDbConnector {
                     e.getCause());
         }
     }
+
+    public Map<Project, ArrayList<LabeledFile>> getProjectsFrom(int id) throws SQLException {
+
+        String fetchQuery = "select * from label_files,projects,users where projects.user_id = ? and projects.id = label_files.id and users.id = ?";
+        PreparedStatement ps = connection.prepareStatement(fetchQuery);
+        ps.setString(1, String.valueOf(id));
+        ps.setString(2, String.valueOf(id));
+
+        Map<Project, ArrayList<LabeledFile>> results = new ConcurrentHashMap<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Set<Project> keys = results.keySet();
+
+            boolean isUsed = false; // To check if a project exists already!
+            for (Project key : keys) {
+                if (rs.getInt("projects.id") == key.getProjectId()) {
+                    isUsed = true;
+                    break;
+                }
+            }
+
+            if (!isUsed) {
+                int project = rs.getInt("projects.id");
+                String name = rs.getString("projects.project_name");
+                int user = rs.getInt("users.id");
+                results.put(new Project(project, name, user), new ArrayList<>());
+            }
+
+            // Add labeled file to project!
+            int labelId = rs.getInt("label_files.id");
+            String label = rs.getString("label_files.label");
+            String path = rs.getString("label_files.path");
+            int projectId = rs.getInt("projects.id");
+            LabeledFile labeledFile = new LabeledFile(labelId, label, path, projectId);
+
+            for (Project key : results.keySet()) {
+                if (rs.getInt("projects.id") == key.getProjectId()) {
+                    results.get(key).add(labeledFile);
+                }
+            }
+
+        }
+
+        return results;
+    }
+
 
     private void prepareStatements() throws SQLException {
         String userNameFetchQuery = "SELECT * FROM users WHERE id = ?";
