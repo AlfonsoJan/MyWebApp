@@ -25,38 +25,14 @@ import java.util.Arrays;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download", loadOnStartup = 1)
 public class DownloadServlet extends HttpServlet {
-    private TemplateEngine templateEngine;
 
-    @Override
-    public void init(){
-        this.templateEngine = WebConfig.getTemplateEngine();
-    }
-    private static final long serialVersionUID = 1L;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        ArrayList<FilesSorter> fsList = new ArrayList<>();
-        try {
-            for (int i = 0; i < 50; i++) {
-                int year = ThreadLocalRandom.current().nextInt(2014, 2022 + 1);
-                int month = ThreadLocalRandom.current().nextInt(1, 12 + 1);
-                int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
-                String date = year + "-" + month + "-" + day;
-                fsList.add(new FilesSorter("placeholder_filename.fastq", date));
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Collections.sort(fsList, Collections.reverseOrder());
-        ctx.setVariable("filesList", fsList);
-        ctx.setVariable("testFiles", fsList);
-        templateEngine.process("home/downloadtest", ctx, response.getWriter());
-    }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] myJsonData = request.getParameterValues("json[]");
-        System.out.println("Hi");
+//        System.out.println("Hi");
         for (String fileName: myJsonData) {
+
+            System.out.println(fileName);
 
             FileInputStream fileInputStream = null;
             OutputStream responseOutputStream = null;
