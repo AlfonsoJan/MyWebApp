@@ -17,9 +17,12 @@ public class VerySimpleDbConnector {
 
     private final Map<String, PreparedStatement> preparedStatements = new HashMap();
 
-    private static final String GET_USER = "get_user";
-    private static final String GET_PROJECT = "get_project";
-    private static final String GET_FILE = "get_file";
+    private static final String GET_USER_USING_ID = "get_user_using_id";
+    private static final String GET_USER_USING_NAME = "get_userid";
+    private static final String GET_PROJECT_USING_PROJECT_ID = "get_project_using_project_id";
+    private static final String GET_PROJECT_USING_USER_ID = "get_project_using_user_id";
+    private static final String GET_FILE_USING_FILE_ID = "get_file_using_file_id";
+    private static final String GET_FILE_USING_PROJECT_ID = "get_file_using_project_id";
 
     private static final String INSERT_USER = "insert_user";
     private static final String INSERT_PROJECT = "insert_project";
@@ -32,13 +35,8 @@ public class VerySimpleDbConnector {
      */
     public static void main(String[] args) {
         try {
-            DbUser dbUser = DbCredentials.getMySQLuser();
-            String user = dbUser.getUserName();
-            String passWrd = dbUser.getDatabasePassword();
-            String url = dbUser.getUrl();
-
             //connect
-            VerySimpleDbConnector connector = new VerySimpleDbConnector(url, user, passWrd);
+            VerySimpleDbConnector connector = new VerySimpleDbConnector();
 
             //make an user object
             User someUser = connector.getUser(1);
@@ -54,10 +52,12 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public VerySimpleDbConnector(String url, String dbUser, String dbPassword) throws DatabaseException {
-        this.url = url;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public VerySimpleDbConnector() throws DatabaseException, IOException, NoSuchFieldException {
+        DbUser credentialsFinder = DbCredentials.getMySQLuser();
+
+        this.url = credentialsFinder.getUrl();;
+        this.dbUser = credentialsFinder.getUserName();
+        this.dbPassword = credentialsFinder.getDatabasePassword();
 
         //make the connection
         connect();
@@ -69,7 +69,8 @@ public class VerySimpleDbConnector {
             Class.forName("com.mysql.cj.jdbc.Driver");
             //create connection
             connection = DriverManager.getConnection(url, dbUser, dbPassword);
-            //..which is risky
+            //prepare statements
+            prepareStatements();
         } catch (Exception e) {
             e.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -78,14 +79,23 @@ public class VerySimpleDbConnector {
     }
 
     private void prepareStatements() throws SQLException {
-        String userFetchQuery = "SELECT * FROM users WHERE id = ?";
-        this.preparedStatements.put(GET_USER, connection.prepareStatement(userFetchQuery));
+        String userNameFetchQuery = "SELECT * FROM users WHERE id = ?";
+        this.preparedStatements.put(GET_USER_USING_ID, connection.prepareStatement(userNameFetchQuery));
 
-        String projectFetchQuery = "SELECT * FROM projects WHERE id = ?";
-        this.preparedStatements.put(GET_PROJECT, connection.prepareStatement(projectFetchQuery));
+        String userIdFetchQuery = "SELECT * FROM users WHERE username = ?";
+        this.preparedStatements.put(GET_USER_USING_NAME, connection.prepareStatement(userIdFetchQuery));
 
-        String fileFetchQuery = "SELECT * FROM labeledfiles WHERE id = ?";
-        this.preparedStatements.put(GET_FILE, connection.prepareStatement(fileFetchQuery));
+        String projectIdFetchQuery = "SELECT * FROM projects WHERE id = ?";
+        this.preparedStatements.put(GET_PROJECT_USING_PROJECT_ID, connection.prepareStatement(projectIdFetchQuery));
+
+        String projectUserIdFetchQuery = "SELECT * FROM projects WHERE user_id = ?";
+        this.preparedStatements.put(GET_PROJECT_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
+
+        String fileIdFetchQuery = "SELECT * FROM labeled_files WHERE id = ?";
+        this.preparedStatements.put(GET_FILE_USING_FILE_ID, connection.prepareStatement(fileIdFetchQuery));
+
+        String fileProjectIdFetchQuery = "SELECT * FROM labeled_files WHERE project_id = ?";
+        this.preparedStatements.put(GET_FILE_USING_PROJECT_ID, connection.prepareStatement(fileProjectIdFetchQuery));
 
         String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
         this.preparedStatements.put(INSERT_USER, connection.prepareStatement(userInsertQuery));
@@ -99,7 +109,7 @@ public class VerySimpleDbConnector {
 
     public User getUser(int id) throws SQLException {
         // prepare query statement
-        PreparedStatement ps = this.preparedStatements.get(GET_USER);
+        PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_ID);
 
         //set data on the "?" placeholders of the prepared statement
         ps.setString(1, String.valueOf(id));
