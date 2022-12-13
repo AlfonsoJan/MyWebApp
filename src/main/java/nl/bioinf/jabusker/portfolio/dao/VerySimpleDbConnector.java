@@ -2,9 +2,9 @@ package nl.bioinf.jabusker.portfolio.dao;
 
 import nl.bioinf.jabusker.portfolio.db_utils.DbCredentials;
 import nl.bioinf.jabusker.portfolio.db_utils.DbUser;
-import nl.bioinf.jabusker.portfolio.model.LabeledFile;
-import nl.bioinf.jabusker.portfolio.model.Project;
-import nl.bioinf.jabusker.portfolio.model.User;
+import nl.bioinf.jabusker.portfolio.db_objects.LabeledFile;
+import nl.bioinf.jabusker.portfolio.db_objects.Project;
+import nl.bioinf.jabusker.portfolio.db_objects.User;
 
 import java.io.IOException;
 import java.sql.*;
