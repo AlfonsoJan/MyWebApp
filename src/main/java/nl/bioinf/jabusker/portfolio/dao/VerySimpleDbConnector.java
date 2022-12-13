@@ -6,12 +6,24 @@ import nl.bioinf.jabusker.portfolio.model.User;
 
 import java.io.IOException;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class VerySimpleDbConnector {
     private final String url;
     private final String dbUser;
     private final String dbPassword;
     private Connection connection;
+
+    private final Map<String, PreparedStatement> preparedStatements = new HashMap();
+
+    private static final String GET_USER = "get_user";
+    private static final String GET_PROJECT = "get_project";
+    private static final String GET_FILE = "get_file";
+
+    private static final String INSERT_USER = "insert_user";
+    private static final String INSERT_PROJECT = "insert_project";
+    private static final String INSERT_FILE = "insert_file";
 
     /**
      * a main for demonstration purposes
@@ -65,10 +77,29 @@ public class VerySimpleDbConnector {
         }
     }
 
+    private void prepareStatements() throws SQLException {
+        String userFetchQuery = "SELECT * FROM users WHERE id = ?";
+        this.preparedStatements.put(GET_USER, connection.prepareStatement(userFetchQuery));
+
+        String projectFetchQuery = "SELECT * FROM projects WHERE id = ?";
+        this.preparedStatements.put(GET_PROJECT, connection.prepareStatement(projectFetchQuery));
+
+        String fileFetchQuery = "SELECT * FROM labeledfiles WHERE id = ?";
+        this.preparedStatements.put(GET_FILE, connection.prepareStatement(fileFetchQuery));
+
+        String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
+        this.preparedStatements.put(INSERT_USER, connection.prepareStatement(userInsertQuery));
+
+        String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
+        this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
+
+        String fileInsertQuery = "INSERT INTO labeledfiles (label, path, project_id) VALUES (?, ?)";
+        this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
+    }
+
     public User getUser(int id) throws SQLException {
         // prepare query statement
-        String fetchQuery = "SELECT * FROM users WHERE id = ?";
-        PreparedStatement ps = connection.prepareStatement(fetchQuery);
+        PreparedStatement ps = this.preparedStatements.get(GET_USER);
 
         //set data on the "?" placeholders of the prepared statement
         ps.setString(1, String.valueOf(id));
@@ -83,6 +114,28 @@ public class VerySimpleDbConnector {
         String userName = rs.getString("username");
 
         return new User(id, userName);
+    }
+
+    public void insertUser(String userName) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            String insertQuery = "INSERT INTO Users (username) VALUES (?)";
+            PreparedStatement ps = connection.prepareStatement(insertQuery);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, userName);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
     }
 
 
