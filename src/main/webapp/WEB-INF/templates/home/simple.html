@@ -288,10 +288,9 @@
             }
             lastChecked = null;
         });
-
         $(".addFiles").click(function(){
             $.each($("#current-files li").filter('.selected'), function(){
-                $(".reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
+                $(".inputs .reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
                 $(this).removeClass("selected");
             });
             $(".addFiles").hide();
@@ -316,7 +315,7 @@
             $(".inputs").droppable({
                 drop: function(event, ui) {
                     $.each($("#current-files li").filter('.selected'), function(){
-                        $(".reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
+                        $(".inputs .reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
                         $(this).removeClass("selected");
                     });
                     if ($('.selected').length >= 1) {
