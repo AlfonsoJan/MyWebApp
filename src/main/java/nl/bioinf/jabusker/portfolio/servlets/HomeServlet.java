@@ -43,7 +43,6 @@ public class HomeServlet extends HttpServlet {
 //        }
         Collections.sort(f.getFiles(), Collections.reverseOrder());
         ctx.setVariable("checkMap", f.getFiles());
-        System.out.println(f.getFiles());
         templateEngine.process("home/index", ctx, response.getWriter());
     }
 }

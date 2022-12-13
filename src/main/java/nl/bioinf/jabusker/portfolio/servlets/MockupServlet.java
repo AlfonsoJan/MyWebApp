@@ -40,7 +40,8 @@ public class MockupServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
         Collections.sort(fsList, Collections.reverseOrder());
-        ctx.setVariable("checkMap", fsList);
+        ctx.setVariable("filesList", fsList);
+        ctx.setVariable("testFiles", fsList);
         templateEngine.process("home/simple", ctx, response.getWriter());
     }
 }
