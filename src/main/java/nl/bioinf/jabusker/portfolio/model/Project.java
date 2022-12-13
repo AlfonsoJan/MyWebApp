@@ -11,6 +11,11 @@ public class Project {
         this.userId = userId;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public int getProjectId() {
         return projectId;
     }

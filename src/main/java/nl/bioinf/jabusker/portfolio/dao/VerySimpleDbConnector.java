@@ -35,6 +35,7 @@ public class VerySimpleDbConnector {
      */
     public static void main(String[] args) {
         try {
+
             //connect
             VerySimpleDbConnector connector = new VerySimpleDbConnector();
 
