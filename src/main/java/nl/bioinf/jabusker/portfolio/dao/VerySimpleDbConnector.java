@@ -32,6 +32,8 @@ public class VerySimpleDbConnector {
     private static final String INSERT_USER = "insert_user";
     private static final String INSERT_PROJECT = "insert_project";
     private static final String INSERT_FILE = "insert_file";
+    private static final String UPDATE_PROJECT = "update_project";
+    private static final String UPDATE_FILE = "update_file";
 
     /**
      * a main for demonstration purposes
@@ -50,7 +52,7 @@ public class VerySimpleDbConnector {
             //print username
             System.out.println(someUser.getName());
 
-            System.out.println(connector.getProjectsFrom(2));
+            System.out.println(connector.getProjectsFromUser(2));
 
             //a catch-all for database interaction exceptions
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
@@ -86,7 +88,211 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public Map<Project, ArrayList<LabeledFile>> getProjectsFrom(int id) throws SQLException {
+
+    private void prepareStatements() throws SQLException {
+        String userNameFetchQuery = "SELECT * FROM users WHERE id = ?";
+        this.preparedStatements.put(GET_USER_USING_ID, connection.prepareStatement(userNameFetchQuery));
+
+        String userIdFetchQuery = "SELECT * FROM users WHERE username = ?";
+        this.preparedStatements.put(GET_USER_USING_NAME, connection.prepareStatement(userIdFetchQuery));
+
+        String projectIdFetchQuery = "SELECT * FROM projects WHERE id = ?";
+        this.preparedStatements.put(GET_PROJECT_USING_PROJECT_ID, connection.prepareStatement(projectIdFetchQuery));
+
+        String projectUserIdFetchQuery = "SELECT * FROM projects WHERE user_id = ?";
+        this.preparedStatements.put(GET_PROJECT_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
+
+        String fileIdFetchQuery = "SELECT * FROM labeled_files WHERE id = ?";
+        this.preparedStatements.put(GET_FILE_USING_FILE_ID, connection.prepareStatement(fileIdFetchQuery));
+
+        String fileProjectIdFetchQuery = "SELECT * FROM labeled_files WHERE project_id = ?";
+        this.preparedStatements.put(GET_FILE_USING_PROJECT_ID, connection.prepareStatement(fileProjectIdFetchQuery));
+
+        String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
+        this.preparedStatements.put(INSERT_USER, connection.prepareStatement(userInsertQuery));
+
+        String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
+        this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
+
+        String fileInsertQuery = "INSERT INTO labeledfiles (label, path, project_id) VALUES (?, ?, ?)";
+        this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
+
+        String projectNameUpdateQuery = "UPDATE projects set project_name = ? where id = ?;";
+        this.preparedStatements.put(UPDATE_PROJECT, connection.prepareStatement(projectNameUpdateQuery));
+
+        String labeledFileNameUpdateQuery = "UPDATE label_files set label = ? where id = ?";
+        this.preparedStatements.put(UPDATE_FILE, connection.prepareStatement(labeledFileNameUpdateQuery));
+    }
+
+    public User getUser(int id) throws SQLException {
+        // prepare query statement
+        PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_ID);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, String.valueOf(id));
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        //next result
+        rs.next();
+
+        //if there is data, process it
+        String userName = rs.getString("username");
+
+        return new User(id, userName);
+    }
+
+    public void insertUser(String userName) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = connection.prepareStatement(INSERT_PROJECT);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, userName);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public Project getProject(int id) throws SQLException {
+        // prepare query statement
+        PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_USING_PROJECT_ID);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, String.valueOf(id));
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        //next result
+        rs.next();
+
+        //if there is data, process it
+        String projectName = rs.getString("project_name");
+        int userId = rs.getInt("user_id");
+        return new Project(id, projectName, userId);
+    }
+
+    public void insertProject(String projectName, int userId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = connection.prepareStatement(INSERT_PROJECT);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, projectName);
+            ps.setInt(2, userId);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public void updateProject(String newName, int projectId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = connection.prepareStatement(UPDATE_PROJECT);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, newName);
+            ps.setInt(2, projectId);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public LabeledFile getLabeledFile(int id) throws SQLException {
+        // prepare query statement
+        PreparedStatement ps = this.preparedStatements.get(GET_FILE_USING_FILE_ID);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, String.valueOf(id));
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        //next result
+        rs.next();
+
+        //if there is data, process it
+        String label = rs.getString("label");
+        String path = rs.getString("path");
+        int userId = rs.getInt("project");
+        return new LabeledFile(id, label, path, userId);
+    }
+
+    public void insertLabeledFile(String label, String path, int projectId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = connection.prepareStatement(INSERT_FILE);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, label);
+            ps.setString(2, path);
+            ps.setInt(3, projectId);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public void updateLabelName(String newLabel, int labelId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = connection.prepareStatement(UPDATE_FILE);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(1, newLabel);
+            ps.setInt(2, labelId);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public Map<Project, ArrayList<LabeledFile>> getProjectsFromUser(int id) throws SQLException {
 
         String fetchQuery = "select * from label_files,projects,users where projects.user_id = ? and projects.id = label_files.id and users.id = ?";
         PreparedStatement ps = connection.prepareStatement(fetchQuery);
@@ -129,77 +335,6 @@ public class VerySimpleDbConnector {
         }
 
         return results;
-    }
-
-
-    private void prepareStatements() throws SQLException {
-        String userNameFetchQuery = "SELECT * FROM users WHERE id = ?";
-        this.preparedStatements.put(GET_USER_USING_ID, connection.prepareStatement(userNameFetchQuery));
-
-        String userIdFetchQuery = "SELECT * FROM users WHERE username = ?";
-        this.preparedStatements.put(GET_USER_USING_NAME, connection.prepareStatement(userIdFetchQuery));
-
-        String projectIdFetchQuery = "SELECT * FROM projects WHERE id = ?";
-        this.preparedStatements.put(GET_PROJECT_USING_PROJECT_ID, connection.prepareStatement(projectIdFetchQuery));
-
-        String projectUserIdFetchQuery = "SELECT * FROM projects WHERE user_id = ?";
-        this.preparedStatements.put(GET_PROJECT_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
-
-        String fileIdFetchQuery = "SELECT * FROM labeled_files WHERE id = ?";
-        this.preparedStatements.put(GET_FILE_USING_FILE_ID, connection.prepareStatement(fileIdFetchQuery));
-
-        String fileProjectIdFetchQuery = "SELECT * FROM labeled_files WHERE project_id = ?";
-        this.preparedStatements.put(GET_FILE_USING_PROJECT_ID, connection.prepareStatement(fileProjectIdFetchQuery));
-
-        String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
-        this.preparedStatements.put(INSERT_USER, connection.prepareStatement(userInsertQuery));
-
-        String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
-        this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
-
-        String fileInsertQuery = "INSERT INTO labeledfiles (label, path, project_id) VALUES (?, ?)";
-        this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
-    }
-
-    public User getUser(int id) throws SQLException {
-        // prepare query statement
-        PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_ID);
-
-        //set data on the "?" placeholders of the prepared statement
-        ps.setString(1, String.valueOf(id));
-
-        //execute
-        ResultSet rs = ps.executeQuery();
-
-        //next result
-        rs.next();
-
-        //if there is data, process it
-        String userName = rs.getString("username");
-
-        return new User(id, userName);
-    }
-
-    public void insertUser(String userName) throws DatabaseException {
-        try{
-            //Prepare statement
-            //!! Doing this within this method is extremely inefficient !!
-            String insertQuery = "INSERT INTO Users (username) VALUES (?)";
-            PreparedStatement ps = connection.prepareStatement(insertQuery);
-
-            //set data on the "?" placeholders of the prepared statement
-            ps.setString(1, userName);
-
-            //do the actual insert
-            ps.executeUpdate();
-
-            //close resources
-            ps.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new DatabaseException("Something is wrong with the database, see cause Exception",
-                    ex.getCause());
-        }
     }
 
 
