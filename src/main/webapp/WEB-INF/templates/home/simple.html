@@ -36,7 +36,7 @@
                     <line x1="12" y1="17" x2="12" y2="17.01" />
                     <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
                 </svg>
-                <span>Dit zijn je geselcteerde bestanden</span>
+                <span>In deze box staan je geselecteerde bestanden</span>
             </div>
         </div>
         <div class="tooltip new-files">
@@ -47,7 +47,7 @@
                     <line x1="12" y1="17" x2="12" y2="17.01" />
                     <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
                 </svg>
-                <span>Dit zijn alle nieuwe bestanden</span>
+                <span>In deze box staan alle (nieuwe) bestanden</span>
             </div>
         </div>
         <div class="fileList">
@@ -232,7 +232,7 @@
         myvar = [];
         var url = "download?";
         $.each($(".inputs .reads").find("p"), function(){
-            url = url + "allfiles=" + $(this).html().substring(0, $(this).html().indexOf('<spa')) + "&";
+            url = url + "allFiles=" + $(this).html().substring(0, $(this).html().indexOf('<spa')) + "&";
         });
         var link = document.createElement('a');
         link.id = 'someLink'
@@ -317,6 +317,7 @@
             });
             $(".addFiles").hide();
         });
+        
         $(document).on("click", "#readDelete", function(){
             $(this).parent().remove();
             $(".addFiles").hide();
