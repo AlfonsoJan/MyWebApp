@@ -25,10 +25,10 @@ public class VerySimpleDbConnector {
     private static final String GET_USER_USING_ID = "get_user_using_id";
     private static final String GET_USER_USING_NAME = "get_userid";
     private static final String GET_PROJECT_USING_PROJECT_ID = "get_project_using_project_id";
-    private static final String GET_PROJECT_USING_USER_ID = "get_project_using_user_id";
+    private static final String GET_PROJECTS_USING_USER_ID = "get_project_using_user_id";
+    private static final String GET_PROJECTS_USING_PROJECT_ID = "get_projects_using_project_id";
     private static final String GET_FILE_USING_FILE_ID = "get_file_using_file_id";
-    private static final String GET_FILE_USING_PROJECT_ID = "get_file_using_project_id";
-
+    private static final String GET_ALL_LABEL_FILES = "get_all_label_files";
     private static final String INSERT_USER = "insert_user";
     private static final String INSERT_PROJECT = "insert_project";
     private static final String INSERT_FILE = "insert_file";
@@ -47,12 +47,7 @@ public class VerySimpleDbConnector {
             VerySimpleDbConnector connector = new VerySimpleDbConnector();
 
             //make an user object
-            User someUser = connector.getUser(1);
-
-            //print username
-            System.out.println(someUser.getName());
-
-            System.out.println(connector.getProjectsFromUser(2));
+            System.out.println(connector.getLabelFilesFromProject(1));
 
             //a catch-all for database interaction exceptions
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
@@ -99,14 +94,17 @@ public class VerySimpleDbConnector {
         String projectIdFetchQuery = "SELECT * FROM projects WHERE id = ?";
         this.preparedStatements.put(GET_PROJECT_USING_PROJECT_ID, connection.prepareStatement(projectIdFetchQuery));
 
-        String projectUserIdFetchQuery = "SELECT * FROM projects WHERE user_id = ?";
-        this.preparedStatements.put(GET_PROJECT_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
+        String projectUserIdFetchQuery = "select * from label_files,projects,users where projects.user_id = ? and projects.id = label_files.project and users.id = projects.user_id";
+        this.preparedStatements.put(GET_PROJECTS_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
 
-        String fileIdFetchQuery = "SELECT * FROM labeled_files WHERE id = ?";
+        String FilesFromProjectId = "select * from label_files,projects where projects.id = ? and label_files.project = projects.id";
+        this.preparedStatements.put(GET_PROJECTS_USING_PROJECT_ID, connection.prepareStatement(FilesFromProjectId));
+
+        String fileIdFetchQuery = "SELECT * FROM label_files WHERE id = ?";
         this.preparedStatements.put(GET_FILE_USING_FILE_ID, connection.prepareStatement(fileIdFetchQuery));
 
-        String fileProjectIdFetchQuery = "SELECT * FROM labeled_files WHERE project_id = ?";
-        this.preparedStatements.put(GET_FILE_USING_PROJECT_ID, connection.prepareStatement(fileProjectIdFetchQuery));
+        String filesFetchQuery = "SELECT * FROM label_files where path = ?";
+        this.preparedStatements.put(GET_ALL_LABEL_FILES, connection.prepareStatement(filesFetchQuery));
 
         String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
         this.preparedStatements.put(INSERT_USER, connection.prepareStatement(userInsertQuery));
@@ -114,7 +112,7 @@ public class VerySimpleDbConnector {
         String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
         this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
 
-        String fileInsertQuery = "INSERT INTO labeledfiles (label, path, project_id) VALUES (?, ?, ?)";
+        String fileInsertQuery = "INSERT INTO label_files (label, path, project) VALUES (?, ?, ?)";
         this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
 
         String projectNameUpdateQuery = "UPDATE projects set project_name = ? where id = ?;";
@@ -143,11 +141,26 @@ public class VerySimpleDbConnector {
         return new User(id, userName);
     }
 
+    public User getUser(String userName) throws SQLException {
+        // prepare query statement
+        PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_NAME);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, userName);
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        //next result
+        rs.next();
+        return new User(rs.getInt("id"), userName);
+    }
+
     public void insertUser(String userName) throws DatabaseException {
         try{
             //Prepare statement
             //!! Doing this within this method is extremely inefficient !!
-            PreparedStatement ps = connection.prepareStatement(INSERT_PROJECT);
+            PreparedStatement ps = this.preparedStatements.get(INSERT_USER);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setString(1, userName);
@@ -187,7 +200,7 @@ public class VerySimpleDbConnector {
         try{
             //Prepare statement
             //!! Doing this within this method is extremely inefficient !!
-            PreparedStatement ps = connection.prepareStatement(INSERT_PROJECT);
+            PreparedStatement ps = this.preparedStatements.get(INSERT_PROJECT);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setString(1, projectName);
@@ -209,7 +222,7 @@ public class VerySimpleDbConnector {
         try{
             //Prepare statement
             //!! Doing this within this method is extremely inefficient !!
-            PreparedStatement ps = connection.prepareStatement(UPDATE_PROJECT);
+            PreparedStatement ps = this.preparedStatements.get(UPDATE_PROJECT);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setString(1, newName);
@@ -217,9 +230,6 @@ public class VerySimpleDbConnector {
 
             //do the actual insert
             ps.executeUpdate();
-
-            //close resources
-            ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -251,7 +261,7 @@ public class VerySimpleDbConnector {
         try{
             //Prepare statement
             //!! Doing this within this method is extremely inefficient !!
-            PreparedStatement ps = connection.prepareStatement(INSERT_FILE);
+            PreparedStatement ps = this.preparedStatements.get(INSERT_FILE);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setString(1, label);
@@ -260,9 +270,6 @@ public class VerySimpleDbConnector {
 
             //do the actual insert
             ps.executeUpdate();
-
-            //close resources
-            ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -274,7 +281,7 @@ public class VerySimpleDbConnector {
         try{
             //Prepare statement
             //!! Doing this within this method is extremely inefficient !!
-            PreparedStatement ps = connection.prepareStatement(UPDATE_FILE);
+            PreparedStatement ps = this.preparedStatements.get(UPDATE_FILE);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setString(1, newLabel);
@@ -282,9 +289,6 @@ public class VerySimpleDbConnector {
 
             //do the actual insert
             ps.executeUpdate();
-
-            //close resources
-            ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -294,10 +298,8 @@ public class VerySimpleDbConnector {
 
     public Map<Project, ArrayList<LabeledFile>> getProjectsFromUser(int id) throws SQLException {
 
-        String fetchQuery = "select * from label_files,projects,users where projects.user_id = ? and projects.id = label_files.id and users.id = ?";
-        PreparedStatement ps = connection.prepareStatement(fetchQuery);
+        PreparedStatement ps = this.preparedStatements.get(GET_PROJECTS_USING_USER_ID);
         ps.setString(1, String.valueOf(id));
-        ps.setString(2, String.valueOf(id));
 
         Map<Project, ArrayList<LabeledFile>> results = new ConcurrentHashMap<>();
         ResultSet rs = ps.executeQuery();
@@ -335,6 +337,42 @@ public class VerySimpleDbConnector {
         }
 
         return results;
+    }
+
+    public ArrayList<LabeledFile> getLabelFilesFromProject(int projectId) throws SQLException {
+
+        PreparedStatement ps = this.preparedStatements.get(GET_PROJECTS_USING_PROJECT_ID);
+        ps.setString(1, String.valueOf(projectId));
+
+        ArrayList<LabeledFile> results = new ArrayList<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int labelId = rs.getInt("label_files.id");
+            String label = rs.getString("label_files.label");
+            String path = rs.getString("label_files.path");
+            int id = rs.getInt("projects.id");
+            results.add(new LabeledFile(labelId, label, path, id));
+        }
+
+        return results;
+    }
+
+    public int getTimesHardFileIsUsed(String path) throws SQLException {
+
+        PreparedStatement ps = this.preparedStatements.get(GET_ALL_LABEL_FILES);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, path);
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        int count = 0;
+        while (rs.next()) {
+            count += 1;
+        }
+
+        return count;
     }
 
 
