@@ -230,9 +230,9 @@
     $(".addFiles").hide();
     function getFiles() {
         myvar = [];
-        var url = "download?allfiles=";
+        var url = "download?";
         $.each($(".inputs .reads").find("p"), function(){
-            url = url + $(this).html().substring(0, $(this).html().indexOf('<spa')) + ",";
+            url = url + "allfiles=" + $(this).html().substring(0, $(this).html().indexOf('<spa')) + "&";
         });
         var link = document.createElement('a');
         link.id = 'someLink'
