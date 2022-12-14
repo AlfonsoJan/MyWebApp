@@ -1,6 +1,7 @@
 package nl.bioinf.jabusker.portfolio.servlets;
 
 import nl.bioinf.jabusker.portfolio.config.WebConfig;
+import nl.bioinf.jabusker.portfolio.model.Enums;
 import nl.bioinf.jabusker.portfolio.model.FilesSorter;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -13,6 +14,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @WebServlet(name = "MockupServlet", urlPatterns = "/welcomeshow", loadOnStartup = 1)
@@ -34,7 +36,9 @@ public class MockupServlet extends HttpServlet {
                 int month = ThreadLocalRandom.current().nextInt(1, 12 + 1);
                 int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
                 String date = year + "-" + month + "-" + day;
-                fsList.add(new FilesSorter("placeholder_filename.fastq", date));
+                Enums.Used used = Enums.Used.values()[new Random().nextInt(Enums.Used.values().length)];
+                System.out.println(used);
+                fsList.add(new FilesSorter("placeholder_filename.fastq", date, used));
             }
         } catch (ParseException e) {
             throw new RuntimeException(e);

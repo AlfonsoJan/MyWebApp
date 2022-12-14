@@ -5,6 +5,7 @@ import nl.bioinf.jabusker.portfolio.db_utils.DbUser;
 import nl.bioinf.jabusker.portfolio.db_objects.LabeledFile;
 import nl.bioinf.jabusker.portfolio.db_objects.Project;
 import nl.bioinf.jabusker.portfolio.db_objects.User;
+import nl.bioinf.jabusker.portfolio.model.Enums;
 
 import java.io.IOException;
 import java.sql.*;
@@ -357,7 +358,7 @@ public class VerySimpleDbConnector {
         return results;
     }
 
-    public int getTimesHardFileIsUsed(String path) throws SQLException {
+    public Enums.Used getTimesHardFileIsUsed(String path) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(GET_ALL_LABEL_FILES);
 
@@ -372,7 +373,15 @@ public class VerySimpleDbConnector {
             count += 1;
         }
 
-        return count;
+        if (count < 1) {
+            return Enums.Used.NONE;
+        } else if (count < 2) {
+            return Enums.Used.LOW;
+        } else if (count < 5) {
+            return Enums.Used.MEDIUM;
+        } else {
+            return Enums.Used.HIGH;
+        }
     }
 
 

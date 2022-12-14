@@ -53,14 +53,23 @@
         <div class="fileList">
             <h3>New Files</h3>
             <ul id="current-files" class="files">
-                <li th:each="files : ${filesList}" th:inline="text"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <th:block th:each="files : ${filesList}">
+                <li><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                     <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
                     <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
                     <line x1="9" y1="17" x2="9" y2="12"></line>
                     <line x1="12" y1="17" x2="12" y2="16"></line>
                     <line x1="15" y1="17" x2="15" y2="14"></line>
-                </svg><span class="fileName">[[${files.fileName}]]</span><span>[[${files.date}]]</span></li>
+                </svg>
+                    <th:block th:switch="${files.used}">
+                        <span th:case="T(nl.bioinf.jabusker.portfolio.model.Enums.Used).NONE" class="fileName none-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
+                        <span th:case="T(nl.bioinf.jabusker.portfolio.model.Enums.Used).LOW" class="fileName low-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
+                        <span th:case="T(nl.bioinf.jabusker.portfolio.model.Enums.Used).MEDIUM" class="fileName medium-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
+                        <span th:case="T(nl.bioinf.jabusker.portfolio.model.Enums.Used).HIGH" class="fileName high-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
+                    </th:block>
+                </li>
+                </th:block>
             </ul>
         </div>
         <div class="chosen-content">
