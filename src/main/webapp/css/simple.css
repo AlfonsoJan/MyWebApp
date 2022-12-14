@@ -366,6 +366,25 @@ nav .nav__links li a:not(.panelButtons) {
     }
 }
 .selected {
-    background-color: rgba(90, 90, 90, 0.9);
+    background-color: rgba(90, 90, 90, 0.9) !important;
     color: white;
 }
+
+.none-used {
+    background-color: white;
+}
+
+.low-used {
+    background-color: #F7E7A6;
+}
+
+.medium-used {
+    background-color: #F8CBB0;
+}
+
+.high-used {
+    background-color: #F7A9A6;
+}
+
+.
+

@@ -8,9 +8,12 @@ public class FilesSorter implements Comparable<FilesSorter> {
     private String fileName;
     private Date date;
 
-    public FilesSorter(String fileName, String stringDate) throws ParseException {
+    private Enums.Used used;
+
+    public FilesSorter(String fileName, String stringDate, Enums.Used used) throws ParseException {
         this.fileName = fileName;
-        this.date = parseDate(stringDate);;
+        this.date = parseDate(stringDate);
+        this.used = used;
     };
 
     @Override
@@ -32,6 +35,14 @@ public class FilesSorter implements Comparable<FilesSorter> {
 
     public Date getDate() {
         return date;
+    }
+
+    public Enums.Used getUsed() {
+        return used;
+    }
+
+    public void setUsed(Enums.Used used) {
+        this.used = used;
     }
 
     public void setDate(Date date) {
