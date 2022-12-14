@@ -28,44 +28,47 @@ public class DownloadServlet extends HttpServlet {
 
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("H");
-        String[] myJsonData = request.getParameterValues("json[]");
-        for (String fileName: myJsonData) {
-
-            System.out.println(fileName);
-
-            FileInputStream fileInputStream = null;
-            OutputStream responseOutputStream = null;
-
-            try
-            {
-                String filePath = request.getServletContext().getRealPath("/WEB-INF/resources/")+ fileName;
-                File file = new File(filePath);
-
-                String mimeType = request.getServletContext().getMimeType(filePath);
-                if (mimeType == null) {
-                    mimeType = "application/octet-stream";
-                }
-                response.setContentType(mimeType);
-                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
-                response.setContentLength((int) file.length());
-
-                fileInputStream = new FileInputStream(file);
-                responseOutputStream = response.getOutputStream();
-                int bytes;
-                while ((bytes = fileInputStream.read()) != -1) {
-                    responseOutputStream.write(bytes);
-                }
-            }
-            catch(Exception ex)
-            {
-                ex.printStackTrace();
-            }
-            finally
-            {
-                fileInputStream.close();
-                responseOutputStream.close();
-            }
+        for (String filename: request.getParameterValues("allfiles")) {
+            System.out.println(filename);
         }
+
+        // String[] myJsonData = request.getParameterValues("json[]");
+//        for (String fileName: myJsonData) {
+//
+//            System.out.println(fileName);
+//
+//            FileInputStream fileInputStream = null;
+//            OutputStream responseOutputStream = null;
+//
+//            try
+//            {
+//                String filePath = request.getServletContext().getRealPath("/WEB-INF/resources/")+ fileName;
+//                File file = new File(filePath);
+//
+//                String mimeType = request.getServletContext().getMimeType(filePath);
+//                if (mimeType == null) {
+//                    mimeType = "application/octet-stream";
+//                }
+//                response.setContentType(mimeType);
+//                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+//                response.setContentLength((int) file.length());
+//
+//                fileInputStream = new FileInputStream(file);
+//                responseOutputStream = response.getOutputStream();
+//                int bytes;
+//                while ((bytes = fileInputStream.read()) != -1) {
+//                    responseOutputStream.write(bytes);
+//                }
+//            }
+//            catch(Exception ex)
+//            {
+//                ex.printStackTrace();
+//            }
+//            finally
+//            {
+//                fileInputStream.close();
+//                responseOutputStream.close();
+//            }
+//        }
     }
 }

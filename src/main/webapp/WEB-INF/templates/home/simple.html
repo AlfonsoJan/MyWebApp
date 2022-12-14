@@ -71,7 +71,7 @@
                         <label for="projectname">Project name*</label>
                         <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
                     </div>
-                    <div class="reads">
+                    <div class="reads" name="allFiles">
                     </div>
                 </div>
                 <div class="addButton">
@@ -90,9 +90,7 @@
                         <polyline points="7 11 12 16 17 11"></polyline>
                         <line x1="12" y1="4" x2="12" y2="16"></line>
                     </svg>
-                    <form name="loginForm" method="get" action="download">
-                        <input type="submit" value="Download" />
-                    </form>
+                    <button onclick="getFiles()"/>Download</button>
 <!--                    <h3>Download</h3>-->
                 </div>
             </div>
@@ -230,7 +228,19 @@
     $("#project-panel").hide()
     $("#analysis-panel").hide()
     $(".addFiles").hide();
+    function getFiles() {
+        myvar = [];
+        var url = "download?allfiles=";
+        $.each($(".inputs .reads").find("p"), function(){
+            url = url + $(this).html().substring(0, $(this).html().indexOf('<spa')) + ",";
+        });
+        var link = document.createElement('a');
+        link.id = 'someLink'
+        link.href = url.slice(0,-1);
+        link.click()
+    }
     $(document).ready(function(){
+
         $(".allFilesButton").click(function(){
             $(".all-projects").hide();
             $(".allFilesButton").addClass('active');
@@ -311,6 +321,12 @@
             $(this).parent().remove();
             $(".addFiles").hide();
         });
+        // $('input[type="submit"]').click(function(){
+        //     myvar = [];
+        //     $.each($(".inputs .reads").find("p").filter('.selected'), function(){
+        //         myvar.add($(this).html());
+        //     });
+        // });
         $(function(){
             $("#current-files li").draggable({
                 cursor: 'move',
