@@ -37,7 +37,6 @@ public class MockupServlet extends HttpServlet {
                 int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
                 String date = year + "-" + month + "-" + day;
                 Enums.Used used = Enums.Used.values()[new Random().nextInt(Enums.Used.values().length)];
-                System.out.println(used);
                 fsList.add(new FilesSorter("placeholder_filename.fastq", date, used));
             }
         } catch (ParseException e) {

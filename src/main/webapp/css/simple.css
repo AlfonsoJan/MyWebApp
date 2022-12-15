@@ -255,7 +255,7 @@ nav .nav__links li a:not(.panelButtons) {
     grid-column-start: 12;
     grid-column-end: 24;
     height: 100%;
-    grid-row: 3/9;
+    grid-row: 2/10;
     border: 1px solid black;
     border-radius: 0.375rem;
 }
@@ -343,9 +343,17 @@ nav .nav__links li a:not(.panelButtons) {
     gap: 1rem;
 }
 .container .newFiles .chosen-content .downloadButton:hover svg,
-.container .newFiles .chosen-content .downloadButton:hover h3 {
+.container .newFiles .chosen-content .downloadButton:hover input {
     stroke: rgb(255, 255, 255);
     color: rgb(255, 255, 255);
+}
+
+.container .newFiles .chosen-content .downloadButton input{
+    text-decoration: none;
+    border: none;
+    font-size: 22pt;
+    background: transparent;
+    color: lightgray;
 }
 
 @-webkit-keyframes visible {
@@ -365,13 +373,8 @@ nav .nav__links li a:not(.panelButtons) {
         opacity: 1;
     }
 }
-.selected {
-    background-color: rgba(90, 90, 90, 0.9) !important;
-    color: white;
-}
-
-.none-used {
-    background-color: white;
+.selected{
+    outline: 3px solid darkblue;
 }
 
 .low-used {
@@ -385,6 +388,3 @@ nav .nav__links li a:not(.panelButtons) {
 .high-used {
     background-color: #F7A9A6;
 }
-
-.
-
