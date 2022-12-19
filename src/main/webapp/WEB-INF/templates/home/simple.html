@@ -50,47 +50,82 @@
                 <span>In deze box staan alle (nieuwe) bestanden</span>
             </div>
         </div>
-        <div class="fileList">
-            <h3>New Files</h3>
-            <ul id="current-files" class="files">
-                <th:block th:each="files : ${filesList}">
-                <li>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                    <line x1="9" y1="17" x2="9" y2="12"></line>
-                    <line x1="12" y1="17" x2="12" y2="16"></line>
-                    <line x1="15" y1="17" x2="15" y2="14"></line>
-                    </svg>
-                    <th:block th:if="${files.used.name() == 'NONE'}">
-                        <span  class="fileName none-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
-                    </th:block>
-                    <th:block th:if="${files.used.name() == 'LOW'}">
-                        <span  class="fileName low-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
-                    </th:block>
-                    <th:block th:if="${files.used.name() == 'MEDIUM'}">
-                        <span  class="fileName medium-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
-                    </th:block>
-                    <th:block th:if="${files.used.name() == 'HIGH'}">
-                        <span  class="fileName high-used" th:text="${files.fileName}"></span><span th:text="${files.date}"></span>
-                    </th:block>
-                </th:block>
-            </ul>
+        <div class="new-file-list">
+            <div class="title">
+                <h3>New Files</h3>
+            </div>
+            <div class="filters">
+                <select name="file-filters" id="file-filters">
+                    <option value="0">All Files</option>
+                    <option value="1">Never used</option>
+                    <option value="2">Low Useage</option>
+                    <option value="3">Medium Usage</option>
+                    <option value="4">High Usage</option>
+                </select>
+                <input type="text" placeholder="Search.." onkeyup="filterFileFunction()" id="filterFileInput">
+            </div>
+            <div class="file-list">
+                <div class="all-files">
+                    <ul id="current-files">
+                        <th:block th:each="files : ${filesList}">
+                            <li>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                    <line x1="9" y1="17" x2="9" y2="12"></line>
+                                    <line x1="12" y1="17" x2="12" y2="16"></line>
+                                    <line x1="15" y1="17" x2="15" y2="14"></line>
+                                </svg>
+                                <th:block th:if="${files.used.name() == 'NONE'}">
+                                    <span  class="fileName none-used" th:text="${files.fileName}">
+                                    </span><span th:text="${files.date}"></span>
+                                </th:block>
+                                <th:block th:if="${files.used.name() == 'LOW'}">
+                                    <span  class="fileName low-used" th:text="${files.fileName}">
+                                    </span><span th:text="${files.date}"></span>
+                                </th:block>
+                                <th:block th:if="${files.used.name() == 'MEDIUM'}">
+                                    <span  class="fileName medium-used" th:text="${files.fileName}">
+                                    </span><span th:text="${files.date}"></span>
+                                </th:block>
+                                <th:block th:if="${files.used.name() == 'HIGH'}">
+                                    <span  class="fileName high-used" th:text="${files.fileName}">
+                                    </span><span th:text="${files.date}"></span>
+                                </th:block>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="chosen-content">
-            <div class="chosenList" id="chosenlist">
-                <div class="inputs">
-                    <h3>New Project</h3>
-                    <div class="form-group">
-                        <label for="projectname">Project name*</label>
-                        <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
+                <div class="title">
+                    <h3>Add Files</h3>
+                </div>
+                <div class="project-type">
+                    <div class="buttons">
+                        <a class="project-button active new">New project</a>
+                        <a class="project-button existing">Add to existing project</a>
                     </div>
-                    <div class="reads" name="allFiles">
+                    <div class="options">
+                        <div class="new-project">
+                            <label for="projectname">Project name*</label>
+                            <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
+                        </div>
+                        <div class="existing-project">
+                            <select name="projects-names" id="projects-name">
+                                <option value="0">Projects 1</option>
+                                <option value="1">Projects 2</option>
+                                <option value="2">Projects 3</option>
+                                <option value="3">Projects 4</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="addButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="48" height="48" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <div class="files"></div>
+                <div class="add-button button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <circle cx="12" cy="12" r="9"></circle>
                         <line x1="9" y1="12" x2="15" y2="12"></line>
@@ -98,33 +133,67 @@
                     </svg>
                     <h3>Add project to your account</h3>
                 </div>
-                <div class="downloadButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="48" height="48" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <div class="download-button button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
                         <polyline points="7 11 12 16 17 11"></polyline>
                         <line x1="12" y1="4" x2="12" y2="16"></line>
                     </svg>
-<!--                    <button type="button" onclick="getFiles()"/>Download</button>-->
-                    <input type="button" value="DOWNLOAD" onclick="getFiles()">
-<!--                    <h3>Download</h3>-->
+                    <h3 type="button" onclick="getFiles()">Download</h3>
                 </div>
-            </div>
         </div>
     </div>
     <div id="project-panel" class="personal">
         <div class="titles">
-            <h2 class="allFilesButton active">All Personal Files</h2>
-            <h2 class="allProjectsButton">Personal Projects</h2>
+            <h3 class="active all-button">All Personal Files</h3>
+            <h3 class="project-button">Personal Projects</h3>
         </div>
-        <div class="all-files">
-            <ul>
-                <li class="headerList"><span>Filename</span><span>Label</span><span>Read</span><span>Date</span></li>
-                <li th:each="files : ${testFiles}" th:inline="text"><span>[[${files.fileName}]]</span><span>Label</span><span>Read</span><span>[[${files.date}]]</span></li>
-            </ul>
+        <div class="all-personal-files tile">
+            <div class="search">
+                <input type="text" placeholder="Search.." onkeyup="filterPersonalFunction()" id="filterPersonalInput">
+            </div>
+            <div class="personal-file-list">
+                <th:block th:each="files : ${testFiles}">
+                    <div class="file-container">
+                        <div class="file-info">
+                            <div class="name" th:text="${files.fileName}"></div>
+                            <div class="read">Read</div>
+                            <div class="label">Label</div>
+                            <div class="del del-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                </svg>
+                            </div>
+                            <div class="edit edit-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-dots-vertical" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="12" cy="19" r="1"></circle>
+                                    <circle cx="12" cy="5" r="1"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="file-edit">
+                            <input type="text" name="filename" id="filename" required placeholder="Filename" class="form-element">
+                            <input type="text" name="read" id="read" required placeholder="Read" class="form-element">
+                            <input type="text" name="label" id="label" required placeholder="Label" class="form-element">
+                            <div class="change-button">Edit</div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
         </div>
-        <div class="all-projects">
-            <div class="projects">
+        <div class="all-projects tile">
+            <div class="search">
+                <input type="text" placeholder="Search.." onkeyup="filterProjectFunction()" id="filterProjectsInput">
+            </div>
+            <div class="personal-projects">
                 <div class="project">
                     <div class="title">
                         <div class="projectName">
@@ -159,29 +228,20 @@
                             </div>
                         </div>
                     </div>
-                    <div class="content">
-                        <div class="filename">Placeholder filename</div>
-                        <div class="label">
-                            <label for="flabel">Label: </label>
-                            <input type="text" id="flabel" name="labelname" placeholder="Your label..">
+                    <div class="project-edit">
+                        <div>
+                            <p>Current filename</p>
+                            <input type="text" name="filename" id="filename" required placeholder="Filename" class="form-element">
                         </div>
-                        <div class="reads">
-                            <label for="fread">Read: </label>
-                            <input type="text" id="fread" name="readnum" placeholder="Read number..">
+                        <div>
+                            <p>Current Read</p>
+                            <input type="text" name="read" id="read" required placeholder="Read" class="form-element">
                         </div>
-                        <input type="submit" value="Update">
-                    </div>
-                    <div class="content">
-                        <div class="filename">Placeholder filename</div>
-                        <div class="label">
-                            <label for="flabel">Label: </label>
-                            <input type="text" id="flabel" name="labelname" placeholder="Your label..">
+                        <div>
+                            <p>Current label</p>
+                            <input type="text" name="label" id="label" required placeholder="Label" class="form-element">
                         </div>
-                        <div class="reads">
-                            <label for="fread">Read: </label>
-                            <input type="text" id="fread" name="readnum" placeholder="Read number..">
-                        </div>
-                        <input type="submit" value="Update">
+                        <div class="change-button">Edit</div>
                     </div>
                 </div>
                 <div class="project">
@@ -218,18 +278,35 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="content">
-                        <div class="filename">Placeholder filename</div>
-                        <div class="label">
-                            <label for="flabel">Label: </label>
-                            <input type="text" id="flabel" name="labelname" placeholder="Your label..">
+                    <div class="project-edit">
+                        <div>
+                            <p>Current filename</p>
+                            <input type="text" name="filename" id="filename" required placeholder="Filename" class="form-element">
                         </div>
-                        <div class="reads">
-                            <label for="fread">Read: </label>
-                            <input type="text" id="fread" name="readnum" placeholder="Read number..">
+                        <div>
+                            <p>Current Read</p>
+                            <input type="text" name="read" id="read" required placeholder="Read" class="form-element">
                         </div>
-                        <input type="submit" value="Update">
+                        <div>
+                            <p>Current label</p>
+                            <input type="text" name="label" id="label" required placeholder="Label" class="form-element">
+                        </div>
+                        <div class="change-button">Edit</div>
+                    </div>
+                    <div class="project-edit">
+                        <div>
+                            <p>Current filename</p>
+                            <input type="text" name="filename" id="filename" required placeholder="Filename" class="form-element">
+                        </div>
+                        <div>
+                            <p>Current Read</p>
+                            <input type="text" name="read" id="read" required placeholder="Read" class="form-element">
+                        </div>
+                        <div>
+                            <p>Current label</p>
+                            <input type="text" name="label" id="label" required placeholder="Label" class="form-element">
+                        </div>
+                        <div class="change-button">Edit</div>
                     </div>
                 </div>
             </div>
@@ -240,10 +317,11 @@
 
 <script type="text/javascript">
     var del = "<span id='readDelete'><svg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
-    $(".all-projects").hide();
     $("#project-panel").hide()
     $("#analysis-panel").hide()
-    $(".addFiles").hide();
+    $(".existing-project").hide();
+    $('.all-projects').hide();
+    $('.newFiles .addFiles').hide();
     function getFiles() {
         //URL TO DOWNLOAD MULTI FILES
        url = "download?allFiles=testplaceholder0.fastq.gz&allFiles=testplaceholder0.fastq.gz";
@@ -260,58 +338,197 @@
         //link.href = url.slice(0,-1);
         link.click()
     }
+    function filterFileFunction() {
+        var input = $("#filterFileInput").val().toUpperCase();
+        $.each($("#current-files li"), function(){
+            if ($(this).find(".fileName").html().toUpperCase().indexOf(input) >= 0) {
+                $(this).show()
+            } else {
+                $(this).hide()
+            }
+        });
+    };
+    function filterPersonalFunction() {
+        var input = $("#filterPersonalInput").val().toUpperCase();
+        $.each($(".personal-file-list .file-container"), function(){
+            if ($(this).find(".name").html().toUpperCase().indexOf(input) >= 0) {
+                $(this).show()
+            } else {
+                $(this).hide()
+            }
+        });
+    };
+    function filterProjectFunction () {
+        var input = $("#filterProjectsInput").val().toUpperCase();
+        $.each($(".personal-projects .project .title .projectName").find('h4'), function(){
+            if ($(this).html().toUpperCase().indexOf(input) >= 0) {
+                $(this).parent().parent().parent().show()
+            } else {
+                $(this).parent().parent().parent().hide()
+            }
+        });
+    };
     $(document).ready(function(){
-
-        $(".allFilesButton").click(function(){
-            $(".all-projects").hide();
-            $(".allFilesButton").addClass('active');
-            $(".allProjectsButton").removeClass('active');
-            $(".all-files").show();
+        $('#file-filters').on('change', function() {
+            var value = $(this).val();
+            if (value == 0){
+                $.each($("#current-files li"), function(){
+                    $(this).show();
+                });
+            }
+            if (value == 1) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('.fileName').hasClass('none-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 2) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('.fileName').hasClass('low-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 3) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('.fileName').hasClass('medium-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 4) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('.fileName').hasClass('high-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
         });
-        $(".allProjectsButton").click(function(){
-            $(".all-projects").show();
-            $(".all-files").hide();
-            $(".allFilesButton").removeClass('active');
-            $(".allProjectsButton").addClass('active');
+        $(document).on('click', ".maximize", function () {
+            $.each($(this).parent().parent().parent().find('.project-edit'), function(){
+                $(this).addClass('show');
+                $(this).parent().find('.maximize').removeClass('active');
+                $(this).parent().find('.minimize').addClass('active');
+            });
         });
-        $(".fileButton").click(function(){
-            $("#list-panel").show()
-            $("#project-panel").hide()
-            $("#analysis-panel").hide()
-        });
-        $(".projectButton").click(function(){
-            $("#list-panel").hide()
-            $("#project-panel").show()
-            $("#analysis-panel").hide()
-        });
-        $(".analysisButton").click(function(){
+        $(document).on('click', ".minimize", function () {
+            $.each($(this).parent().parent().parent().find('.project-edit'), function(){
+                $(this).removeClass('show');
+                $(this).parent().find('.maximize').addClass('active');
+                $(this).parent().find('.minimize').removeClass('active');
+            });
+        });$(document).on('click', ".analysisButton", function () {
             $("#list-panel").hide()
             $("#project-panel").hide()
             $("#analysis-panel").show()
         });
-        $('.maximize').click(function (e) {
-            e.preventDefault();
-            $(this).parent().parent().parent().children().addClass('show');
-            $(this).parent().find('.maximize').removeClass('active');
-            $(this).parent().find('.minimize').addClass('active');
+        $(document).on('click', ".fileButton", function () {
+            $("#list-panel").show()
+            $("#project-panel").hide()
+            $("#analysis-panel").hide()
         });
-        $('.minimize').click(function (e) {
-            e.preventDefault();
-            $(this).parent().parent().parent().children().removeClass('show');
-            $(this).parent().find('.maximize').addClass('active');
-            $(this).parent().find('.minimize').removeClass('active');
+        $(document).on('click', ".projectButton", function () {
+            $("#list-panel").hide()
+            $("#project-panel").show()
+            $("#analysis-panel").hide()
+        });
+        $(document).on('click', ".addFiles", function () {
+            $.each($("#current-files li").filter('.selected'), function(){
+                $(".chosen-content .files").append("<p class='file-name'>" + $(this).find('.fileName').html() + del + "</p>");
+                $(this).removeClass("selected");
+            });
+            $('.newFiles .addFiles').hide();
+        });
+        $(document).on('click', '.project-button.existing', function () {
+            $(this).parent().find(".project-button").removeClass("active");
+            $(this).addClass('active');
+            $(".new-project").hide();
+            $(".existing-project").show();
+        });
+        $(document).on('click', '.project-button.new', function () {
+            $(this).parent().find(".project-button").removeClass("active");
+            $(this).addClass('active');
+            $(".existing-project").hide();
+            $(".new-project").show();
+        });
+        $(document).on('click', '#readDelete', function () {
+            $(this).parent().remove();
+        });
+        $(document).on('click', '.add-button', function () {
+            var l = $(".chosen-content .files").find(".file-name").length;
+            if (l < 1) {
+                alert('Please select a file');
+                return;
+            }
+        });
+        $(document).on('click', '.titles .all-button', function () {
+            $(this).addClass('active');
+            $('.titles .project-button').removeClass('active');
+            $('.all-projects').hide();
+            $('.all-personal-files').show();
+        });
+        $(document).on('click', '.titles .project-button', function () {
+            $(this).addClass('active');
+            $('.titles .all-button').removeClass('active');
+            $('.all-projects').show();
+            $('.all-personal-files').hide();
+        });
+        $(document).on('click', '.del-button', function () {
+            $(this).parent().fadeOut(200, function() {
+                $(this).parent().remove();
+            });
+        });
+        $(document).on('click', '.edit-button', function () {
+            $(this).parent().parent().find('.file-edit').toggleClass('show');
+        });
+        $(function(){
+            $("#current-files li").draggable({
+                cursor: 'move',
+                helper: function(){
+                    var selected = $("#current-files li.selected");
+                    if (selected.length == 0){
+                        selected = $(this).addClass('selected');
+                    }
+                    var container = $('<div/>').attr('id', 'draggingContainer');
+                    container.append(selected.clone().removeClass("selected"));
+                    return container;
+                }
+            });
+            $(".files").droppable({
+                drop: function(event, ui) {
+                    $.each($("#current-files li").filter('.selected'), function(){
+                        $(".chosen-content .files").append("<p class='file-name'>" + $(this).find('.fileName').html() + del + "</p>");
+                        $(this).removeClass("selected");
+                    });
+                    if ($('.selected').length >= 1) {
+                        $('.newFiles .addFiles').show();
+                    } else {
+                        $('.newFiles .addFiles').hide();
+                    }
+                }
+            });
         });
         lastChecked = null;
-        $("#current-files li").click(function(e){
+        $(document).on('click', "#current-files li", function (e) {
             if (e.ctrlKey){
                 $(this).toggleClass("selected");
             }
             if ($('.selected').length >= 1) {
-                $(".addFiles").show();
+                $('.newFiles .addFiles').show();
             } else {
-                $(".addFiles").hide();
+                $('.newFiles .addFiles').hide();
             }
             if(!lastChecked){
+                $(this).addClass("selected");
                 lastChecked = this;
                 return;
             }
@@ -330,51 +547,6 @@
                 }
             }
             lastChecked = null;
-        });
-        $(".addFiles").click(function(){
-            $.each($("#current-files li").filter('.selected'), function(){
-                $(".inputs .reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
-                $(this).removeClass("selected");
-            });
-            $(".addFiles").hide();
-        });
-        
-        $(document).on("click", "#readDelete", function(){
-            $(this).parent().remove();
-            $(".addFiles").hide();
-        });
-        // $('input[type="submit"]').click(function(){
-        //     myvar = [];
-        //     $.each($(".inputs .reads").find("p").filter('.selected'), function(){
-        //         myvar.add($(this).html());
-        //     });
-        // });
-        $(function(){
-            $("#current-files li").draggable({
-                cursor: 'move',
-                helper: function(){
-                    var selected = $("#current-files li.selected");
-                    if (selected.length == 0){
-                        selected = $(this).addClass('selected');
-                    }
-                    var container = $('<div/>').attr('id', 'draggingContainer');
-                    container.append(selected.clone().removeClass("selected"));
-                    return container;
-                }
-            });
-            $(".inputs").droppable({
-                drop: function(event, ui) {
-                    $.each($("#current-files li").filter('.selected'), function(){
-                        $(".inputs .reads").append("<p>" + $(this).find('.fileName').html() + del + "</p>");
-                        $(this).removeClass("selected");
-                    });
-                    if ($('.selected').length >= 1) {
-                        $(".addFiles").show();
-                    } else {
-                        $(".addFiles").hide();
-                    }
-                }
-            });
         });
     });
 </script>

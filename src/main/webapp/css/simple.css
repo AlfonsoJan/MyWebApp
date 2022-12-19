@@ -65,102 +65,16 @@ nav .nav__links li a:not(.panelButtons) {
     grid-template-columns: repeat(24, 1fr);
     grid-template-rows: repeat(10, 1fr);
 }
-.container .personal {
-    grid-row: 2/-2;
-    grid-column: 2/24;
-    padding: 1em;
-    overflow-y: scroll;
-    border-radius: 0.375rem;
-    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
-}
-.container .personal .titles {
-    display: flex;
-    gap: 3rem;
-}
-.container .personal .titles h2 {
-    line-height: 1.5;
-    margin-bottom: 1rem;
-}
-.container .personal .titles h2.active {
-    border-bottom: 1px solid black;
-}
-.container .personal .all-projects .projects {
-    display: flex;
-    flex-direction: column;
-}
-.container .personal .all-projects .projects .project {
-    width: 100%;
-    margin-bottom: 1rem;
-    border-radius: 0.375rem;
-    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
-}
-.container .personal .all-projects .projects .project .content + .content {
-    border-top: 1px solid darkgray;
-    border-width: fit-content;
-}
-.container .personal .all-projects .projects .project .content {
-    opacity: 0;
-    display: none;
-    min-height: 3rem;
-}
-.container .personal .all-projects .projects .project .content.show {
-    opacity: 1;
-    display: flex;
-    margin: 0 1rem;
-    justify-content: space-around;
-    align-items: center;
-    -webkit-animation: visible 0.7s;
-    animation: visible 0.7s;
-}
-.container .personal .all-projects .projects .project .title {
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.container .personal .all-projects .projects .project .title .icon div:not(.active) {
-    display: none;
-}
-.container .personal .all-projects .projects .project .title .icon:hover {
-    stroke: gray;
-}
-.container .personal .all-files ul {
-    margin: 10px 15px 15px 15px;
-    padding-left: 0;
-}
-.container .personal .all-files ul .headerList {
-    font-weight: bold;
-}
-.container .personal .all-files ul li {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-.container .personal .all-files ul li span {
-    width: 23%;
-    text-align: center;
-    margin-bottom: 5px;
-}
-.container .personal .all-files ul li span:last-of-type {
-    text-align: right;
-}
-.container .personal .all-files ul li span:first-of-type {
-    text-align: left;
-}
 .container .newFiles {
-    grid-column-start: 3;
-    grid-column-end: 23;
-    grid-row-start: 2;
-    grid-row-end: 10;
+    grid-column: 2/24;
+    grid-row: 2/10;
     display: grid;
     grid-template-columns: repeat(24, 1fr);
     grid-template-rows: repeat(10, 1fr);
 }
 .container .newFiles .addFiles {
-    grid-column-start: 10;
-    grid-column-end: 12;
-    grid-row-start: 5;
-    grid-row-end: 7;
+    grid-column: 11/13;
+    grid-row: 5/7;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -174,8 +88,6 @@ nav .nav__links li a:not(.panelButtons) {
 }
 .container .newFiles .tooltip {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
     padding-left: 2px;
 }
 .container .newFiles .tooltip .tooltipBox {
@@ -201,34 +113,58 @@ nav .nav__links li a:not(.panelButtons) {
     left: 50%;
 }
 .container .newFiles .selected-files {
-    grid-column-start: 24;
-    grid-column-end: 25;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    align-items: flex-end;
+    justify-content: flex-end;
+    grid-column: 24/25;
+    grid-row: 1/2;
 }
 .container .newFiles .new-files {
-    grid-column-start: 10;
-    grid-column-end: 11;
-    grid-row-start: 1;
-    grid-row-end: 2;
+    align-items: flex-start;
+    justify-content: flex-start;
+    grid-column: 11/12;
+    grid-row: 1/2;
 }
-.container .newFiles .fileList {
+.container .newFiles .new-file-list {
     height: 100%;
-    grid-column-start: 1;
-    grid-column-end: 10;
+    grid-column: 1/11;
     grid-row: 1/-1;
-    border: 1px solid black;
     border-radius: 0.375rem;
     box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
-    overflow-y: scroll;
-    overflow-x: scroll;
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+    padding: 5px;
+    gap: 1rem;
+}
+.container .newFiles .new-file-list .title {
+    grid-row: 1/3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container .newFiles .new-file-list .filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    grid-row: 3/4;
+    padding: 5px 10px;
+    margin: 0 -5px;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.container .newFiles .new-file-list .file-list {
+    grid-row: 4/-1;
+}
+.container .newFiles .new-file-list .file-list .all-files {
     max-height: 100%;
+    overflow-y: auto;
+    padding: 0.375rem 0;
 }
-.container .newFiles .fileList ul {
-    margin: 10px 15px 15px 15px;
+.container .newFiles .new-file-list .file-list .all-files ul {
     padding: 0;
+    margin: 10px 15px 15px 15px;
 }
-.container .newFiles .fileList ul li {
+.container .newFiles .new-file-list .file-list .all-files ul li {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -241,64 +177,60 @@ nav .nav__links li a:not(.panelButtons) {
     -ms-user-select: none;
     user-select: none;
 }
-.container .newFiles .fileList ul li .fileName {
+.container .newFiles .new-file-list .file-list .all-files ul li .fileName {
     margin-right: auto;
 }
-.container .newFiles .fileList h3 {
-    text-align: center;
-    padding-top: 10px;
-    border-bottom: 1px solid black;
-    margin-left: 3em;
-    margin-right: 3em;
+.container .newFiles .new-file-list .file-list .all-files ul .selected {
+    outline: 3px solid rgb(0, 0, 77);
 }
 .container .newFiles .chosen-content {
-    grid-column-start: 12;
-    grid-column-end: 24;
-    height: 100%;
+    grid-column: 13/25;
     grid-row: 2/10;
-    border: 1px solid black;
     border-radius: 0.375rem;
-}
-.container .newFiles .chosen-content .chosenList {
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
     display: grid;
-    grid-template-rows: repeat(13, 1fr);
-    height: 100%;
-    max-height: 100%;
+    grid-template-rows: repeat(20, 1fr);
+    padding: 5px;
+    gap: 0.5rem;
 }
-.container .newFiles .chosen-content .chosenList .inputs {
-    grid-row: 1/9;
-    overflow-y: scroll;
-    overflow-x: scroll;
-}
-.container .newFiles .chosen-content .chosenList .inputs h3 {
-    text-align: center;
-    padding-top: 10px;
+.container .newFiles .chosen-content .project-type {
+    grid-row: 3/5;
+    padding: 5px 10px;
+    margin: 0 -5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid black;
     border-bottom: 1px solid black;
-    margin-left: 3em;
-    margin-right: 3em;
 }
-.container .newFiles .chosen-content .chosenList .inputs .form-group {
-    margin: 1rem 0 1rem 0;
-    width: 100%;
+.container .newFiles .chosen-content .project-type .buttons a {
+    border: 1px solid rgb(150, 150, 150);
+    padding: 2px 5px;
+    border-radius: 0.375rem;
+    color: rgb(150, 150, 150);
+}
+.container .newFiles .chosen-content .project-type .buttons a:hover {
+    color: rgb(0, 0, 0);
+}
+.container .newFiles .chosen-content .project-type .buttons .active {
+    color: rgb(0, 0, 0);
+}
+.container .newFiles .chosen-content .title {
+    grid-row: 1/3;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #888;
-    font-size: 17px;
-    gap: 3rem;
 }
-.container .newFiles .chosen-content .chosenList .inputs .form-group input {
-    height: 1.8rem;
+.container .newFiles .chosen-content .files {
+    grid-row: 5/-5;
+    overflow-y: auto;
 }
-.container .newFiles .chosen-content .chosenList .inputs .reads {
-    margin: 0.675rem 0.375rem 0.675rem 0.375rem;
-}
-.container .newFiles .chosen-content .chosenList .inputs .reads p {
+.container .newFiles .chosen-content .files p {
     width: 100%;
-    padding-bottom: 0.375rem 0.675rem 0 0.675rem;
+    padding: 0.375rem 0.675rem 0 0.675rem;
     margin: 0 0 0.375rem 0;
 }
-.container .newFiles .chosen-content .chosenList .inputs .reads p span {
+.container .newFiles .chosen-content .files p span {
     width: 24px;
     height: 24px;
     position: relative;
@@ -307,16 +239,20 @@ nav .nav__links li a:not(.panelButtons) {
     justify-content: center;
     align-items: center;
 }
-.container .newFiles .chosen-content .chosenList .inputs .reads p span:hover svg {
+.container .newFiles .chosen-content .files p span:hover svg {
     stroke: black;
     cursor: pointer;
 }
-.container .newFiles .chosen-content .chosenList .inputs .reads p:last-child {
+.container .newFiles .chosen-content .files p:last-child {
     padding-bottom: 0;
 }
-.container .newFiles .chosen-content .addButton {
-    grid-row: 11/-1;
-    margin: 0.375rem;
+.container .newFiles .chosen-content .download-button {
+    grid-row: -5/-3;
+}
+.container .newFiles .chosen-content .add-button {
+    grid-row: -3/-1;
+}
+.container .newFiles .chosen-content .button {
     border-radius: 0.375rem;
     background-color: rgb(140, 140, 140);
     display: flex;
@@ -325,55 +261,229 @@ nav .nav__links li a:not(.panelButtons) {
     color: lightgray;
     gap: 1rem;
 }
-.container .newFiles .chosen-content .addButton:hover svg,
-.container .newFiles .chosen-content .addButton:hover h3 {
+.container .newFiles .chosen-content .button:hover svg,
+.container .newFiles .chosen-content .button:hover h3 {
     stroke: rgb(255, 255, 255);
     color: rgb(255, 255, 255);
 }
-
-.container .newFiles .chosen-content .downloadButton {
-    grid-row: 9/11;
-    margin: 0.375rem;
-    border-radius: 0.375rem;
-    background-color: rgb(140, 140, 140);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: lightgray;
+.container .personal {
+    grid-column: 2/24;
+    grid-row: 2/10;
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+    padding: 5px;
     gap: 1rem;
 }
-.container .newFiles .chosen-content .downloadButton:hover svg,
-.container .newFiles .chosen-content .downloadButton:hover input {
-    stroke: rgb(255, 255, 255);
-    color: rgb(255, 255, 255);
+.container .personal .titles {
+    grid-row: 1/4;
+    border-radius: 0.375rem;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    width: 100%;
+    padding-left: 3rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
-
-.container .newFiles .chosen-content .downloadButton input{
-    text-decoration: none;
+.container .personal .titles .active {
+    border-bottom: 2px solid black;
+}
+.container .personal .titles h3 {
+    padding: 5px;
+}
+.container .personal .titles h3:hover {
+    color: white;
+    border-radius: 0.375rem;
     border: none;
-    font-size: 22pt;
-    background: transparent;
-    color: lightgray;
+    background-color: rgba(50, 50, 50, 0.9);
+}
+.container .personal .tile {
+    grid-row: 4/-1;
+}
+.container .personal .all-personal-files {
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+    border-radius: 0.375rem;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+    padding: 5px;
+}
+.container .personal .all-personal-files .search {
+    grid-row: 1/3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 30px;
+}
+.container .personal .all-personal-files .search input {
+    height: 1.8rem;
+    border: none;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+    border-radius: 0.375rem;
+    width: minmax(20%, 300px);
+}
+.container .personal .all-personal-files .personal-file-list {
+    grid-row: 3/-1;
+    overflow-y: auto;
+}
+.container .personal .all-personal-files .personal-file-list .file-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    border-radius: 0.375rem;
+    margin: 0 30px 1rem 30px;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-info {
+    display: flex;
+    padding: 10px 10px;
+    align-items: center;
+    margin: 0 1rem 0.5rem 1rem;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-info .name {
+    flex: 1 0 21%;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-info .read {
+    flex: 1 0 21%;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-info .label {
+    flex: 1 0 21%;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-info .del, .container .personal .all-personal-files .personal-file-list .file-container .file-info .edit {
+    flex: 0 0 fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-edit {
+    padding: 10px 10px;
+    margin: 0 1rem 0.5rem 1rem;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid black;
+    opacity: 0;
+    display: none;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-edit input {
+    height: 1.8rem;
+    border: none;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+    border-radius: 0.375rem;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-edit .change-button {
+    height: 1.8rem;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 0.375rem;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-edit .change-button:hover {
+    background-color: rgb(20, 20, 20);
+    color: white;
+}
+.container .personal .all-personal-files .personal-file-list .file-container .file-edit.show {
+    opacity: 1;
+    display: flex;
+}
+.container .personal .all-projects {
+    border-radius: 0.375rem;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+    padding: 5px;
+    display: grid;
+    grid-template-rows: repeat(20, 1fr);
+}
+.container .personal .all-projects .search {
+    grid-row: 1/3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+.container .personal .all-projects .search input {
+    height: 1.8rem;
+    border: none;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+    border-radius: 0.375rem;
+    width: minmax(20%, 300px);
+}
+.container .personal .all-projects .personal-projects {
+    padding: 20px;
+    max-height: 100%;
+    overflow-y: auto;
+    grid-row: 3/-1;
+    display: flex;
+    flex-direction: column;
+}
+.container .personal .all-projects .personal-projects .project {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.9);
+}
+.container .personal .all-projects .personal-projects .project .title {
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container .personal .all-projects .personal-projects .project .title .icon div:not(.active) {
+    display: none;
+}
+.container .personal .all-projects .personal-projects .project .title .icon:hover {
+    stroke: gray;
+}
+.container .personal .all-projects .personal-projects .project .project-edit {
+    opacity: 0;
+    display: none;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 10px;
+    padding: 10px;
+}
+.container .personal .all-projects .personal-projects .project .project-edit input {
+    height: 1.8rem;
+    border: none;
+    box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+    border-radius: 0.375rem;
+}
+.container .personal .all-projects .personal-projects .project .project-edit .change-button {
+    height: 1.8rem;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 0.375rem;
+}
+.container .personal .all-projects .personal-projects .project .project-edit .change-button:hover {
+    background-color: rgb(20, 20, 20);
+    color: white;
+}
+.container .personal .all-projects .personal-projects .project .project-edit div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+.container .personal .all-projects .personal-projects .project .project-edit + .project-edit {
+    border-top: 1px solid black;
+}
+.container .personal .all-projects .personal-projects .project .project-edit:last-child {
+    padding-bottom: 10px;
+}
+.container .personal .all-projects .personal-projects .project .project-edit.show {
+    opacity: 1;
+    display: flex;
 }
 
-@-webkit-keyframes visible {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes visible {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-.selected{
+.selected {
     outline: 3px solid darkblue;
 }
 
