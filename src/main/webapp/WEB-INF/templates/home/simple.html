@@ -197,6 +197,16 @@
                         <div class="projectName">
                             <h4>Project Name 1</h4>
                         </div>
+                        <div class="del del-project">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="4" y1="7" x2="20" y2="7"></line>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                            </svg>
+                        </div>
                         <div class="icon">
                             <div class="maximize active">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-maximize" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -246,6 +256,16 @@
                     <div class="title">
                         <div class="projectName">
                             <h4>Project Name 2</h4>
+                        </div>
+                        <div class="del del-project">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="4" y1="7" x2="20" y2="7"></line>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                            </svg>
                         </div>
                         <div class="icon">
                             <div class="maximize active">
@@ -515,9 +535,65 @@
             $('.all-personal-files').hide();
         });
         $(document).on('click', '.del-button', function () {
+            var name = $(this).parent().find('.name').html();
             $(this).parent().fadeOut(200, function() {
                 $(this).parent().remove();
             });
+            $.ajax({
+                type: 'GET',
+                url: 'deletefile',
+                data: {fileName: name},
+                success : function (){
+                    alert("Succes")
+                },
+                error : function (){
+                    alert("Something went wrong");
+                }
+            });
+        });
+        $(document).on('click', '.del-project', function () {
+            var projectName = $(this).parent().find('.projectName').find('h4').html();
+            $(this).parent().parent().remove();
+            $.ajax({
+                type: 'GET',
+                url: 'projectdelete',
+                data: {projectName: projectName},
+                success : function (){
+                    alert("Succes");
+                },
+                error : function (){
+                    alert("Something went wrong");
+                }
+            });
+        });
+        $(document).on('click', '.change-button', function () {
+            var fileName = $(this).parent().find('#filename').val();
+            var read = $(this).parent().find('#read').val();
+            var label = $(this).parent().find('#label').val();
+            if (fileName.length === 0 ){
+                fileName = $(this).parent().parent().find('.file-info').find('.name').html();
+            }
+            if (label.length === 0 ){
+                label = $(this).parent().parent().find('.file-info').find('.label').html();
+            }
+            if (read.length === 0 ){
+                read = $(this).parent().parent().find('.file-info').find('.read').html();
+            }
+            $.ajax({
+                type: 'GET',
+                url: 'editfile',
+                data: {fileInfo: [fileName, read, label]},
+                success : function (){
+                    alert("Succes");
+                },
+                error : function (){
+                    alert("Something went wrong");
+                }
+            });
+
+            console.log(fileName);
+            console.log(read);
+            console.log(label);
         });
         $(document).on('click', '.edit-button', function () {
             $(this).parent().parent().find('.file-edit').toggleClass('show');
