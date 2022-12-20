@@ -59,7 +59,7 @@ public class MockupServlet extends HttpServlet {
         ctx.setVariable("filesList", fsList);
         ctx.setVariable("testFiles", fsList);
         try {
-            ctx.setVariable("projects", connector.getProjectsFromUser(5).keySet());
+            ctx.setVariable("projects", connector.getProjectsFromUser(1).keySet());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

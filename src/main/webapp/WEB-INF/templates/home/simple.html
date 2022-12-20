@@ -321,11 +321,6 @@
     $('.all-projects').hide();
     $('.newFiles .addFiles').hide();
 
-    var correct = /*[[${name_is_correct}]]*/ true;
-    if (!correct) {
-        window.alert("Please select a project name that you didn't use before!")
-    }
-
     function createProject() {
         var name = $('#projectname').val();
         if (name.length < 1) {

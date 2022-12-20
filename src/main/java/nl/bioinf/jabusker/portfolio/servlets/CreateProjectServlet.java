@@ -26,29 +26,26 @@ public class CreateProjectServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String projectName = request.getParameterValues("projectname[]")[0];
 
-//        String name = request.getParameter("name");
-//        String[] files = request.getParameter("files").split(",");
-//        boolean con = true;
+        String name = request.getParameter("name");
+        String[] files = request.getParameter("files").split(",");
         try {
             MockupServlet.getConnector().insertProject(projectName, 1);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         }
-//        int projectId;
-//        if (con) {
-//            try {
-//                projectId = MockupServlet.getConnector().getProject(name, 1).getProjectId();
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
-//            try {
-//                for (String path : files) {
-//                    MockupServlet.getConnector().insertLabeledFile(path, path, projectId);
-//                }
-//            } catch (DatabaseException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
+        int projectId;
+        try {
+            projectId = MockupServlet.getConnector().getProject(name, 1).getProjectId();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            for (String path : files) {
+                MockupServlet.getConnector().insertLabeledFile(path, path, projectId);
+            }
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
