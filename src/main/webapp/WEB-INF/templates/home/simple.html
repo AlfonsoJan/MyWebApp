@@ -121,13 +121,14 @@
                     </div>
                 </div>
                 <div class="files"></div>
-                <div class="add-button button" onclick="createProject()">
+                <div class="add-button button">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <circle cx="12" cy="12" r="9"></circle>
                         <line x1="9" y1="12" x2="15" y2="12"></line>
                         <line x1="12" y1="9" x2="12" y2="15"></line>
                     </svg>
+<!--                    <h3 type="button" onclick="createProject()">Add project to your account</h3>-->
                     <h3>Add project to your account</h3>
                 </div>
                 <div class="download-button button">
@@ -326,12 +327,17 @@
     }
 
     function createProject() {
-        let name = document.getElementById("projectname").value;
+        var name = $('#projectname').val();
         if (name.length < 1) {
-            window.alert("Please give your project a name!")
+            alert("Please give your project a name!");
             return;
         }
-        var url = `createproject?files=thiswillbeafile.fastq,thiswillbeonetoo.fastq&name=${name}`;
+        // let name = document.getElementById("projectname").value;
+        // if (name.length < 1) {
+        //     window.alert("Please give your project a name!")
+        //     return;
+        // }
+        var url = `createproject?files=thiswillbeafile.fastq&files=thiswillbeonetoo.fastq&name=${name}`;
         var link = document.createElement('a');
         link.href = url;
         link.click();
@@ -479,11 +485,27 @@
             $(this).parent().remove();
         });
         $(document).on('click', '.add-button', function () {
-            var l = $(".chosen-content .files").find(".file-name").length;
-            if (l < 1) {
-                alert('Please select a file');
+            // var l = $(".chosen-content .files").find(".file-name").length;
+            // if (l < 1) {
+            //     alert('Please select a file');
+            //     return;
+            // }
+            var name = $('#projectname').val();
+            if (name < 1){
+                alert('Please type in a project name');
                 return;
             }
+            $.ajax({
+                type: 'GET',
+                url: 'createproject',
+                data: {projectname: [name]},
+                success : function (){
+                    alert("Suucces");
+                },
+                error : function (){
+                    alert("Something went wrong");
+                }
+            });
         });
         $(document).on('click', '.titles .all-button', function () {
             $(this).addClass('active');
