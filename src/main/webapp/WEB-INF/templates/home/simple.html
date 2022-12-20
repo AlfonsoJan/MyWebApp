@@ -115,16 +115,13 @@
                         </div>
                         <div class="existing-project">
                             <select name="projects-names" id="projects-name">
-                                <option value="0">Projects 1</option>
-                                <option value="1">Projects 2</option>
-                                <option value="2">Projects 3</option>
-                                <option value="3">Projects 4</option>
+                                <option th:each="project : ${projects}" value="${project.id}" th:text="${project.name}"></option>
                             </select>
                         </div>
                     </div>
                 </div>
                 <div class="files"></div>
-                <div class="add-button button">
+                <div class="add-button button" onclick="createProject()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <circle cx="12" cy="12" r="9"></circle>
@@ -322,6 +319,24 @@
     $(".existing-project").hide();
     $('.all-projects').hide();
     $('.newFiles .addFiles').hide();
+
+    var correct = /*[[${name_is_correct}]]*/ true;
+    if (!correct) {
+        window.alert("Please select a project name that you didn't use before!")
+    }
+
+    function createProject() {
+        let name = document.getElementById("projectname").value;
+        if (name.length < 1) {
+            window.alert("Please give your project a name!")
+            return;
+        }
+        var url = `createproject?files=thiswillbeafile.fastq,thiswillbeonetoo.fastq&name=${name}`;
+        var link = document.createElement('a');
+        link.href = url;
+        link.click();
+    }
+
     function getFiles() {
         //URL TO DOWNLOAD MULTI FILES
        url = "download?allFiles=testplaceholder0.fastq.gz&allFiles=testplaceholder0.fastq.gz";

@@ -1,5 +1,7 @@
 package nl.bioinf.jabusker.portfolio.dao;
 
+import com.mysql.cj.protocol.Resultset;
+import com.mysql.cj.xdevapi.Result;
 import nl.bioinf.jabusker.portfolio.db_utils.DbCredentials;
 import nl.bioinf.jabusker.portfolio.db_utils.DbUser;
 import nl.bioinf.jabusker.portfolio.db_objects.LabeledFile;
@@ -35,6 +37,7 @@ public class VerySimpleDbConnector {
     private static final String INSERT_FILE = "insert_file";
     private static final String UPDATE_PROJECT = "update_project";
     private static final String UPDATE_FILE = "update_file";
+    private static final String SELECT_PROJECT_FROM_NAME = "select_project_from_name";
 
     /**
      * a main for demonstration purposes
@@ -95,16 +98,16 @@ public class VerySimpleDbConnector {
         String projectIdFetchQuery = "SELECT * FROM projects WHERE id = ?";
         this.preparedStatements.put(GET_PROJECT_USING_PROJECT_ID, connection.prepareStatement(projectIdFetchQuery));
 
-        String projectUserIdFetchQuery = "select * from label_files,projects,users where projects.user_id = ? and projects.id = label_files.project and users.id = projects.user_id";
+        String projectUserIdFetchQuery = "select * from labeled_files,projects,users where projects.user_id = ? and projects.id = labeled_files.project_id and users.id = projects.user_id";
         this.preparedStatements.put(GET_PROJECTS_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
 
-        String FilesFromProjectId = "select * from label_files,projects where projects.id = ? and label_files.project = projects.id";
+        String FilesFromProjectId = "select * from labeled_files,projects where projects.id = ? and labeled_files.project_id = projects.id";
         this.preparedStatements.put(GET_PROJECTS_USING_PROJECT_ID, connection.prepareStatement(FilesFromProjectId));
 
-        String fileIdFetchQuery = "SELECT * FROM label_files WHERE id = ?";
+        String fileIdFetchQuery = "SELECT * FROM labeled_files WHERE id = ?";
         this.preparedStatements.put(GET_FILE_USING_FILE_ID, connection.prepareStatement(fileIdFetchQuery));
 
-        String filesFetchQuery = "SELECT * FROM label_files where path = ?";
+        String filesFetchQuery = "SELECT * FROM labeled_files where path = ?";
         this.preparedStatements.put(GET_ALL_LABEL_FILES, connection.prepareStatement(filesFetchQuery));
 
         String userInsertQuery = "INSERT INTO users (username) VALUES (?)";
@@ -113,14 +116,15 @@ public class VerySimpleDbConnector {
         String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
         this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
 
-        String fileInsertQuery = "INSERT INTO label_files (label, path, project) VALUES (?, ?, ?)";
+        String fileInsertQuery = "INSERT INTO labeled_files (label, path, project_id) VALUES (?, ?, ?)";
         this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
 
         String projectNameUpdateQuery = "UPDATE projects set project_name = ? where id = ?;";
         this.preparedStatements.put(UPDATE_PROJECT, connection.prepareStatement(projectNameUpdateQuery));
 
-        String labeledFileNameUpdateQuery = "UPDATE label_files set label = ? where id = ?";
-        this.preparedStatements.put(UPDATE_FILE, connection.prepareStatement(labeledFileNameUpdateQuery));
+        String projectIDFetchQueryFromName = "SELECT id from projects where user_id = ? and project_name = ?";
+        this.preparedStatements.put(SELECT_PROJECT_FROM_NAME, connection.prepareStatement(projectIDFetchQueryFromName));
+
     }
 
     public User getUser(int id) throws SQLException {
@@ -197,6 +201,25 @@ public class VerySimpleDbConnector {
         return new Project(id, projectName, userId);
     }
 
+    public Project getProject(String name, int userID) throws SQLException {
+        // prepare query statement
+        PreparedStatement ps = this.preparedStatements.get(SELECT_PROJECT_FROM_NAME);
+
+        //set data on the "?" placeholders of the prepared statement
+        ps.setString(1, String.valueOf(userID));
+        ps.setString(2, name);
+
+        //execute
+        ResultSet rs = ps.executeQuery();
+
+        //next result
+        rs.next();
+
+        //if there is data, process it
+        int id = rs.getInt("id");
+        return new Project(id, name, userID);
+    }
+
     public void insertProject(String projectName, int userId) throws DatabaseException {
         try{
             //Prepare statement
@@ -208,10 +231,8 @@ public class VerySimpleDbConnector {
             ps.setInt(2, userId);
 
             //do the actual insert
-            ps.executeUpdate();
+            ps.executeUpdate();;
 
-            //close resources
-            ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -323,9 +344,9 @@ public class VerySimpleDbConnector {
             }
 
             // Add labeled file to project!
-            int labelId = rs.getInt("label_files.id");
-            String label = rs.getString("label_files.label");
-            String path = rs.getString("label_files.path");
+            int labelId = rs.getInt("labeled_files.id");
+            String label = rs.getString("labeled_files.label");
+            String path = rs.getString("labeled_files.path");
             int projectId = rs.getInt("projects.id");
             LabeledFile labeledFile = new LabeledFile(labelId, label, path, projectId);
 
@@ -348,9 +369,9 @@ public class VerySimpleDbConnector {
         ArrayList<LabeledFile> results = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            int labelId = rs.getInt("label_files.id");
-            String label = rs.getString("label_files.label");
-            String path = rs.getString("label_files.path");
+            int labelId = rs.getInt("labeled_files.id");
+            String label = rs.getString("labeled_files.label");
+            String path = rs.getString("labeled_files.path");
             int id = rs.getInt("projects.id");
             results.add(new LabeledFile(labelId, label, path, id));
         }
