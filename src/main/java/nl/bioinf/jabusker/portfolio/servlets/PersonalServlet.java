@@ -3,6 +3,8 @@ package nl.bioinf.jabusker.portfolio.servlets;
 import nl.bioinf.jabusker.portfolio.config.WebConfig;
 import nl.bioinf.jabusker.portfolio.dao.DatabaseException;
 import nl.bioinf.jabusker.portfolio.dao.VerySimpleDbConnector;
+import nl.bioinf.jabusker.portfolio.db_objects.LabeledFile;
+import nl.bioinf.jabusker.portfolio.db_objects.Project;
 import nl.bioinf.jabusker.portfolio.model.Enums;
 import nl.bioinf.jabusker.portfolio.model.FilesSorter;
 import org.thymeleaf.TemplateEngine;
@@ -15,9 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @WebServlet(name = "PersonalServlet", urlPatterns = "/personal_tab", loadOnStartup = 1)
@@ -42,27 +42,23 @@ public class PersonalServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        ArrayList<FilesSorter> fsList = new ArrayList<>();
+
+        Map<Project, ArrayList<LabeledFile>> projectLabeledFileHashMap;
         try {
-            for (int i = 0; i < 50; i++) {
-                int year = ThreadLocalRandom.current().nextInt(2014, 2022 + 1);
-                int month = ThreadLocalRandom.current().nextInt(1, 12 + 1);
-                int day = ThreadLocalRandom.current().nextInt(0, 28 + 1);
-                String date = year + "-" + month + "-" + day;
-                Enums.Used used = Enums.Used.values()[new Random().nextInt(Enums.Used.values().length)];
-                fsList.add(new FilesSorter("placeholder_filename.fastq", date, used));
-            }
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Collections.sort(fsList, Collections.reverseOrder());
-        ctx.setVariable("filesList", fsList);
-        ctx.setVariable("testFiles", fsList);
-        try {
-            ctx.setVariable("projects", connector.getProjectsFromUser(1).keySet());
+            projectLabeledFileHashMap = connector.getProjectsFromUser(1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+        ArrayList<Project> projects = new ArrayList<>();
+        for (Project project : projectLabeledFileHashMap.keySet()) {
+            for (LabeledFile labeledFile : projectLabeledFileHashMap.get(project)) {
+                project.addLabeledFile(labeledFile);
+            }
+            projects.add(project);
+        }
+        ctx.setVariable("projects", projects);
+
         templateEngine.process("home/personal", ctx, response.getWriter());
     }
 

@@ -501,3 +501,24 @@ nav .nav__links li a:not(.panelButtons) {
 .high-used {
     background-color: #F7A9A6;
 }
+
+.special-form::placeholder {
+    color: black;
+    opacity: 1;
+    font-size: 16px;
+}
+
+.special-form {
+    border:none;
+    box-shadow:0px 0px red !important;
+    outline:none;
+    background-color: transparent;
+    resize:none;
+    font-size: 16px;
+}
+
+.thick-form {
+    padding: 20px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
