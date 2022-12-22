@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Home</title>
-    <link rel="stylesheet" href="css/simple.css" th:href="@{/css/simple.css}"/>
+    <link rel="stylesheet" href="css/analysis.css" th:href="@{/css/analysis.css}"/>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 </head>
@@ -19,129 +19,7 @@
 </nav>
 
 <div class="container">
-    <div id="list-panel" class="newFiles">
-        <div class="addFiles">
-            <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-big-right" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z"></path>
-                </svg>
-            </div>
-        </div>
-        <div class="tooltip selected-files">
-            <div class="tooltipBox">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <circle cx="12" cy="12" r="9" />
-                    <line x1="12" y1="17" x2="12" y2="17.01" />
-                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
-                </svg>
-                <span>In deze box staan je geselecteerde bestanden</span>
-            </div>
-        </div>
-        <div class="tooltip new-files">
-            <div class="tooltipBox">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <circle cx="12" cy="12" r="9" />
-                    <line x1="12" y1="17" x2="12" y2="17.01" />
-                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
-                </svg>
-                <span>In deze box staan alle (nieuwe) bestanden</span>
-            </div>
-        </div>
-        <div class="new-file-list">
-            <div class="title">
-                <h3>New Files</h3>
-            </div>
-            <div class="filters">
-                <select name="file-filters" id="file-filters">
-                    <option value="0">All Files</option>
-                    <option value="1">Never used</option>
-                    <option value="2">Low Useage</option>
-                    <option value="3">Medium Usage</option>
-                    <option value="4">High Usage</option>
-                </select>
-                <input type="text" placeholder="Search.." onkeyup="filterFileFunction()" id="filterFileInput">
-            </div>
-            <div class="file-list">
-                <div class="all-files">
-                    <ul id="current-files">
-                        <th:block th:each="files : ${filesList}">
-                            <li>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
-                                    <line x1="9" y1="17" x2="9" y2="12"></line>
-                                    <line x1="12" y1="17" x2="12" y2="16"></line>
-                                    <line x1="15" y1="17" x2="15" y2="14"></line>
-                                </svg>
-                                <th:block th:if="${files.used.name() == 'NONE'}">
-                                    <span  class="fileName none-used" th:text="${files.fileName}">
-                                    </span><span th:text="${files.date}"></span>
-                                </th:block>
-                                <th:block th:if="${files.used.name() == 'LOW'}">
-                                    <span  class="fileName low-used" th:text="${files.fileName}">
-                                    </span><span th:text="${files.date}"></span>
-                                </th:block>
-                                <th:block th:if="${files.used.name() == 'MEDIUM'}">
-                                    <span  class="fileName medium-used" th:text="${files.fileName}">
-                                    </span><span th:text="${files.date}"></span>
-                                </th:block>
-                                <th:block th:if="${files.used.name() == 'HIGH'}">
-                                    <span  class="fileName high-used" th:text="${files.fileName}">
-                                    </span><span th:text="${files.date}"></span>
-                                </th:block>
-                            </li>
-                        </th:block>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="chosen-content">
-                <div class="title">
-                    <h3>Add Files</h3>
-                </div>
-                <div class="project-type">
-                    <div class="buttons">
-                        <a class="project-button active new">New project</a>
-                        <a class="project-button existing">Add to existing project</a>
-                    </div>
-                    <div class="options">
-                        <div class="new-project">
-                            <label for="projectname">Project name*</label>
-                            <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
-                        </div>
-                        <div class="existing-project" id="existing-project">
-                            <select name="projects-names" id="projects-name">
-                                <option th:each="project : ${projects}" value="${project.id}" th:text="${project.name}"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="files"></div>
-                <div class="add-button button">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <circle cx="12" cy="12" r="9"></circle>
-                        <line x1="9" y1="12" x2="15" y2="12"></line>
-                        <line x1="12" y1="9" x2="12" y2="15"></line>
-                    </svg>
-<!--                    <h3 type="button" onclick="createProject()">Add project to your account</h3>-->
-                    <h3 id="add-button-text">Add project to your account</h3>
-                </div>
-                <div class="download-button button">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                        <polyline points="7 11 12 16 17 11"></polyline>
-                        <line x1="12" y1="4" x2="12" y2="16"></line>
-                    </svg>
-                    <h3 type="button" onclick="getFiles()">Download</h3>
-                </div>
-        </div>
-    </div>
+    <div id="analysis-panel" class="analysis">Analysis</div>
 </div>
 
 <script type="text/javascript">
@@ -171,9 +49,9 @@
 
     function getFiles() {
         //URL TO DOWNLOAD MULTI FILES
-       url = "download?allFiles=testplaceholder0.fastq.gz&allFiles=testplaceholder0.fastq.gz";
-       // URL TO DOWNLOAD ONE FILE
-       // url = "download?allFiles=testplaceholder0.fastq.gz";
+        url = "download?allFiles=testplaceholder0.fastq.gz&allFiles=testplaceholder0.fastq.gz";
+        // URL TO DOWNLOAD ONE FILE
+        // url = "download?allFiles=testplaceholder0.fastq.gz";
         // myvar = [];
         // var url = "download?";
         // $.each($(".inputs .reads").find("p"), function(){
