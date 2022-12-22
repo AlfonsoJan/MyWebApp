@@ -1,7 +1,7 @@
 /* 
 Remove the tables if they exist
 */
-drop table if exists label_files;
+drop table if exists labeled_files;
 drop table if exists projects;
 drop table if exists users;
 
@@ -22,7 +22,7 @@ And which user it belongs to with his user id.
 create table projects
 (
     id int auto_increment not null,
-    project_name varchar(20),
+    project_name varchar(20) unique,
     user_id int not null,
     primary key(id),
     foreign key(user_id)
@@ -41,7 +41,7 @@ create table labeled_files
     path varchar(100) not null,
     project_id int not null,
     primary key(id),
-    foreign key(project)
+    foreign key(project_id)
         references projects(id)
         on delete restrict
 );
