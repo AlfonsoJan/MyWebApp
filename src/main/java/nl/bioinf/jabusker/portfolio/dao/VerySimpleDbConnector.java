@@ -39,6 +39,7 @@ public class VerySimpleDbConnector {
     private static final String UPDATE_FILE = "update_file";
     private static final String SELECT_PROJECT_FROM_NAME = "select_project_from_name";
 
+    private static final String SELECT_PROJECTS_FROM_USER = "select_projects_from_user";
     /**
      * a main for demonstration purposes
      *
@@ -100,6 +101,9 @@ public class VerySimpleDbConnector {
 
         String projectUserIdFetchQuery = "select * from labeled_files,projects,users where projects.user_id = ? and projects.id = labeled_files.project_id and users.id = projects.user_id";
         this.preparedStatements.put(GET_PROJECTS_USING_USER_ID, connection.prepareStatement(projectUserIdFetchQuery));
+
+        String selectProjectsFromUserQuery = "select * from projects where projects.user_id = ?";
+        this.preparedStatements.put(SELECT_PROJECTS_FROM_USER, connection.prepareStatement(selectProjectsFromUserQuery));
 
         String FilesFromProjectId = "select * from labeled_files,projects where projects.id = ? and labeled_files.project_id = projects.id";
         this.preparedStatements.put(GET_PROJECTS_USING_PROJECT_ID, connection.prepareStatement(FilesFromProjectId));
@@ -320,10 +324,21 @@ public class VerySimpleDbConnector {
 
     public Map<Project, ArrayList<LabeledFile>> getProjectsFromUser(int id) throws SQLException {
 
+        PreparedStatement preparedStatement = this.preparedStatements.get(SELECT_PROJECTS_FROM_USER);
+        preparedStatement.setString(1, String.valueOf(id));
+
+        Map<Project, ArrayList<LabeledFile>> results = new ConcurrentHashMap<>();
+        ResultSet resultSet = preparedStatement.executeQuery();
+        while (resultSet.next()) {
+            int project = resultSet.getInt("projects.id");
+            String name = resultSet.getString("projects.project_name");
+            results.put(new Project(project, name, id), new ArrayList<>());
+        }
+
+
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECTS_USING_USER_ID);
         ps.setString(1, String.valueOf(id));
 
-        Map<Project, ArrayList<LabeledFile>> results = new ConcurrentHashMap<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             Set<Project> keys = results.keySet();

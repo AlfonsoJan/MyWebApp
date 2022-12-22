@@ -113,7 +113,7 @@
                             <label for="projectname">Project name*</label>
                             <input type="text" name="projectname" id="projectname" required placeholder="projectname" class="form-element">
                         </div>
-                        <div class="existing-project">
+                        <div class="existing-project" id="existing-project">
                             <select name="projects-names" id="projects-name">
                                 <option th:each="project : ${projects}" value="${project.id}" th:text="${project.name}"></option>
                             </select>
@@ -129,7 +129,7 @@
                         <line x1="12" y1="9" x2="12" y2="15"></line>
                     </svg>
 <!--                    <h3 type="button" onclick="createProject()">Add project to your account</h3>-->
-                    <h3>Add project to your account</h3>
+                    <h3 id="add-button-text">Add project to your account</h3>
                 </div>
                 <div class="download-button button">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -485,12 +485,14 @@
             $('.newFiles .addFiles').hide();
         });
         $(document).on('click', '.project-button.existing', function () {
+            document.getElementById("add-button-text").textContent = "Add files to project";
             $(this).parent().find(".project-button").removeClass("active");
             $(this).addClass('active');
             $(".new-project").hide();
             $(".existing-project").show();
         });
         $(document).on('click', '.project-button.new', function () {
+            document.getElementById("add-button-text").textContent = "Add project to your account";
             $(this).parent().find(".project-button").removeClass("active");
             $(this).addClass('active');
             $(".existing-project").hide();
@@ -500,27 +502,53 @@
             $(this).parent().remove();
         });
         $(document).on('click', '.add-button', function () {
-            // var l = $(".chosen-content .files").find(".file-name").length;
-            // if (l < 1) {
-            //     alert('Please select a file');
-            //     return;
-            // }
-            var name = $('#projectname').val();
-            if (name < 1){
-                alert('Please type in a project name');
-                return;
+            var fileList = [];
+            let elementList = document.getElementsByClassName("file-name");
+            for (var i = 0; i < elementList.length; i++) {
+                fileList.push(elementList[i].textContent)
             }
-            $.ajax({
-                type: 'GET',
-                url: 'createproject',
-                data: {projectname: [name]},
-                success : function (){
-                    alert("Suucces");
-                },
-                error : function (){
-                    alert("Something went wrong");
+            let exists = document.getElementById("add-button-text").textContent === "Add files to project";
+            if (!exists) {
+                var name = $('#projectname').val();
+                if (name < 1) {
+                    alert('Please type in a project name');
+                    return;
                 }
-            });
+                $.ajax({
+                    type: 'GET',
+                    url: 'createproject',
+                    data: {projectname: [name], files: fileList},
+                    success: function () {
+                        alert(`Successfully added ${name} to your account with ${fileList.length} files!`);
+                        let select = document.getElementById('projects-name');
+                        var opt = document.createElement('option');
+                        opt.value = i;
+                        opt.innerHTML = name;
+                        select.appendChild(opt);
+                    },
+                    error: function () {
+                        alert("This project already exists!");
+                    }
+                });
+            } else {
+                var e = document.getElementById("projects-name");
+                var name = e.options[e.selectedIndex].text;
+                if (fileList.length < 1) {
+                    alert("Please select at least 1 file!")
+                    return;
+                }
+                $.ajax({
+                    type: 'GET',
+                    url: 'addfilestoproject',
+                    data: {projectname: [name], files: fileList},
+                    success : function (){
+                        alert(`Successfully added the ${fileList.length} files to ${name}!`);
+                    },
+                    error : function (){
+                        alert("There was an error, please contact support!");
+                    }
+                });
+            }
         });
         $(document).on('click', '.titles .all-button', function () {
             $(this).addClass('active');
