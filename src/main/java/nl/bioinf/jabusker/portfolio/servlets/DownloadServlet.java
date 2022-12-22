@@ -1,7 +1,5 @@
 package nl.bioinf.jabusker.portfolio.servlets;
 
-import nl.bioinf.jabusker.portfolio.model.TarGzipExample1;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,32 +8,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+
+import static nl.bioinf.jabusker.portfolio.model.TarZipMultipleFiles.createTarGzipFile;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download", loadOnStartup = 1)
 public class DownloadServlet extends HttpServlet {
-    private String fileName;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
         String resourcePath = request.getServletContext().getRealPath("/WEB-INF/resources/");
+        String sessionId = request.getSession(true).getId();
 
+        String fileName;
         if (allFiles.length == 1) {
             fileName = allFiles[0];
         }
-        else if (allFiles.length > 1) {
-            fileName = "placeholder.tar.gz";
+        else {
+            fileName = sessionId + ".tar.gz";
 
-            TarGzipExample1 zipper = new TarGzipExample1(resourcePath, allFiles);
-
-            resourcePath = resourcePath + "/temp";
-
-            List<Path> paths = zipper.fileNamesToPaths();
-            Path outPath = Paths.get(resourcePath + fileName);
-
-            zipper.createTarGzipFiles(paths, outPath);
+            createTarGzipFile(allFiles, resourcePath, resourcePath + "/temp" + fileName);
         }
 
         FileInputStream fileInputStream = null;
