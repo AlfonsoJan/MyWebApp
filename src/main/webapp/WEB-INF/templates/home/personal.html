@@ -211,27 +211,7 @@
 
 <script type="text/javascript">
     var del = "<span id='readDelete'><svg xmlns='http://www.w3.org/2000/svg' class='icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
-    $("#project-panel").hide()
-    $('.all-projects').hide();
-    $('.newFiles .addFiles').hide();
-
-    function createProject() {
-        var name = $('#projectname').val();
-        if (name.length < 1) {
-            alert("Please give your project a name!");
-            return;
-        }
-        // let name = document.getElementById("projectname").value;
-        // if (name.length < 1) {
-        //     window.alert("Please give your project a name!")
-        //     return;
-        // }
-        var url = `createproject?files=thiswillbeafile.fastq&files=thiswillbeonetoo.fastq&name=${name}`;
-        var link = document.createElement('a');
-        link.href = url;
-        link.click();
-    }
-
+    $(".all-projects").hide();
     function getFiles() {
         //URL TO DOWNLOAD MULTI FILES
         url = "download?allFiles=testplaceholder0.fastq.gz&allFiles=testplaceholder0.fastq.gz";
@@ -248,81 +228,6 @@
         //link.href = url.slice(0,-1);
         link.click()
     }
-    function filterFileFunction() {
-        var input = $("#filterFileInput").val().toUpperCase();
-        $.each($("#current-files li"), function(){
-            if ($(this).find(".fileName").html().toUpperCase().indexOf(input) >= 0) {
-                $(this).show()
-            } else {
-                $(this).hide()
-            }
-        });
-    };
-    function filterPersonalFunction() {
-        var input = $("#filterPersonalInput").val().toUpperCase();
-        $.each($(".personal-file-list .file-container"), function(){
-            if ($(this).find(".name").html().toUpperCase().indexOf(input) >= 0) {
-                $(this).show()
-            } else {
-                $(this).hide()
-            }
-        });
-    };
-    function filterProjectFunction () {
-        var input = $("#filterProjectsInput").val().toUpperCase();
-        $.each($(".personal-projects .project .title .projectName").find('h4'), function(){
-            if ($(this).html().toUpperCase().indexOf(input) >= 0) {
-                $(this).parent().parent().parent().show()
-            } else {
-                $(this).parent().parent().parent().hide()
-            }
-        });
-    };
-    $(document).ready(function(){
-        $('#file-filters').on('change', function() {
-            var value = $(this).val();
-            if (value == 0){
-                $.each($("#current-files li"), function(){
-                    $(this).show();
-                });
-            }
-            if (value == 1) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('.fileName').hasClass('none-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 2) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('.fileName').hasClass('low-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 3) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('.fileName').hasClass('medium-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 4) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('.fileName').hasClass('high-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-        });
         $(document).on('click', ".maximize", function () {
             $.each($(this).parent().parent().parent().find('.project-edit'), function(){
                 $(this).addClass('show');
@@ -377,55 +282,6 @@
         });
         $(document).on('click', '#readDelete', function () {
             $(this).parent().remove();
-        });
-        $(document).on('click', '.add-button', function () {
-            var fileList = [];
-            let elementList = document.getElementsByClassName("file-name");
-            for (var i = 0; i < elementList.length; i++) {
-                fileList.push(elementList[i].textContent)
-            }
-            let exists = document.getElementById("add-button-text").textContent === "Add files to project";
-            if (!exists) {
-                var name = $('#projectname').val();
-                if (name < 1) {
-                    alert('Please type in a project name');
-                    return;
-                }
-                $.ajax({
-                    type: 'GET',
-                    url: 'createproject',
-                    data: {projectname: [name], files: fileList},
-                    success: function () {
-                        alert(`Successfully added ${name} to your account with ${fileList.length} files!`);
-                        let select = document.getElementById('projects-name');
-                        var opt = document.createElement('option');
-                        opt.value = i;
-                        opt.innerHTML = name;
-                        select.appendChild(opt);
-                    },
-                    error: function () {
-                        alert("This project already exists!");
-                    }
-                });
-            } else {
-                var e = document.getElementById("projects-name");
-                var name = e.options[e.selectedIndex].text;
-                if (fileList.length < 1) {
-                    alert("Please select at least 1 file!")
-                    return;
-                }
-                $.ajax({
-                    type: 'GET',
-                    url: 'addfilestoproject',
-                    data: {projectname: [name], files: fileList},
-                    success : function (){
-                        alert(`Successfully added the ${fileList.length} files to ${name}!`);
-                    },
-                    error : function (){
-                        alert("There was an error, please contact support!");
-                    }
-                });
-            }
         });
         $(document).on('click', '.titles .all-button', function () {
             $(this).addClass('active');
@@ -561,7 +417,6 @@
             }
             lastChecked = null;
         });
-    });
 </script>
 </body>
 </html>

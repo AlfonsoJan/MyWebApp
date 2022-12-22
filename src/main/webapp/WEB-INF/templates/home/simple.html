@@ -186,32 +186,12 @@
         link.click()
     }
     function filterFileFunction() {
-        var input = $("#filterFileInput").val().toUpperCase();
+        var input = $('#filterFileInput').val().toUpperCase();
         $.each($("#current-files li"), function(){
             if ($(this).find(".fileName").html().toUpperCase().indexOf(input) >= 0) {
                 $(this).show()
             } else {
                 $(this).hide()
-            }
-        });
-    };
-    function filterPersonalFunction() {
-        var input = $("#filterPersonalInput").val().toUpperCase();
-        $.each($(".personal-file-list .file-container"), function(){
-            if ($(this).find(".name").html().toUpperCase().indexOf(input) >= 0) {
-                $(this).show()
-            } else {
-                $(this).hide()
-            }
-        });
-    };
-    function filterProjectFunction () {
-        var input = $("#filterProjectsInput").val().toUpperCase();
-        $.each($(".personal-projects .project .title .projectName").find('h4'), function(){
-            if ($(this).html().toUpperCase().indexOf(input) >= 0) {
-                $(this).parent().parent().parent().show()
-            } else {
-                $(this).parent().parent().parent().hide()
             }
         });
     };
@@ -260,20 +240,7 @@
                 });
             }
         });
-        $(document).on('click', ".maximize", function () {
-            $.each($(this).parent().parent().parent().find('.project-edit'), function(){
-                $(this).addClass('show');
-                $(this).parent().find('.maximize').removeClass('active');
-                $(this).parent().find('.minimize').addClass('active');
-            });
-        });
-        $(document).on('click', ".minimize", function () {
-            $.each($(this).parent().parent().parent().find('.project-edit'), function(){
-                $(this).removeClass('show');
-                $(this).parent().find('.maximize').addClass('active');
-                $(this).parent().find('.minimize').removeClass('active');
-            });
-        });$(document).on('click', ".analysisButton", function () {
+        $(document).on('click', ".analysisButton", function () {
             url = "analysis";
             var link = document.createElement('a');
             link.href = url;
@@ -363,82 +330,6 @@
                     }
                 });
             }
-        });
-        $(document).on('click', '.titles .all-button', function () {
-            $(this).addClass('active');
-            $('.titles .project-button').removeClass('active');
-            $('.all-projects').hide();
-            $('.all-personal-files').show();
-        });
-        $(document).on('click', '.titles .project-button', function () {
-            $(this).addClass('active');
-            $('.titles .all-button').removeClass('active');
-            $('.all-projects').show();
-            $('.all-personal-files').hide();
-        });
-        $(document).on('click', '.del-button', function () {
-            var name = $(this).parent().find('.name').html();
-            $(this).parent().fadeOut(200, function() {
-                $(this).parent().remove();
-            });
-            $.ajax({
-                type: 'GET',
-                url: 'deletefile',
-                data: {fileName: name},
-                success : function (){
-                    alert("Succes")
-                },
-                error : function (){
-                    alert("Something went wrong");
-                }
-            });
-        });
-        $(document).on('click', '.del-project', function () {
-            var projectName = $(this).parent().find('.projectName').find('h4').html();
-            $(this).parent().parent().remove();
-            $.ajax({
-                type: 'GET',
-                url: 'projectdelete',
-                data: {projectName: projectName},
-                success : function (){
-                    alert("Succes");
-                },
-                error : function (){
-                    alert("Something went wrong");
-                }
-            });
-        });
-        $(document).on('click', '.change-button', function () {
-            var fileName = $(this).parent().find('#filename').val();
-            var read = $(this).parent().find('#read').val();
-            var label = $(this).parent().find('#label').val();
-            if (fileName.length === 0 ){
-                fileName = $(this).parent().parent().find('.file-info').find('.name').html();
-            }
-            if (label.length === 0 ){
-                label = $(this).parent().parent().find('.file-info').find('.label').html();
-            }
-            if (read.length === 0 ){
-                read = $(this).parent().parent().find('.file-info').find('.read').html();
-            }
-            $.ajax({
-                type: 'GET',
-                url: 'editfile',
-                data: {fileInfo: [fileName, read, label]},
-                success : function (){
-                    alert("Succes");
-                },
-                error : function (){
-                    alert("Something went wrong");
-                }
-            });
-
-            console.log(fileName);
-            console.log(read);
-            console.log(label);
-        });
-        $(document).on('click', '.edit-button', function () {
-            $(this).parent().parent().find('.file-edit').toggleClass('show');
         });
         $(function(){
             $("#current-files li").draggable({
