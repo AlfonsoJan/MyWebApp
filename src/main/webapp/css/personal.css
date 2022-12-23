@@ -438,7 +438,7 @@ nav .nav__links li a:not(.panelButtons) {
 .container .personal .all-projects .personal-projects .project .title .icon:hover {
     stroke: gray;
 }
-.container .personal .all-projects .personal-projects .project .title .del {
+.container .personal .all-projects .personal-projects .project .title .download-project{
     margin-left: auto;
 }
 .container .personal .all-projects .personal-projects .project .project-edit {
@@ -521,4 +521,12 @@ nav .nav__links li a:not(.panelButtons) {
     padding: 20px !important;
     font-size: 20px !important;
     font-weight: bold !important;
+}
+
+.download-file {
+    margin-left: auto;
+}
+
+.read-c {
+    margin-left: 10%;
 }

@@ -438,7 +438,7 @@ nav .nav__links li a:not(.panelButtons) {
 .container .personal .all-projects .personal-projects .project .title .icon:hover {
     stroke: gray;
 }
-.container .personal .all-projects .personal-projects .project .title .del {
+.container .personal .all-projects .personal-projects .project .title .save-project {
     margin-left: auto;
 }
 .container .personal .all-projects .personal-projects .project .project-edit {
