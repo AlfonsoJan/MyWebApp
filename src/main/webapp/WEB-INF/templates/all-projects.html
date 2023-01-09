@@ -1,0 +1,222 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Personal Projects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
+    <script src="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
+    <style>
+        .rotated {
+            transform: rotate(180deg);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'sans': ['Helvetica', 'Arial', 'sans-serif'],
+                },
+                extend: {
+                    gridTemplateColumns: {
+                        '24': 'repeat(24, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridTemplateRows: {
+                        '10': 'repeat(10, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridRowEnd: {
+                        '10': '10',
+                        '21': '21',
+                        '16': '16',
+                        '19': '19',
+                        '13': '13',
+                        '17': '17'
+                    },
+                    gridRowStart: {
+                        '16': '16',
+                        '19': '19',
+                        '11': '11',
+                        '17': '17'
+                    },
+                    gridColumnEnd: {
+                        '24': '24',
+                        '21': '21',
+                        '25': '25'
+                    },
+                    gridColumnStart: {
+                        '24': '24',
+                        '12': '12',
+                    },
+                    boxShadow: {
+                        '3xl': '0px 0px 3px rgba(0, 0, 0, 0.9)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans mm-0 p-0">
+<!-- Navbar -->
+<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
+    <div class="mr-auto">
+        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
+    </div>
+    <div class="flex items-center justify-center">
+        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            New Files
+        </button>
+        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Personal
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Analysis
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10" id="container">
+    <div class="col-end-24 col-start-2 row-start-2 row-end-10 max-h-full grid grid-rows-20" id="all-personal-projects">
+        <div class="row-start-1 row-end-3 flex items-center justify-start px-2.5" id="search-projects">
+            <form class="w-[20rem]">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="search" onkeyup="filterProjectFunction()" id="filterProjectsInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Projects...">
+                </div>
+            </form>
+        </div>
+        <div class="row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="personal-projects">
+            <th:block th:each="project : ${projectInfo}">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="project">
+                    <div class="flex items-center justify-between" id="title">
+                        <p class="font-bold mx-0 my-4" id="project-title-header" th:text="${project.key}"></p>
+                        <button id="dropdownProjectOptionsButton" th:attr="data-dropdown-toggle=${project.key}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
+                            <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
+                        </button>
+                        <div class="h-6 w-6 group" id="show-project-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mb-2 hidden" id="project-info-files">
+                        <div id="analysis-files" class="">
+                            <th:block th:each="file : ${project.value}">
+                                <div class="flex items-center justify-between last:pb-3" id="analyse-file">
+                                    <p class="mt-2 mx-0" id="fileName" th:attr="data-name=${file}" th:text="'- ' + ${file}"></p>
+                                    <button id="dropdownFileOptionsButton" th:attr="data-dropdown-toggle=${file}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
+                                        <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
+                                    </button>
+                                    <div th:id="${file}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+                                        <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownFileOptionsButton">
+                                            <li>
+                                                <a onclick="downloadFile(this)" class="block px-4 py-2 hover:bg-gray-200">Download File</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="deleteFile(this)" class="block px-4 py-2 hover:bg-gray-200">Delete File</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <div th:id="${project.key}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+                        <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownProjectOptionsButton">
+                            <li>
+                                <a onclick="downloadProject(this)" class="block px-4 py-2 hover:bg-gray-200">Download Project</a>
+                            </li>
+                            <li>
+                                <a onclick="deleteProject(this)" class="block px-4 py-2 hover:bg-gray-200">Delete Project</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+
+<!-- The dropdowns for the navbar -->
+<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
+        <li>
+            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
+        </li>
+        <li>
+            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
+        </li>
+    </ul>
+</div>
+<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
+        <li>
+            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
+        </li>
+        <li>
+            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Scripts -->
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "linear",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    function downloadProject(item) {
+        var files = [];
+        var projectName = $(item).parent().parent().parent().parent().find("#title #project-title-header").html();
+        $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
+            files.push($(this).find("#fileName").data("name"));
+        });
+        console.log(`Download started for ${projectName} ${files}`)
+    }
+    function deleteProject(item) {
+        console.log($(item).parent().parent().parent().parent().find("#title #project-title-header").html());
+    }
+    function filterProjectFunction() {
+        var input = $("#filterProjectsInput").val().toUpperCase();
+        $.each($("#personal-projects #project"), function(){
+            var text = $(this).find("#title #project-title-header").html();
+            if (text.toUpperCase().indexOf(input) >= 0) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+    $(document).ready(function(){
+        $(document).on('click', "#show-project-icon", function () {
+            $(this).parent().parent().find("#project-info-files").toggle("fast");
+            $(this).toggleClass('rotated');
+        });
+    });
+</script>
+</body>
+</html>
