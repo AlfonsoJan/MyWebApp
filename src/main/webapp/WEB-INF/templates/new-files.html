@@ -1,0 +1,567 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>New Files</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
+    <script src="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
+    <style>
+        li.selected {
+            outline: 2px solid darkblue;
+        }
+        .low-used {
+            background-color: #F7E7A6;
+        }
+        .medium-used {
+            background-color: #F8CBB0;
+        }
+        .high-used {
+            background-color: #F7A9A6;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'sans': ['Helvetica', 'Arial', 'sans-serif'],
+                },
+                extend: {
+                    gridTemplateColumns: {
+                        '24': 'repeat(24, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridTemplateRows: {
+                        '10': 'repeat(10, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridRowEnd: {
+                        '10': '10',
+                        '21': '21',
+                        '16': '16',
+                        '19': '19',
+                        '13': '13',
+                        '17': '17'
+                    },
+                    gridRowStart: {
+                        '16': '16',
+                        '19': '19',
+                        '11': '11',
+                        '17': '17'
+                    },
+                    gridColumnEnd: {
+                        '24': '24',
+                        '21': '21',
+                        '25': '25'
+                    },
+                    gridColumnStart: {
+                        '24': '24',
+                        '12': '12',
+                    },
+                    boxShadow: {
+                        '3xl': '0px 0px 3px rgba(0, 0, 0, 0.9)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans mm-0 p-0">
+<!-- Navbar -->
+<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
+    <div class="mr-auto">
+        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
+    </div>
+    <div class="flex items-center justify-center">
+        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            New Files
+        </button>
+        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Personal
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Analysis
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10">
+    <div class="col-end-24 col-start-2 row-start-1 row-end-2 grid grid-cols-24">
+        <div class="col-end-11 col-start-1 flex items-end justify-center m-2">
+            <p class="font-bold text-xl">New Files</p>
+        </div>
+        <div class="col-start-13 col-end-25 flex items-end justify-center m-2">
+            <p class="font-bold text-xl">Add Files</p>
+        </div>
+    </div>
+    <div class="col-end-24 col-start-2 row-start-2 row-end-10 grid grid-cols-24 grid-rows-10">
+        <div class="col-end-13 col-start-11 row-start-5 row-end-7 flex items-center justify-center">
+            <div class="h-12 w-12 hover:cursor-pointer" id="icon-add-file">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrow-big-right" width="40" height="40" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 9h8v-3.586a1 1 0 0 1 1.707 -.707l6.586 6.586a1 1 0 0 1 0 1.414l-6.586 6.586a1 1 0 0 1 -1.707 -.707v-3.586h-8a1 1 0 0 1 -1 -1v-4a1 1 0 0 1 1 -1z"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="flex pl-0.5 row-start-1 row-end-2 items-start justify-end col-start-12 col-end-13">
+            <div class="w-6 h-6 relative group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="17" x2="12" y2="17.01" />
+                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
+                </svg>
+                <span class="invisible w-32 bg-black text-white text-center rounded-md px-0 py-1 z-[1] absolute -ml-16 bottom-[110%] left-[50%] group-hover:visible">In deze box staan je geselecteerde bestanden</span>
+            </div>
+        </div>
+        <div class="flex pl-0.5 row-start-1 row-end-2 items-start justify-start col-end-12 col-start-11">
+            <div class="w-6 h-6 relative group">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-help" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="12" cy="12" r="9" />
+                    <line x1="12" y1="17" x2="12" y2="17.01" />
+                    <path d="M12 13.5a1.5 1.5 0 0 1 1 -1.5a2.6 2.6 0 1 0 -3 -4" />
+                </svg>
+                <span class="invisible w-32 bg-black text-white text-center rounded-md px-0 py-1 z-[1] absolute -ml-16 bottom-[110%] left-[50%] group-hover:visible">In deze box staan alle (nieuwe) bestanden</span>
+            </div>
+        </div>
+        <!-- The New File List -->
+        <div class="h-full col-start-1 col-end-11 row-span-full rounded-md shadow-3xl grid grid-rows-20 p-1 gap-2" id="new-file-list">
+            <div class="row-start-1 row-end-3 flex items-center justify-between gap-4 px-2 py-1 border-[#8C8C8C] border-b" id="filters">
+                <select name="file-filters" id="file-filters" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 block p-2">
+                    <option value="0">All Files</option>
+                    <option value="1">Never used</option>
+                    <option value="2">Low Useage</option>
+                    <option value="3">Medium Usage</option>
+                    <option value="4">High Usage</option>
+                </select>
+                <input type="search" onkeyup="filterFileFunction()" id="filterFileInput" class="block text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search File...">
+            </div>
+            <div class="row-start-3 row-end-21" id="file-list">
+                <div class="max-h-full overflow-y-auto px-0 py-1.5" id="all-files">
+                    <ul id="current-files" class="p-0 mx-4 mt-2 mb-4">
+                        <th:block th:each="files : ${filesList}">
+                            <li class="flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                    <line x1="9" y1="17" x2="9" y2="12"></line>
+                                    <line x1="12" y1="17" x2="12" y2="16"></line>
+                                    <line x1="15" y1="17" x2="15" y2="14"></line>
+                                </svg>
+                                <th:block th:if="${files[2] == 'NONE'}">
+                                    <span id="fileName" class="mr-auto none-used" th:text="${files[0]}"></span>
+                                </th:block>
+                                <th:block th:if="${files[2] == 'LOW'}">
+                                    <span id="fileName" class="mr-auto low-used" th:text="${files[0]}"></span>
+                                </th:block>
+                                <th:block th:if="${files[2] == 'MEDIUM'}">
+                                    <span id="fileName" class="mr-auto medium-used" th:text="${files[0]}"></span>
+                                </th:block>
+                                <th:block th:if="${files[2] == 'HIGH'}">
+                                    <span id="fileName" class="mr-auto high-used" th:text="${files[0]}"></span>
+                                </th:block>
+                                <span th:text="${files[1]}"></span>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Add Container -->
+        <div class="row-span-full col-start-13 col-end-25 rounded-md shadow-3xl grid grid-rows-20 p-1 gap-2" id="chosen-content">
+            <div class="row-start-1 row-end-3 flex items-center justify-between gap-4 px-2 py-1 border-[#8C8C8C] border-b">
+                <div id="buttons-push-project">
+                    <input checked id="radio-button-new" type="radio" value="NEW" name="radio-buttons" class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-800 focus:ring-orange-200">
+                    <label for="radio-button-new" class="ml-1 mr-2 text-sm font-medium text-gray-900">New Project</label>
+                    <input id="radio-button-exist" type="radio" value="EXIST" name="radio-buttons" class="w-4 h-4 text-orange-500 bg-gray-100 border-gray-800 focus:ring-orange-200">
+                    <label for="radio-button-exist" class="ml-1 text-sm font-medium text-gray-900">Add to existing project</label>
+                </div>
+                <div class="" id="options">
+                    <div class="" id="new-project">
+                        <label for="projectname">Project name</label>
+                        <input class="text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" type="text" name="projectname" id="projectname" placeholder="Project Name...">
+                    </div>
+                    <div class="" id="existing-project">
+                        <select name="projects-names" id="projects-names" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 block p-2">
+                            <option Selected>Select a Project</option>
+<!--                            <option th:each="project : ${projects}" value="${project.name}" th:text="${project.name}"></option>-->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="overflow-y-auto row-start-3 row-end-17" id="files"></div>
+            <div type="button" onclick="getFiles()" class="row-start-17 row-end-19 rounded-md bg-[#808080] text-[#D3D3D3] font-bold text-xl hover:text-white flex items-center justify-center" id="download-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                    <polyline points="7 11 12 16 17 11"></polyline>
+                    <line x1="12" y1="4" x2="12" y2="16"></line>
+                </svg>
+                <h3>Download</h3>
+            </div>
+            <div class="row-start-19 row-end-21 rounded-md bg-[#808080] text-[#D3D3D3] font-bold text-xl hover:text-white flex items-center justify-center" id="add-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <line x1="9" y1="12" x2="15" y2="12"></line>
+                    <line x1="12" y1="9" x2="12" y2="15"></line>
+                </svg>
+                <h3>Add project to your account</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The dropdowns for the navbar -->
+<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
+        <li>
+            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
+        </li>
+        <li>
+            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
+        </li>
+    </ul>
+</div>
+<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
+        <li>
+            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
+        </li>
+        <li>
+            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
+        </li>
+    </ul>
+</div>
+
+
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "linear",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    var del = "<span id='readDelete' class='w-6 h-6 relative flex items-center justify-center float-right group'><svg xmlns='http://www.w3.org/2000/svg' class='hover:stroke-black hover:cursor-pointer icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
+    function filterFileFunction() {
+        var input = $('#filterFileInput').val().toUpperCase();
+        var value = $('#file-filters').val();
+        $.each($("#current-files li"), function(){
+            if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                $(this).show()
+            } else {
+                $(this).hide()
+            }
+            if (value == 0){
+                $.each($("#current-files li"), function(){
+                    if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                        $(this).show()
+                    } else {
+                        $(this).hide()
+                    }
+                });
+            }
+            if (value == 1) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('none-used')) {
+                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                            $(this).show()
+                        } else {
+                            $(this).hide()
+                        }
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 2) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('low-used')) {
+                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                            $(this).show()
+                        } else {
+                            $(this).hide()
+                        }
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 3) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('medium-used')) {
+                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                            $(this).show()
+                        } else {
+                            $(this).hide()
+                        }
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 4) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('high-used')) {
+                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
+                            $(this).show()
+                        } else {
+                            $(this).hide()
+                        }
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+    }
+    $("#icon-add-file").hide();
+    $("#existing-project").hide();
+    function getFiles() {
+        var url = "download?";
+        var elements = $("#chosen-content #files");
+        var fileNames = [];
+        $.each($("#chosen-content #files").find("p"), function () {
+            fileNames.push($(this).data("name"))
+        });
+        if (fileNames.length < 1) {
+            toastr.warning("Please select at least one file");
+            return;
+        }
+        $.each(fileNames, function (index, val) {
+            url += `allFiles=${val}&`;
+        });
+        $.each($("#chosen-content #files").find("p"), function () {
+            $(this).remove()
+        });
+        url = url.slice(0, -1);
+        var link = document.createElement('a');
+        link.href = url;
+        link.click();
+    }
+    function addFileToProject(fileNames) {
+        var projectName = $("#projects-names option:selected" ).val();
+        if (projectName.toLowerCase() === "select a project") {
+            toastr.warning("Please select a project");
+            return;
+        }
+        $.ajax({
+            type: 'GET',
+            url: 'addfilestoproject',
+            data: {projectname: projectName, files: [fileNames]},
+            success: function () {
+                toastr.success(`Successfully added ${fileNames.length} files to ${projectName}!`);
+                $.each($("#chosen-content #files").find("p"), function(){
+                    $(this).remove();
+                });
+            },
+            error: function () {
+                toastr.error('There was an error, please contact support!');
+            }
+        });
+    }
+    function createProject(fileNames) {
+        var projectName = $('#projectname').val();
+        if (projectName < 1) {
+            toastr.warning('Please type in a project name!');
+            return;
+        }
+        $.ajax({
+            type: 'GET',
+            url: 'createproject',
+            data: {projectname: projectName, files: [fileNames]},
+            success: function () {
+                toastr.success(`Successfully added ${projectName} to your account with ${fileNames.length} files!`);
+                $("#projects-names").append($('<option>', {value: projectName, text: projectName}));
+                $.each($("#chosen-content #files").find("p"), function(){
+                    $(this).remove();
+                });
+            },
+            error: function () {
+                toastr.error('This project already exists!');
+            }
+        });
+    }
+    $(document).ready(function(){
+        $(document).on('click', '#add-button', function (e) {
+            e.preventDefault();
+            var fileNames = [];
+            $.each($("#chosen-content #files").find("p"), function(){
+                fileNames.push($(this).data("name"))
+            });
+            if (fileNames.length < 1) {
+                toastr.warning("Please select at least one file");
+                return;
+            }
+            var newProject = $("#add-button h3").html().toLowerCase() === "add project to your account";
+            switch (newProject) {
+                case true:
+                    createProject(fileNames);
+                    break;
+                case false:
+                    addFileToProject(fileNames);
+                    break;
+            }
+        });
+        // Show different options
+        $('input[type=radio][name=radio-buttons]').on('change', function() {
+            switch ($(this).val()) {
+                case 'NEW':
+                    $("#new-project").show();
+                    $("#existing-project").hide();
+                    $("#add-button h3").text("Add project to your account");
+                    break;
+                case 'EXIST':
+                    $("#new-project").hide();
+                    $("#existing-project").show();
+                    $("#add-button h3").text("Add files to project");
+                    break;
+            }
+        });
+        // Delete file from selected
+        $(document).on('click', '#readDelete', function (e) {
+            e.preventDefault();
+            $(this).parent().remove();
+        });
+        // Add file button
+        $(document).on('click', "#icon-add-file", function (e) {
+            e.preventDefault();
+            $.each($("#current-files li").filter('.selected'), function(){
+                var fileName = $(this).find('#fileName').html();
+                $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
+                $(this).removeClass("selected");
+            });
+            $("#icon-add-file").hide();
+        });
+        // Drag functions
+        $(function(){
+            $("#current-files li").draggable({
+                containment: "window",
+                cursor: 'clone',
+                helper: function(){
+                    $("#icon-add-file").show();
+                    var selected = $("#current-files li.selected");
+                    if (selected.length == 0){
+                        selected = $(this).addClass('selected');
+                    }
+                    var w = $(this).css('width');
+                    var h = $(this).css('height');
+                    var container = $('<div/>').attr('id', 'draggingContainer');
+                    container.append(selected.clone().removeClass("selected").css('width', w).css('height', h));
+                    return container;
+                }
+            });
+            $("#chosen-content #files").droppable({
+                drop: function(event, ui) {
+                    $.each($("#current-files li").filter('.selected'), function(){
+                        var fileName = $(this).find('#fileName').html();
+                        $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
+                        $(this).removeClass("selected");
+                    });
+                    $("#icon-add-file").hide();
+                }
+            });
+        });
+        // Select files functions
+        lastChecked = null;
+        $(document).on('click', "#current-files li", function (e) {
+            e.preventDefault();
+            if (e.ctrlKey){
+                $(this).toggleClass("selected");
+                if ($('.selected').length >= 1) {
+                    $("#icon-add-file").show();
+                } else {
+                    $("#icon-add-file").hide();
+                }
+            }
+            if(!lastChecked){
+                lastChecked = this;
+                return;
+            }
+            if (e.shiftKey){
+                var from = $("#current-files li").index(this);
+                var to = $("#current-files li").index(lastChecked);
+                var start = Math.min(from, to);
+                var end = Math.max(from, to) + 1;
+                $.each($("#current-files li").slice(start, end).filter(':not(.selected)'), function(){
+                    $(this).addClass("selected");
+                });
+                if ($('.selected').length >= 1) {
+                    $("#icon-add-file").show();
+                } else {
+                    $("#icon-add-file").hide();
+                }
+            }
+            lastChecked = null;
+        });
+        // Show the files with the correct class
+        $('#file-filters').on('change', function() {
+            var value = $(this).val();
+            $('#filterFileInput').val('');
+            if (value == 0){
+                $.each($("#current-files li"), function(){
+                    $(this).show();
+                });
+            }
+            if (value == 1) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('none-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 2) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('low-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 3) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('medium-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+            if (value == 4) {
+                $.each($("#current-files li"), function(){
+                    if ($(this).find('#fileName').hasClass('high-used')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>
