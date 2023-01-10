@@ -1,0 +1,219 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Analyse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
+    <script src="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
+    <style>
+        .rotated {
+            transform: rotate(180deg);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'sans': ['Helvetica', 'Arial', 'sans-serif'],
+                },
+                extend: {
+                    gridTemplateColumns: {
+                        '24': 'repeat(24, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridTemplateRows: {
+                        '10': 'repeat(10, 1fr)',
+                        '20': 'repeat(20, 1fr)'
+                    },
+                    gridRowEnd: {
+                        '10': '10',
+                        '21': '21',
+                        '16': '16',
+                        '19': '19',
+                        '13': '13',
+                        '17': '17'
+                    },
+                    gridRowStart: {
+                        '16': '16',
+                        '19': '19',
+                        '11': '11',
+                        '17': '17'
+                    },
+                    gridColumnEnd: {
+                        '24': '24',
+                        '21': '21',
+                        '25': '25',
+                        '13': '13'
+                    },
+                    gridColumnStart: {
+                        '24': '24',
+                        '12': '12',
+                    },
+                    boxShadow: {
+                        '3xl': '0px 0px 3px rgba(0, 0, 0, 0.9)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans mm-0 p-0">
+<!-- Navbar -->
+<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
+    <div class="mr-auto">
+        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
+    </div>
+    <div class="flex items-center justify-center">
+        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            New Files
+        </button>
+        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Personal
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Analysis
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
+    </div>
+</nav>
+
+<div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10" id="container">
+    <div class="col-end-24 col-start-2 row-start-2 row-end-10 max-h-full grid grid-rows-20">
+        <div class="row-start-1 row-end-3 flex items-center justify-start px-2.5" id="search-projects">
+            <form class="w-[20rem]">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <input type="search" onkeyup="filterAnalyseFunction()" id="filterAnalyseInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Analysis...">
+                </div>
+            </form>
+        </div>
+        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="analysis-done">
+            <th:block th:each="analyse :  ${analyseInfo}">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${analyse.sessionID}">
+                    <div class="flex items-center justify-between" id="analysis-title">
+                        <p class="font-bold mx-0 my-4" id="title-header" th:text="${analyse.projectName}"></p>
+                        <div class="flex" id="status-button">
+                            <div id="finished-icon" class="hidden">
+                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-900 text-green-300">
+                                        <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
+                                        Finished
+                                    </span>
+                            </div>
+                            <div id="running-icon" class="">
+                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-orange-900 text-orange-300">
+                                        <span class="w-2 h-2 mr-1 bg-orange-500 rounded-full"></span>
+                                        Running
+                                    </span>
+                            </div>
+                            <div id="cant-find-anaylse" class="hidden">
+                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-900 text-red-300">
+                                        <span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span>
+                                        Absent
+                                    </span>
+                            </div>
+                            <div class="h-6 w-6 group" id="show-analysis-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2 hidden" id="analysis-info">
+                        <div id="analysis-files">
+                            <th:block th:each="files :  ${analyse.files}">
+                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-fileName=${files}" th:text="'- ' + ${files}"></p>
+                            </th:block>
+                        </div>
+                        <div class="w-full" id="analysis-download">
+                            <div id="done" class="hidden">
+                                <p>Download a summary of the FastQC: <span id="download-link" class="rounded-md px-4 py-1.5 mx-1 bg-orange-300 hover:cursor-pointer hover:bg-orange-400">here</span></p>
+                            </div>
+
+                            <div class="flex items-center" id="still-performing">
+                                <p class="pr-1 italic text-[#323232]">Still performing the QC on the file(s)</p>
+                                <div role="status">
+                                    <svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-orange-500 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+
+<!-- The dropdowns for the navbar -->
+<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
+        <li>
+            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
+        </li>
+        <li>
+            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
+        </li>
+    </ul>
+</div>
+<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
+        <li>
+            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
+        </li>
+        <li>
+            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Scripts -->
+<script>
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": true,
+        "progressBar": false,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "linear",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    function filterAnalyseFunction() {
+        var input = $("#filterAnalyseInput").val().toUpperCase();
+        $.each($("#analysis-done #analysis-tile"), function(){
+            var text = $(this).find("#analysis-title #title-header").html();
+            if (text.toUpperCase().indexOf(input) >= 0) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    }
+    $(document).ready(function(){
+        $(document).on('click', "#show-analysis-icon", function () {
+            $(this).parent().parent().parent().find("#analysis-info").toggle("fast");
+            $(this).toggleClass('rotated');
+        });
+    });
+</script>
+
+</body>
+</html>
