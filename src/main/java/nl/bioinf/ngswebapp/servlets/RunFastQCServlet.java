@@ -13,6 +13,7 @@ public class RunFastQCServlet {
 //        String files[] = new String[]{"/homes/jabusker/Desktop/clock_10K_R1.fastq.gz",
 //                "/homes/jabusker/Desktop/clock_10K_R2.fastq.gz", "-o",
 //        "/homes/jabusker/Desktop/tmp/"};
+
         String files[] = new String[]{"clock_10K_R1.fastq.gz",
                 "clock_10K_R2.fastq.gz"};
         FastQC fastQC = new FastQC(files);
