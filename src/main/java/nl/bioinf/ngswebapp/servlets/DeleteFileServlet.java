@@ -12,14 +12,11 @@ import java.io.IOException;
 public class DeleteFileServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println(request.getParameterValues("a[]")[0]);
-        //int id = Integer.parseInt(request.getParameter("id"));
-//        try {
-//            System.out.println(id);
-//            AllPersonalFilesServlet.getConnector().deleteLabeledFile(1);
-//        } catch (DatabaseException e) {
-//            System.out.println(e);
-//            throw new RuntimeException(e);
-//        }
+        int id = Integer.parseInt(request.getParameterValues("id[]")[0]);
+        try {
+            AllPersonalFilesServlet.getConnector().deleteLabeledFile(id);
+        } catch (DatabaseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

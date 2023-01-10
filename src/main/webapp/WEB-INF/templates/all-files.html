@@ -269,7 +269,7 @@
         $.ajax({
             type: 'GET',
             url: 'deletefile',
-            data: {id: [the_id], ja: ["a"]},
+            data: {id: [the_id]},
             success: function () {
                 toastr.success(`Successfully deleted ${selected.textContent}`);
             },
