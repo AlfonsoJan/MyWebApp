@@ -20,57 +20,45 @@ public class DownloadServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
-        String resourcePath = request.getServletContext().getRealPath("/WEB-INF/resources/");
-
-        if (allFiles.length == 1) {
-            fileName = allFiles[0];
-        }
-        else if (allFiles.length > 1) {
-            fileName = "placeholder.tar.gz";
-
-            TarGzipExample1 zipper = new TarGzipExample1(resourcePath, allFiles);
-
-            resourcePath = resourcePath + "/temp";
-
-            List<Path> paths = zipper.fileNamesToPaths();
-            Path outPath = Paths.get(resourcePath + fileName);
-
-            zipper.createTarGzipFiles(paths, outPath);
-        }
+        String resourcePath = request.getServletContext().getInitParameter("resourcePath");
 
         FileInputStream fileInputStream = null;
         OutputStream responseOutputStream = null;
 
-        try
-        {
-            String filePath = resourcePath + fileName;
-            File file = new File(filePath);
+        if (allFiles.length == 1) {
+            fileName = allFiles[0];
+            try {
+                String filePath = resourcePath + fileName;
+                File file = new File(filePath);
 
-            String mimeType = request.getServletContext().getMimeType(filePath);
-            if (mimeType == null) {
-                mimeType = "application/octet-stream";
-            }
-            response.setContentType(mimeType);
-            response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
-            response.setContentLength((int) file.length());
+                String mimeType = request.getServletContext().getMimeType(filePath);
+                if (mimeType == null) {
+                    mimeType = "application/octet-stream";
+                }
+                response.setContentType(mimeType);
+                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+                response.setContentLength((int) file.length());
 
-            fileInputStream = new FileInputStream(file);
-            responseOutputStream = response.getOutputStream();
-            int bytes;
-            while ((bytes = fileInputStream.read()) != -1) {
-                responseOutputStream.write(bytes);
+                fileInputStream = new FileInputStream(file);
+                responseOutputStream = response.getOutputStream();
+                int bytes;
+                while ((bytes = fileInputStream.read()) != -1) {
+                    responseOutputStream.write(bytes);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                assert fileInputStream != null;
+                fileInputStream.close();
+                assert responseOutputStream != null;
+                responseOutputStream.close();
             }
+        } else if (allFiles.length > 1) {
+
+
         }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        finally
-        {
-            assert fileInputStream != null;
-            fileInputStream.close();
-            assert responseOutputStream != null;
-            responseOutputStream.close();
-        }
+
+
+
     }
 }
