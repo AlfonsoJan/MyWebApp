@@ -12,7 +12,9 @@ public class FastqFiles {
     public static ArrayList<ArrayList<String>> getFiles(String filePath) throws IOException {
         ArrayList<ArrayList<String>> listOfFiles = new ArrayList<>();
         File[] filesList = new File(filePath).listFiles();
-        Arrays.sort(filesList, Comparator.comparingLong(File::lastModified).reversed());
+        if (filesList.length > 0) {
+            Arrays.sort(filesList, Comparator.comparingLong(File::lastModified).reversed());
+        }
         for (File file: filesList) {
             if (file.isFile() && file.getName().endsWith(".fastq.gz")) {
                 ArrayList<String> tmp = new ArrayList<>();
