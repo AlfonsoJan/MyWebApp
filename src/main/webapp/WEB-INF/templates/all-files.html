@@ -93,21 +93,21 @@
             <th:block th:each="file : ${filesList}">
                 <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="file-container">
                     <div class="flex items-center justify-between" id="file-title">
-                        <p class="font-bold mx-0 my-4" id="file-header" th:text="${file[0]}"></p>
-                        <p class="ml-auto italic overflow-hidden whitespace-nowrap text-ellipsis max-w-[18rem]" id="orig-file-header" th:text="'Originalname: ' + ${file[3]}"></p>
-                        <div class="pl-3">
-                            <button id="dropdownMenuOptionsButton" th:attr="data-dropdown-toggle=${file[0]}" class="group inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
+                        <p class="font-bold mx-0 my-4" id="file-header" th:text="${file.label}"></p>
+                        <p class="ml-auto italic overflow-hidden whitespace-nowrap text-ellipsis max-w-[18rem]" id="orig-file-header" th:text="'Originalname: ' + ${file.fullPath}"></p>
+                        <div class="pl-3" th:id="${file.fileId}">
+                            <button id="dropdownMenuOptionsButton" th:attr="data-dropdown-toggle=${file.label}" class="group inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button" onclick="updateSelected(this)">
                                 <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                             </button>
                         </div>
-                        <div class="h-6 w-6 group" id="show-project-icon">
+                        <!--<div class="h-6 w-6 group" id="show-project-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
-                        </div>
+                        </div>!-->
                     </div>
-                    <div class="mb-2 hidden" id="info-files">
+                    <!--<div class="mb-2 hidden" id="info-files">
                         <p id="label" th:text="'Label: ' + ${file[1]}"></p>
                         <th:block th:if="${file[2]} gt 0">
                             <p id="read" th:text="'Read: ' + ${file[2]}"></p>
@@ -115,8 +115,8 @@
                         <th:block th:if="${file[2]} lt 1">
                             <p id="read">Read: -</p>
                         </th:block>
-                    </div>
-                    <div th:id="${file[0]}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+                    </div>!-->
+                    <div th:id="${file.label}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
                         <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownMenuOptionsButton">
                             <li>
                                 <a onclick="editFile(this)" class="block px-4 py-2 hover:bg-gray-200">Edit</a>
@@ -170,19 +170,19 @@
             <div class="px-6 py-6 lg:px-8" id="fileOptions">
                 <h3 class="mb-4 text-xl font-medium text-gray-900">Update (filename)</h3>
                 <form class="space-y-6" id="editButtonSubmit">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between" id="fileNameDiv">
                         <label id="origFileName" for="fileName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Filename)</label>
                         <input type="text" name="fileName" id="fileName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Filename...">
                     </div>
-                    <div class="flex items-center justify-between">
+                    <!--<div class="flex items-center justify-between">
                         <label id="origLabel" for="label" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Label)</label>
                         <input type="text" name="label" id="label" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Label...">
                     </div>
                     <div class="flex items-center justify-between">
                         <label id="origRead" for="read" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old read)</label>
                         <input type="text" name="read" pattern="[12-]{1,}" id="read" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Read...">
-                    </div>
-                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center">Update File</button>
+                    </div>!-->
+                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="updateFile(this)">Update File</button>
                 </form>
             </div>
         </div>
@@ -209,6 +209,7 @@
         "hideMethod": "fadeOut"
     }
     var modelElem = $("#modalEl")[ 0 ];
+    var selected;
     var options = {
         placement: 'center',
         backdrop: 'dynamic',
@@ -217,14 +218,14 @@
     var modal = new Modal(modelElem, options);
     function editFile(item) {
         var origFileName = $(item).parent().parent().parent().parent().find("#file-title #file-header").html();
-        var origRead = $(item).parent().parent().parent().parent().find("#info-files #read").html();
-        origRead = origRead.substring(origRead.indexOf(":") + 1, origRead.length).replace(/ /g,'');
-        var origLabel = $(item).parent().parent().parent().parent().find("#info-files #label").html();
-        origLabel = origLabel.substring(origLabel.indexOf(":") + 1, origLabel.length).replace(/ /g,'');
+        //var origRead = $(item).parent().parent().parent().parent().find("#info-files #read").html();
+        //origRead = origRead.substring(origRead.indexOf(":") + 1, origRead.length).replace(/ /g,'');
+        //var origLabel = $(item).parent().parent().parent().parent().find("#info-files #label").html();
+        //origLabel = origLabel.substring(origLabel.indexOf(":") + 1, origLabel.length).replace(/ /g,'');
         $("#modalEl div div #fileOptions h3").text(`Update: ${origFileName}`);
         $("#modalEl div div #fileOptions form div #origFileName").text(`Current name: ${origFileName}`);
-        $("#modalEl div div #fileOptions form div #origLabel").text(`Current label: ${origLabel}`);
-        $("#modalEl div div #fileOptions form div #origRead").text(`Current read: ${origRead}`);
+        //$("#modalEl div div #fileOptions form div #origLabel").text(`Current label: ${origLabel}`);
+        //$("#modalEl div div #fileOptions form div #origRead").text(`Current read: ${origRead}`);
         modal.show()
     }
     function downloadFile(item) {
@@ -245,6 +246,40 @@
                 $(this).hide();
             }
         });
+    }
+    function updateFile(element) {
+        let newName = element.parentElement.children.item(0).children.item(1).value;
+        let id = selected.parentElement.children.item(2).id;
+        $.ajax({
+            type: 'GET',
+            url: 'changefilename',
+            data: {id: [id], newName: [newName]},
+            success: function () {
+                toastr.success(`Successfully changed the name to ${newName}`);
+                selected.textContent = newName;
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
+    }
+    function deleteFile(element) {
+        let the_id = selected.parentElement.children.item(2).id; // is a number as string
+        console.log(the_id)
+        $.ajax({
+            type: 'GET',
+            url: 'deletefile',
+            data: {id: [the_id], ja: ["a"]},
+            success: function () {
+                toastr.success(`Successfully deleted ${selected.textContent}`);
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
+    }
+    function  updateSelected(element) {
+        selected = element.parentElement.parentElement.children.item(0);
     }
     $(document).ready(function(){
         $("#editButtonSubmit").submit(function(e) {

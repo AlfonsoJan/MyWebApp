@@ -35,9 +35,11 @@ public class VerySimpleDbConnector {
     private static final String INSERT_FILE = "insert_file";
     private static final String UPDATE_PROJECT = "update_project";
     private static final String UPDATE_FILE = "update_file";
+    private static final String DELETE_FILE = "delete_file";
     private static final String SELECT_PROJECT_FROM_NAME = "select_project_from_name";
 
     private static final String SELECT_PROJECTS_FROM_USER = "select_projects_from_user";
+    private static final String SELECT_LABEL_FILES_FROM_USER = "select_labeled_from_user";
     /**
      * a main for demonstration purposes
      *
@@ -124,8 +126,17 @@ public class VerySimpleDbConnector {
         String projectNameUpdateQuery = "UPDATE projects set project_name = ? where id = ?;";
         this.preparedStatements.put(UPDATE_PROJECT, connection.prepareStatement(projectNameUpdateQuery));
 
+        String labelNameUpdateQuery = "UPDATE labeled_files set label = ? where id = ?;";
+        this.preparedStatements.put(UPDATE_FILE, connection.prepareStatement(labelNameUpdateQuery));
+
+        String labelNameDeleteQuery = "DELETE from labeled_files where id = ?;";
+        this.preparedStatements.put(DELETE_FILE, connection.prepareStatement(labelNameDeleteQuery));
+
         String projectIDFetchQueryFromName = "SELECT id from projects where user_id = ? and project_name = ?";
         this.preparedStatements.put(SELECT_PROJECT_FROM_NAME, connection.prepareStatement(projectIDFetchQueryFromName));
+
+        String labeledFetchQueryFromUser = "SELECT * from labeled_files,projects where labeled_files.project_id = projects.id and user_id = ?";
+        this.preparedStatements.put(SELECT_LABEL_FILES_FROM_USER, connection.prepareStatement(labeledFetchQueryFromUser));
 
     }
 
@@ -304,7 +315,6 @@ public class VerySimpleDbConnector {
     public void updateLabelName(String newLabel, int labelId) throws DatabaseException {
         try{
             //Prepare statement
-            //!! Doing this within this method is extremely inefficient !!
             PreparedStatement ps = this.preparedStatements.get(UPDATE_FILE);
 
             //set data on the "?" placeholders of the prepared statement
@@ -319,6 +329,24 @@ public class VerySimpleDbConnector {
                     ex.getCause());
         }
     }
+
+    public void deleteLabeledFile(int labelId) throws DatabaseException {
+        try{
+            //Prepare statement
+            PreparedStatement ps = this.preparedStatements.get(DELETE_FILE);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setInt(1, labelId);
+
+            //do the actual insert
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
 
     public Map<Project, ArrayList<LabeledFile>> getProjectsFromUser(int id) throws SQLException {
 
@@ -378,6 +406,24 @@ public class VerySimpleDbConnector {
 
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECTS_USING_PROJECT_ID);
         ps.setString(1, String.valueOf(projectId));
+
+        ArrayList<LabeledFile> results = new ArrayList<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int labelId = rs.getInt("labeled_files.id");
+            String label = rs.getString("labeled_files.label");
+            String path = rs.getString("labeled_files.path");
+            int id = rs.getInt("projects.id");
+            results.add(new LabeledFile(labelId, label, path, id));
+        }
+
+        return results;
+    }
+
+    public ArrayList<LabeledFile> getLabeledFromUser(int userID) throws SQLException {
+
+        PreparedStatement ps = this.preparedStatements.get(SELECT_LABEL_FILES_FROM_USER);
+        ps.setString(1, String.valueOf(userID));
 
         ArrayList<LabeledFile> results = new ArrayList<>();
         ResultSet rs = ps.executeQuery();

@@ -23,7 +23,7 @@ public class LabeledFile {
         return String.valueOf(fileId) + ";" + label + ";" + fullPath + ";" + String.valueOf(projectId);
     }
 
-    public int getId() {
+    public int getFileId() {
         return fileId;
     }
 
