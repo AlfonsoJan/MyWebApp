@@ -23,17 +23,6 @@ public class TarGzipExample1 {
         this.fileNames = fileNames;
     }
 
-    public List<Path> fileNamesToPaths() {
-        List<Path> paths = new ArrayList<>();
-
-        for (String fileName : fileNames) {
-            Path path = Paths.get(resourcePath + fileName);
-            paths.add(path);
-        }
-
-        return paths;
-    }
-
     // tar.gz few files
     public void createTarGzipFiles(List<Path> paths, Path output) throws IOException {
 

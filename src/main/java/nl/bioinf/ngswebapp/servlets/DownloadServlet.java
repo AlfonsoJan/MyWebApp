@@ -1,6 +1,7 @@
 package nl.bioinf.ngswebapp.servlets;
 
 import nl.bioinf.ngswebapp.model.TarGzipExample1;
+import nl.bioinf.ngswebapp.service.TarGzip;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -54,8 +55,7 @@ public class DownloadServlet extends HttpServlet {
                 responseOutputStream.close();
             }
         } else if (allFiles.length > 1) {
-
-
+            TarGzip zipper = new TarGzip(resourcePath, allFiles);
         }
 
 
