@@ -159,16 +159,16 @@
                                     <line x1="15" y1="17" x2="15" y2="14"></line>
                                 </svg>
                                 <th:block th:if="${files[2] == 'NONE'}">
-                                    <span id="fileName" class="mr-auto none-used" th:text="${files[0]}"></span>
+                                    <span id="fileName" class="text-bold mr-auto none-used" th:text="${files[0]}"></span>
                                 </th:block>
                                 <th:block th:if="${files[2] == 'LOW'}">
-                                    <span id="fileName" class="mr-auto low-used" th:text="${files[0]}"></span>
+                                    <span id="fileName" class="text-bold mr-auto low-used" th:text="${files[0]}"></span>
                                 </th:block>
                                 <th:block th:if="${files[2] == 'MEDIUM'}">
-                                    <span id="fileName" class="mr-auto medium-used" th:text="${files[0]}"></span>
+                                    <span id="fileName" class="text-bold mr-auto medium-used" th:text="${files[0]}"></span>
                                 </th:block>
                                 <th:block th:if="${files[2] == 'HIGH'}">
-                                    <span id="fileName" class="mr-auto high-used" th:text="${files[0]}"></span>
+                                    <span id="fileName" class="text-bold mr-auto high-used" th:text="${files[0]}"></span>
                                 </th:block>
                                 <span th:text="${files[1]}"></span>
                             </li>
@@ -369,7 +369,7 @@
         $.ajax({
             type: 'GET',
             url: 'addfilestoproject',
-            data: {projectname: projectName, files: [fileNames]},
+            data: {projectname: [projectName], files: fileNames},
             success: function () {
                 toastr.success(`Successfully added ${fileNames.length} files to ${projectName}!`);
                 $.each($("#chosen-content #files").find("p"), function(){
@@ -390,7 +390,7 @@
         $.ajax({
             type: 'GET',
             url: 'createproject',
-            data: {projectname: projectName, files: [fileNames]},
+            data: {projectname: [projectName], files: fileNames},
             success: function () {
                 toastr.success(`Successfully added ${projectName} to your account with ${fileNames.length} files!`);
                 $("#projects-names").append($('<option>', {value: projectName, text: projectName}));
