@@ -16,8 +16,7 @@ public class RunFastQCServlet {
         String files[] = new String[]{"clock_10K_R1.fastq.gz",
                 "clock_10K_R2.fastq.gz"};
         FastQC fastQC = new FastQC(files);
-        FastQCRunner runnerFastQC = new FastQCRunner(fastQC);
         Files.createDirectories(Paths.get("/homes/jabusker/Desktop/tmp/"));
-        runnerFastQC.startJob("/homes/jabusker/Desktop/tmp/", "test");
+        fastQC.startJob("/homes/jabusker/Desktop/tmp/", "test");
     }
 }

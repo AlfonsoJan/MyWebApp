@@ -1,5 +1,5 @@
 package nl.bioinf.ngswebapp.service;
 
-public interface QualityControl {
+public interface CommandConstructor {
     ProcessBuilder constructCommand();
 }
