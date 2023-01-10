@@ -16,22 +16,33 @@ public class JobRunner implements CommandConstructor {
     private final String resourcePath;
     private final String[] files;
     private final String jobType;
+    private final List<String> paths;
 
     public JobRunner(UUID uniqueId, String resourcePath, String[] files, String jobType) {
         this.uniqueId = uniqueId;
         this.resourcePath = resourcePath;
         this.files = files;
         this.jobType = jobType;
+        this.paths = fileNamesToPath();
+    }
+
+    private List<String> fileNamesToPath() {
+        List<String> paths = new ArrayList<>();
+        for (String fileName : files) {
+            paths.add(resourcePath + fileName);
+        }
+        return paths;
     }
 
     private String[] constructCommandPrefix() throws IOException {
-        Files.createDirectory(Paths.get(resourcePath + "/temp"));
+        String uniquePath = resourcePath + "temp/" + uniqueId;
+        Files.createDirectories(Paths.get(resourcePath + "temp/"));
         switch (jobType) {
             case "fastqc":
-                Files.createDirectory(Paths.get(resourcePath + "/temp/" + uniqueId));
-                return new String[]{"fastqc", "-C", resourcePath, "-o", "/temp/" + uniqueId};
+                Files.createDirectories(Paths.get(uniquePath));
+                return new String[]{"fastqc", "-o", uniquePath};
             case "zip":
-                return new String[]{"tar", "-czvf", "/temp/" + uniqueId + ".tar.gz", "-C", resourcePath};
+                return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", "-C", resourcePath};
             default:
                 return null;
         }
@@ -48,8 +59,8 @@ public class JobRunner implements CommandConstructor {
     }
 
     public void startJob() throws IOException {
-        String outFile = resourcePath + uniqueId + ".output.log";
-        String errFile = resourcePath + uniqueId + ".error.log";
+        String outFile = resourcePath + "temp/" + uniqueId + ".output.log";
+        String errFile = resourcePath + "temp/" + uniqueId + ".error.log";
 
         // Get the job command
         ProcessBuilder job = constructCommand();
