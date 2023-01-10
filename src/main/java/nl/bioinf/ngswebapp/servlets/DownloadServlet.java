@@ -1,7 +1,6 @@
 package nl.bioinf.ngswebapp.servlets;
 
-import nl.bioinf.ngswebapp.model.TarGzipExample1;
-import nl.bioinf.ngswebapp.service.TarGzip;
+import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,14 +10,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import java.util.UUID;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download")
 public class DownloadServlet extends HttpServlet {
-    private String fileName;
-
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
         String resourcePath = request.getServletContext().getInitParameter("resourcePath");
@@ -27,9 +22,8 @@ public class DownloadServlet extends HttpServlet {
         OutputStream responseOutputStream = null;
 
         if (allFiles.length == 1) {
-            fileName = allFiles[0];
             try {
-                String filePath = resourcePath + fileName;
+                String filePath = resourcePath + allFiles[0];
                 File file = new File(filePath);
 
                 String mimeType = request.getServletContext().getMimeType(filePath);
@@ -37,7 +31,7 @@ public class DownloadServlet extends HttpServlet {
                     mimeType = "application/octet-stream";
                 }
                 response.setContentType(mimeType);
-                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
+                response.addHeader("Content-Disposition", "attachment; filename=" + allFiles[0]);
                 response.setContentLength((int) file.length());
 
                 fileInputStream = new FileInputStream(file);
@@ -55,10 +49,8 @@ public class DownloadServlet extends HttpServlet {
                 responseOutputStream.close();
             }
         } else if (allFiles.length > 1) {
-            TarGzip zipper = new TarGzip(resourcePath, allFiles);
+            JobRunner zipper = new JobRunner(UUID.randomUUID(), resourcePath, allFiles, "zip");
+            zipper.startJob();
         }
-
-
-
     }
 }
