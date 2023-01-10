@@ -20,7 +20,7 @@ public class DownloadServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
-        String resourcePath = request.getServletContext().getRealPath("/WEB-INF/resources/");
+        String resourcePath = request.getServletContext().getInitParameter("resourcePath");
 
         if (allFiles.length == 1) {
             fileName = allFiles[0];

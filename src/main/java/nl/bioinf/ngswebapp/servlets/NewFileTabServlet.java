@@ -35,7 +35,7 @@ public class NewFileTabServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        String resourcePath = request.getServletContext().getRealPath("/WEB-INF/resources/");
+        String resourcePath = request.getServletContext().getInitParameter("resourcePath");
         ArrayList<ArrayList<String>> listOfFiles = FastqFiles.getFiles(resourcePath);
         ctx.setVariable("filesList", listOfFiles);
         try {
