@@ -179,25 +179,6 @@
 
 <!-- Scripts -->
 <script>
-    $(function () {
-        var isAllDone = false;
-
-        var checkProjectDone = function () {
-            var id = []
-            $.each($("#analysis-done").find("#analysis-tile"), function(){
-                var files = [$(this).data("id")];
-                $.each($(`[data-id="${$(this).data("id")}"]`).find("#analysis-info #analysis-files p"), function(){
-                    files.push($(this).data("filename"));
-                });
-                id.push(files);
-            });
-            console.log(id);
-        }
-        window.setTimeout(function(){ checkProjectDone(); }, 2000);
-    });
-</script>
-
-<script>
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -227,10 +208,32 @@
         });
     }
     $(document).ready(function(){
-
         $(document).on('click', "#show-analysis-icon", function () {
             $(this).parent().parent().parent().find("#analysis-info").toggle("fast");
             $(this).toggleClass('rotated');
+        });
+        $(function () {
+            var isAllDone = false;
+
+            var checkProjectDone = function () {
+                var json = {};
+                $.each($("#analysis-done #analysis-tile"), function(){
+                    var projectName = $(this).find("#analysis-title p").html();
+                    json[projectName] = [];
+                    $.each($(this).find("#analysis-info #analysis-files p"), function(){
+                        json[projectName].push($(this).data("filename"));
+                    });
+                });
+                $.ajax({
+                    url: "analysedone",
+                    type: "GET",
+                    dataType: "json",
+                    data: {json: JSON.stringify(json)}
+                });
+                //$.get("analysedone", {analyseInfo: id});
+            }
+
+            checkProjectDone();
         });
     });
 </script>

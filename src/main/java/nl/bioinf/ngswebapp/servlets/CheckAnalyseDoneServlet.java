@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 //@WebServlet(name = "CheckAnalyseDoneServlet", urlPatterns = "/analysedone")
 //public class CheckAnalyseDoneServlet extends HttpServlet {
@@ -17,11 +18,12 @@ import java.io.IOException;
 //    }
 //}
 
-public class CheckAnalyseDoneServlet {
-    public static void main(String[] args) {
-        String loc = "/students/2022-2023/Thema10/ngs_dummyfiles/temp/";
-        String[] id = new String[]{"78992c54-4bdd-4bbb-9854-1f8f1da6475d"};
-        FastQCResultsParser fastQCResultsParser = new FastQCResultsParser();
-        fastQCResultsParser.isFinished(id, loc);
+@WebServlet(name = "CheckAnalyseDoneServlet", urlPatterns = "/analysedone")
+public class CheckAnalyseDoneServlet extends HttpServlet {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String analyseInfo = request.getParameter("json");
+        System.out.println(analyseInfo);
+        //Gson gson = new Gson();
+        //System.out.println(request.getParameterMap().keySet());
     }
 }
