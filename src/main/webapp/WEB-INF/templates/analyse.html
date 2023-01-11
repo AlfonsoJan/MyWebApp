@@ -130,7 +130,7 @@
                     <div class="mb-2 hidden" id="analysis-info">
                         <div id="analysis-files">
                             <th:block th:each="files :  ${analyse.files}">
-                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-fileName=${files}" th:text="'- ' + ${files}"></p>
+                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files}" th:text="'- ' + ${files}"></p>
                             </th:block>
                         </div>
                         <div class="w-full" id="analysis-download">
@@ -179,6 +179,25 @@
 
 <!-- Scripts -->
 <script>
+    $(function () {
+        var isAllDone = false;
+
+        var checkProjectDone = function () {
+            var id = []
+            $.each($("#analysis-done").find("#analysis-tile"), function(){
+                var files = [$(this).data("id")];
+                $.each($(`[data-id="${$(this).data("id")}"]`).find("#analysis-info #analysis-files p"), function(){
+                    files.push($(this).data("filename"));
+                });
+                id.push(files);
+            });
+            console.log(id);
+        }
+        window.setTimeout(function(){ checkProjectDone(); }, 2000);
+    });
+</script>
+
+<script>
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -208,6 +227,7 @@
         });
     }
     $(document).ready(function(){
+
         $(document).on('click', "#show-analysis-icon", function () {
             $(this).parent().parent().parent().find("#analysis-info").toggle("fast");
             $(this).toggleClass('rotated');

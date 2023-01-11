@@ -36,7 +36,7 @@ public class AnalyseServlet extends HttpServlet {
         ArrayList<AnalyseInfo> analyseInfos = new ArrayList<>();
         analyseInfos.add(new AnalyseInfo("Project 2",
                 new String[]{"clock_10K_R1.fastq.gz", "clock_10K_R2.fastq.gz"},
-                "9822897298284952596359"));
+                "78992c54-4bdd-4bbb-9854-1f8f1da6475d"));
         ctx.setVariable("analyseInfo", analyseInfos);
         templateEngine.process("analyse", ctx, response.getWriter());
     }
