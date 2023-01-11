@@ -1,5 +1,6 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,10 +16,21 @@ public class RunFastQCServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String resourcePath = request.getServletContext().getInitParameter("resourcePath");
         String files[] = request.getParameterValues("fileNames[]");
+        String project = request.getParameterValues("project[]")[0];
         for (int i = 0; i < files.length; i++) {
             files[i] = resourcePath + files[i];
         }
         String analyseType = request.getParameter("analyseType").toLowerCase();
+
+        try {
+            VerySimpleDbConnector connector = NewAnalyseServlet.getConnector();
+            int projectId = connector.getProject(project, 1).getProjectId();
+            Process process = connector.insertProcess(analyseType, projectId);
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+
         JobRunner fastqc = new JobRunner(UUID.randomUUID(), resourcePath, files, analyseType);
         fastqc.startJob();
         // TODO: Add fastqc to DB

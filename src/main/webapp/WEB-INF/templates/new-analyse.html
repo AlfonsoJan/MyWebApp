@@ -116,10 +116,10 @@
             <div class="row-start-3 row-end-21" id="select-files-options">
                 <div class="max-h-full overflow-y-auto" id="personal-all-options">
                     <ul id="container-options-analyse-files" class="p-0 px-4 pt-2 pb-4">
-                        <th:block th:each="project : ${projectInfo}">
+                        <th:block th:each="project : ${projects}">
                             <li class="list-none rounded-md p-1 shadow-3xl mt-2 first:mt-0">
                                 <div class="flex items-center justify-between" id="project-name">
-                                    <p class="font-bold mx-0 my-4" th:text="${project.key}"></p>
+                                    <p class="font-bold mx-0 my-4" th:text="${project.name}" th:id="${project.projectId}"></p>
                                     <div class="h-6 w-6" id="container-box-project">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -129,8 +129,8 @@
                                 </div>
                                 <div class="hidden" id="project-files">
                                     <p class="font-bold mx-0 my-2 last:pb-2">Files:</p>
-                                    <th:block th:each="file : ${project.value}">
-                                        <p class="mx-0 my-2 last:pb-2" id="file-name-projects" th:text="${file}"></p>
+                                    <th:block th:each="file : ${project.labeledFiles}">
+                                        <p class="mx-0 my-2 last:pb-2" id="file-name-projects" th:text="${file.label}" th:attr="fullPath=${file.fullPath}"></p>
                                     </th:block>
                                 </div>
                             </li>
@@ -185,6 +185,7 @@
 <!-- Scripts -->
 <script>
     var del = '<span id="deleteProjectAnalyse" class="h-6 w-6 relative float-right flex items-center justify-center hover:cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" class="hover:stroke-black icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160,160,160)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><line x1="4" y1="7" x2="20" y2="7"></line><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg></span>';
+    var selected_project;
     toastr.options = {
         "closeButton": true,
         "debug": false,
@@ -238,7 +239,7 @@
             $.ajax({
                 url: "runfastqc",
                 type: "GET",
-                data: {fileNames: files, analyseType: option},
+                data: {fileNames: files, analyseType: option, project: [selected_project]},
                 beforeSend: function() {
                     toastr.info(`Starting: ${option} on ${files.length} file(s)`);
                 },
@@ -313,6 +314,7 @@
                     });
                     $("#placeholder-selected-files").remove();
                     var projectName = $(ui.draggable).find("#project-name p").html();
+                    selected_project = $(ui.draggable).find("#project-name p").html();
                     var nameHolder = `<p class="font-bold mx-0 my-2">Files: </p>`;
                     $.each($(ui.draggable).find("#project-files > p").filter(':not(.font-bold)'), function(){
                         var name = $(this).html().substring($(this).html().indexOf(" ") + 1, $(this).html().length);

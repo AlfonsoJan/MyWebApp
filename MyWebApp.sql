@@ -45,3 +45,14 @@ create table labeled_files
         references projects(id)
         on delete restrict
 );
+
+create table process
+(
+    id int auto_increment not null,
+    type varchar(100) not null,
+    project_id int not null,
+    primary key(id),
+    foreign key(project_id)
+        references projects(id)
+        on delete restrict
+);

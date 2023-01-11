@@ -1,7 +1,10 @@
 package nl.bioinf.ngswebapp.servlets;
 
 import nl.bioinf.ngswebapp.config.WebConfig;
+import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.db_objects.LabeledFile;
+import nl.bioinf.ngswebapp.db_objects.Project;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -11,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,11 +27,11 @@ public class NewAnalyseServlet extends HttpServlet {
     @Override
     public void init(){
         this.templateEngine = WebConfig.getTemplateEngine();
-//        try {
-//            connector = new VerySimpleDbConnector();
-//        } catch (DatabaseException | IOException | NoSuchFieldException e) {
-//            throw new RuntimeException(e);
-//        }
+        try {
+            connector = new VerySimpleDbConnector();
+        } catch (IOException | NoSuchFieldException | DatabaseException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Serial
     private static final long serialVersionUID = 1L;
@@ -34,10 +39,20 @@ public class NewAnalyseServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
         // Placeholder
-        Map<String, Object> projectsMap = new HashMap<>();
-        projectsMap.put("Project 1", new String[]{"testplaceholder0.fastq.gz", "testplaceholder1.fastq.gz", "testplaceholder2.fastq.gz"});
-        projectsMap.put("Project 2", new String[]{"clock_10K_R1.fastq.gz", "clock_10K_R2.fastq.gz"});
-        ctx.setVariable("projectInfo", projectsMap);
+        Map<Project, ArrayList<LabeledFile>> projectLabeledFileHashMap;
+        try {
+            projectLabeledFileHashMap = connector.getProjectsFromUser(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        ArrayList<Project> projectsInfo = new ArrayList<>();
+        for (Project project : projectLabeledFileHashMap.keySet()) {
+            for (LabeledFile labeledFile : projectLabeledFileHashMap.get(project)) {
+                project.addLabeledFile(labeledFile);
+            }
+            projectsInfo.add(project);
+        }
+        ctx.setVariable("projects", projectsInfo);
         templateEngine.process("new-analyse", ctx, response.getWriter());
     }
 

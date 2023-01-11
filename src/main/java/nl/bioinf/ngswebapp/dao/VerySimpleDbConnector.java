@@ -44,6 +44,8 @@ public class VerySimpleDbConnector {
 
     private static final String SELECT_PROJECTS_FROM_USER = "select_projects_from_user";
     private static final String SELECT_LABEL_FILES_FROM_USER = "select_labeled_from_user";
+
+    private static final String INSERT_PROCESS = "insert_process";
     /**
      * a main for demonstration purposes
      *
@@ -155,6 +157,8 @@ public class VerySimpleDbConnector {
         String labeledFetchQueryFromUser = "SELECT * from labeled_files,projects where labeled_files.project_id = projects.id and user_id = ?";
         this.preparedStatements.put(SELECT_LABEL_FILES_FROM_USER, connection.prepareStatement(labeledFetchQueryFromUser));
 
+        String processInsertQuery = "INSERT INTO process (type, project_id) VALUES (?, ?)";
+        this.preparedStatements.put(INSERT_PROCESS, connection.prepareStatement(processInsertQuery));
     }
 
     public User getUser(int id) throws SQLException {
@@ -495,6 +499,27 @@ public class VerySimpleDbConnector {
             return Enums.Used.MEDIUM;
         } else {
             return Enums.Used.HIGH;
+        }
+    }
+
+    public Process insertProcess(String type, int projectId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setString(type, projectId);
+
+            //do the actual insert
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
         }
     }
 
