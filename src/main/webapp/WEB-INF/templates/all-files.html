@@ -250,6 +250,10 @@
     function updateFile(element) {
         let newName = element.parentElement.children.item(0).children.item(1).value;
         let id = selected.parentElement.children.item(2).id;
+        if (newName.length < 2) {
+            toastr.error("Please pick a name with at least 3 characters!");
+            return;
+        }
         $.ajax({
             type: 'GET',
             url: 'changefilename',
@@ -272,6 +276,7 @@
             data: {id: [the_id]},
             success: function () {
                 toastr.success(`Successfully deleted ${selected.textContent}`);
+                selected.parentElement.parentElement.remove();
             },
             error: function () {
                 toastr.error('There was an error!');

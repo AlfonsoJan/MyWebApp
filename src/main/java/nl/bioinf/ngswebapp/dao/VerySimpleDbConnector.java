@@ -6,6 +6,9 @@ import nl.bioinf.ngswebapp.db_objects.LabeledFile;
 import nl.bioinf.ngswebapp.db_objects.Project;
 import nl.bioinf.ngswebapp.db_objects.User;
 import nl.bioinf.ngswebapp.model.Enums;
+import nl.bioinf.ngswebapp.servlets.AllPersonalFilesServlet;
+import nl.bioinf.ngswebapp.servlets.AllPersonalProjectsServlet;
+import nl.bioinf.ngswebapp.servlets.NewFileTabServlet;
 
 import java.io.IOException;
 import java.sql.*;
@@ -34,6 +37,7 @@ public class VerySimpleDbConnector {
     private static final String INSERT_PROJECT = "insert_project";
     private static final String INSERT_FILE = "insert_file";
     private static final String UPDATE_PROJECT = "update_project";
+    private static final String DELETE_PROJECT = "delete_project";
     private static final String UPDATE_FILE = "update_file";
     private static final String DELETE_FILE = "delete_file";
     private static final String SELECT_PROJECT_FROM_NAME = "select_project_from_name";
@@ -60,6 +64,16 @@ public class VerySimpleDbConnector {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static VerySimpleDbConnector getConnector(String connector) {
+        switch(connector) {
+            case "all-files":
+                return AllPersonalFilesServlet.getConnector();
+            case "all-projects":
+                return AllPersonalProjectsServlet.getConnector();
+        }
+        return NewFileTabServlet.getConnector();
     }
 
     public VerySimpleDbConnector() throws DatabaseException, IOException, NoSuchFieldException {
@@ -119,6 +133,9 @@ public class VerySimpleDbConnector {
 
         String projectInsertQuery = "INSERT INTO projects (project_name, user_id) VALUES (?, ?)";
         this.preparedStatements.put(INSERT_PROJECT, connection.prepareStatement(projectInsertQuery));
+
+        String deleteProjectQuery = "DELETE from projects where id = ?";
+        this.preparedStatements.put(DELETE_PROJECT, connection.prepareStatement(deleteProjectQuery));
 
         String fileInsertQuery = "INSERT INTO labeled_files (label, path, project_id) VALUES (?, ?, ?)";
         this.preparedStatements.put(INSERT_FILE, connection.prepareStatement(fileInsertQuery));
@@ -272,6 +289,23 @@ public class VerySimpleDbConnector {
         }
     }
 
+    public void deleteProject(int projectId) throws DatabaseException {
+        try{
+            //Prepare statement
+            PreparedStatement ps = this.preparedStatements.get(DELETE_PROJECT);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setInt(1, projectId);
+
+            //do the actual insert
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
     public LabeledFile getLabeledFile(int id) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(GET_FILE_USING_FILE_ID);
@@ -288,7 +322,7 @@ public class VerySimpleDbConnector {
         //if there is data, process it
         String label = rs.getString("label");
         String path = rs.getString("path");
-        int userId = rs.getInt("project");
+        int userId = rs.getInt("project_id");
         return new LabeledFile(id, label, path, userId);
     }
 

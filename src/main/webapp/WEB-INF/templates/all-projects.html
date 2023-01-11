@@ -15,7 +15,8 @@
         }
     </style>
     <script>
-        tailwind.config = {
+
+    tailwind.config = {
             theme: {
                 fontFamily: {
                     'sans': ['Helvetica', 'Arial', 'sans-serif'],
@@ -99,8 +100,9 @@
             <th:block th:each="project : ${projects}">
                 <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="project">
                     <div class="flex items-center justify-between" id="title">
+                        <div th:id="${project.projectId}"></div>
                         <p class="font-bold mx-0 my-4" id="project-title-header" th:text="${project.name}"></p>
-                        <button id="dropdownProjectOptionsButton" th:attr="data-dropdown-toggle=${project.name}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
+                        <button onclick="updateSelected(this, false)" id="dropdownProjectOptionsButton" th:attr="data-dropdown-toggle=${project.name}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
                             <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                         </button>
                         <div class="h-6 w-6 group" id="show-project-icon">
@@ -114,14 +116,18 @@
                         <div id="analysis-files" class="">
                             <th:block th:each="file : ${project.labeledFiles}">
                                 <div class="flex items-center justify-between last:pb-3" id="analyse-file">
-                                    <p class="mt-2 mx-0" id="fileName" th:attr="data-name=${file.label}" th:text="'- ' + ${file.label}"></p>
-                                    <button id="dropdownFileOptionsButton" th:attr="data-dropdown-toggle=${file.label}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
+                                    <div th:id="${file.fileId}"></div>
+                                    <p class="mt-2 mx-0" id="fileNameH" th:attr="data-name=${file.label}" th:text="'- ' + ${file.label}"></p>
+                                    <button onclick="updateSelected( this, true)" id="dropdownFileOptionsButton" th:attr="data-dropdown-toggle=${file.fileId} + ${project.projectId}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
                                         <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                                     </button>
-                                    <div th:id="${file.label}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
+                                    <div th:id="${file.fileId} + ${project.projectId}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
                                         <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownFileOptionsButton">
                                             <li>
                                                 <a onclick="downloadFile(this)" class="block px-4 py-2 hover:bg-gray-200">Download File</a>
+                                            </li>
+                                            <li>
+                                                <a onclick="editFile(this)" class="block px-4 py-2 hover:bg-gray-200">Edit File</a>
                                             </li>
                                             <li>
                                                 <a onclick="deleteFile(this)" class="block px-4 py-2 hover:bg-gray-200">Delete File</a>
@@ -136,6 +142,9 @@
                         <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownProjectOptionsButton">
                             <li>
                                 <a onclick="downloadProject(this)" class="block px-4 py-2 hover:bg-gray-200">Download Project</a>
+                            </li>
+                            <li>
+                                <a onclick="editProject(this)" class="block px-4 py-2 hover:bg-gray-200">Edit Project</a>
                             </li>
                             <li>
                                 <a onclick="deleteProject(this)" class="block px-4 py-2 hover:bg-gray-200">Delete Project</a>
@@ -169,7 +178,36 @@
         </li>
     </ul>
 </div>
-
+<!-- Modal for EDIT -->
+<div id="modalEl" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full">
+    <div class="relative w-full h-full max-w-2xl md:h-auto">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-md shadow">
+            <button id="modelHide"  type="button" class="absolute top-3 right-2.5 text-gray-800 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="px-6 py-6 lg:px-8" id="fileOptions">
+                <h3 class="mb-4 text-xl font-medium text-gray-900">Update (filename)</h3>
+                <form class="space-y-6" id="editButtonSubmit">
+                    <div class="flex items-center justify-between" id="fileNameDiv">
+                        <label id="origFileName" for="fileName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Filename)</label>
+                        <input type="text" name="fileName" id="fileName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Filename...">
+                    </div>
+                    <!--<div class="flex items-center justify-between">
+                        <label id="origLabel" for="label" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Label)</label>
+                        <input type="text" name="label" id="label" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Label...">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label id="origRead" for="read" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old read)</label>
+                        <input type="text" name="read" pattern="[12-]{1,}" id="read" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Read...">
+                    </div>!-->
+                    <button type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="update(this)">Update File</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Scripts -->
 <script>
     toastr.options = {
@@ -189,16 +227,110 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
+    var modelElem = $("#modalEl")[ 0 ];
+    var modal = new Modal(modelElem, options);
+    var selected;
+    var select_file; // This variable is a flag in order to see if the project or the file name needs to be changed
+    var options = {
+        placement: 'center',
+        backdrop: 'dynamic',
+        backdropClasses: 'bg-gray-900 bg-opacity-70 fixed inset-0 z-40',
+    }
+    function updateSelected(item, select) {
+        selected = item.parentElement.children.item(0);
+        select_file = select;
+    }
+    function editProject(item) {
+        var origFileName = selected.parentElement.children.item(1).textContent;
+        $("#modalEl div div #fileOptions h3").text(`Update: ${origFileName}`);
+        $("#modalEl div div #fileOptions form div #origFileName").text(`Current name: ${origFileName}`);
+        modal.show()
+    }
+    function editFile(item) {
+        var origFileName = selected.parentElement.children.item(1).textContent;
+        $("#modalEl div div #fileOptions h3").text(`Update: ${origFileName}`);
+        $("#modalEl div div #fileOptions form div #origFileName").text(`Current name: ${origFileName}`);
+        modal.show()
+    }
+    function update(element) {
+        let newName = element.parentElement.children.item(0).children.item(1).value;
+        let id = selected.parentElement.children.item(0).id;
+        if (newName.length < 2) {
+            toastr.error("Please pick a name with at least 3 characters!");
+            return;
+        }
+        if (select_file) {
+            $.ajax({
+                type: 'GET',
+                url: 'changefilenamefromproject',
+                data: {id: [id], newName: [newName]},
+                success: function () {
+                    toastr.success(`Successfully changed the name to ${newName}`);
+                    selected.parentElement.children.item(1).textContent = "- " + newName;
+                    modal.hide();
+                },
+                error: function () {
+                    toastr.error('There was an error!');
+                }
+            });
+        } else {
+            $.ajax({
+                type: 'GET',
+                url: 'changeproject',
+                data: {id: [id], newName: [newName]},
+                success: function () {
+                    toastr.success(`Successfully changed the name to ${newName}`);
+                    selected.parentElement.children.item(1).textContent = newName;
+                    modal.hide();
+                },
+                error: function () {
+                    toastr.error('There was an error!');
+                }
+            });
+        }
+    }
+    function deleteFile(item) {
+        let id = selected.parentElement.children.item(0).id;
+        var origFileName = selected.parentElement.children.item(1).textContent;
+        $.ajax({
+            type: 'GET',
+            url: 'deletefilefromproject',
+            data: {id: [id]},
+            success: function () {
+                toastr.success(`Successfully deleted ${origFileName}!`);
+                if (selected.parentElement.parentElement.children.length == 1) {
+                    selected.parentElement.parentElement.parentElement.parentElement.remove();
+                }
+                selected.parentElement.remove();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
+    }
     function downloadProject(item) {
         var files = [];
         var projectName = $(item).parent().parent().parent().parent().find("#title #project-title-header").html();
         $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
-            files.push($(this).find("#fileName").data("name"));
+            files.push($(this).find("#fileNameH").data("name"));
         });
         console.log(`Download started for ${projectName} ${files}`)
     }
     function deleteProject(item) {
-        console.log($(item).parent().parent().parent().parent().find("#title #project-title-header").html());
+        let id = selected.parentElement.children.item(0).id;
+        var origFileName = selected.parentElement.children.item(1).textContent;
+        $.ajax({
+            type: 'GET',
+            url: 'deleteproject',
+            data: {id: [id]},
+            success: function () {
+                toastr.success(`Successfully deleted ${origFileName}!`);
+                selected.parentElement.parentElement.remove();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
     }
     function filterProjectFunction() {
         var input = $("#filterProjectsInput").val().toUpperCase();
@@ -216,6 +348,9 @@
             $(this).parent().parent().find("#project-info-files").toggle("fast");
             $(this).toggleClass('rotated');
         });
+    });
+    $(document).on('click', "#modelHide", function () {
+        modal.hide();
     });
 </script>
 </body>

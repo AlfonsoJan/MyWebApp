@@ -10,25 +10,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
-@WebServlet(name = "DeleteProjectServlet", urlPatterns = "/deleteproject")
-public class DeleteProjectServlet extends HttpServlet {
+@WebServlet(name = "DeleteFileFromProjectServlet", urlPatterns = "/deletefilefromproject")
+public class DeleteFileFromProjectServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int id = Integer.parseInt(request.getParameterValues("id[]")[0]);
         try {
             VerySimpleDbConnector connector = AllPersonalProjectsServlet.getConnector();
-            ArrayList<LabeledFile> files = connector.getLabelFilesFromProject(id);
-            for (LabeledFile file : files) {
-                connector.deleteLabeledFile(file.getFileId());
+            LabeledFile file = connector.getLabeledFile(id);
+            connector.deleteLabeledFile(id);
+            if (connector.getLabelFilesFromProject(file.getProjectId()).size() < 1) {
+                connector.deleteProject(file.getProjectId());
             }
-            connector.deleteProject(id);
         } catch (DatabaseException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
