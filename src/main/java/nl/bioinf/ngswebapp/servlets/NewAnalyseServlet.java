@@ -36,7 +36,7 @@ public class NewAnalyseServlet extends HttpServlet {
         // Placeholder
         Map<String, Object> projectsMap = new HashMap<>();
         projectsMap.put("Project 1", new String[]{"testplaceholder0.fastq.gz", "testplaceholder1.fastq.gz", "testplaceholder2.fastq.gz"});
-        projectsMap.put("Project 2", new String[]{"testplaceholder0.fastq.gz", "testplaceholder1.fastq.gz"});
+        projectsMap.put("Project 2", new String[]{"clock_10K_R1.fastq.gz", "clock_10K_R2.fastq.gz"});
         ctx.setVariable("projectInfo", projectsMap);
         templateEngine.process("new-analyse", ctx, response.getWriter());
     }

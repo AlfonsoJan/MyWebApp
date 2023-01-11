@@ -234,9 +234,22 @@
             $.each($("#selected-files-for-analyse #placeholder-selected-files > p").filter(':not(.font-bold)'), function(){
                 files.push($(this).html().substring($(this).html().indexOf(" ") + 1, $(this).html().length));
             });
-            toastr.info(`Starting: ${option}`);
-            window.setTimeout(function(){ window.location = "analyse"; }, 2000);
-
+            console.log(files);
+            $.ajax({
+                url: "runfastqc",
+                type: "GET",
+                data: {fileNames: files, analyseType: option},
+                beforeSend: function() {
+                    toastr.info(`Starting: ${option} on ${files.length} file(s)`);
+                },
+                success: function() {
+                    toastr.success(`Succesfully started`);
+                    window.setTimeout(function(){ window.location = "analyse"; }, 2000);
+                },
+                error: function() {
+                    toastr.error(`Something went wrong`);
+                }
+            });
         });
         $(document).on('click', "#analyse-tile", function () {
             $(this).toggleClass("selected");

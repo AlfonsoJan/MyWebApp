@@ -54,13 +54,19 @@ public class JobRunner implements CommandConstructor {
         String[] command = Stream.of(commandPrefix, files).
                 flatMap(Stream::of).
                 toArray(String[]::new);
-//        System.out.println(Arrays.toString(command));
         return new ProcessBuilder(command);
     }
 
     public void startJob() throws IOException {
-        String outFile = resourcePath + "temp/" + uniqueId + ".output.log";
-        String errFile = resourcePath + "temp/" + uniqueId + ".error.log";
+        String outFile;
+        String errFile;
+        if ("fastqc".equals(jobType)) {
+            outFile = resourcePath + "temp/" + uniqueId + "/output.log";
+            errFile = resourcePath + "temp/" + uniqueId + "/error.log";
+        } else {
+            outFile = resourcePath + "temp/" + uniqueId + ".output.log";
+            errFile = resourcePath + "temp/" + uniqueId + ".error.log";
+        }
 
         // Get the job command
         ProcessBuilder job = constructCommand();
