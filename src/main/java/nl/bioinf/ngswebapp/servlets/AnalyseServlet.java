@@ -34,11 +34,8 @@ public class AnalyseServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
         ArrayList<AnalyseInfo> analyseInfos = new ArrayList<>();
-        analyseInfos.add(new AnalyseInfo("Project 1",
-                new String[]{"testplaceholder0.fastq.gz", "testplaceholder1.fastq.gz", "testplaceholder2.fastq.gz"},
-                "8429187498412987189718917"));
         analyseInfos.add(new AnalyseInfo("Project 2",
-                new String[]{"testplaceholder0.fastq.gz", "testplaceholder1.fastq.gz"},
+                new String[]{"clock_10K_R1.fastq.gz", "clock_10K_R2.fastq.gz"},
                 "9822897298284952596359"));
         ctx.setVariable("analyseInfo", analyseInfos);
         templateEngine.process("analyse", ctx, response.getWriter());
