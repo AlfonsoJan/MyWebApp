@@ -96,10 +96,11 @@
             </form>
         </div>
         <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="analysis-done">
-            <th:block th:each="analyse :  ${analyseInfo}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${analyse.sessionID}">
+            <th:block th:each="process :  ${processes}">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${process.id}">
                     <div class="flex items-center justify-between" id="analysis-title">
-                        <p class="font-bold mx-0 my-4" id="title-header" th:text="${analyse.projectName}"></p>
+                        <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
+                        <p th:text="${process.type}" id="process_type"></p>
                         <div class="flex" id="status-button">
                             <div id="finished-icon" class="hidden">
                                     <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-900 text-green-300">
@@ -129,8 +130,8 @@
                     </div>
                     <div class="mb-2 hidden" id="analysis-info">
                         <div id="analysis-files">
-                            <th:block th:each="files :  ${analyse.files}">
-                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files}" th:text="'- ' + ${files}"></p>
+                            <th:block th:each="files :  ${process.project.labeledFiles}">
+                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files.fullPath}" th:text="'- ' + ${files.label}"></p>
                             </th:block>
                         </div>
                         <div class="w-full" id="analysis-download">

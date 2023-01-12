@@ -18,11 +18,13 @@ import java.util.UUID;
 public class DownloadServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
+        System.out.println("B");
+        int projectId = Integer.parseInt(request.getParameter("project"));
+        System.out.println("AAA");
         String resourcePath = request.getServletContext().getInitParameter("resourcePath");
-
+        System.out.println(allFiles.length);
         FileInputStream fileInputStream = null;
         OutputStream responseOutputStream = null;
-
         if (allFiles.length == 1) {
             try {
                 String filePath = resourcePath + allFiles[0];
@@ -52,9 +54,13 @@ public class DownloadServlet extends HttpServlet {
             }
         } else if (allFiles.length > 1) {
             Process process;
+            System.out.println("YE");
             try {
+                System.out.println("A");
                 VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
-                process = connector.insertProcess("download_without_project");
+                System.out.println("B");
+                process = connector.insertProcess("download", projectId);
+                System.out.println("C");
             } catch (Exception e) {
                 System.out.println(e);
                 throw new RuntimeException(e);

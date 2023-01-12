@@ -49,6 +49,7 @@ public class VerySimpleDbConnector {
     private static final String INSERT_PROCESS = "insert_process";
     private static final String INSERT_PROCESS_NO_PROJECT = "insert_process_no_project";
     private static final String MAX_PROCESS = "max_process";
+    private static final String SELECT_ALL_PROCESS = "select_process";
     /**
      * a main for demonstration purposes
      *
@@ -168,6 +169,9 @@ public class VerySimpleDbConnector {
 
         String maxProcessIdQuery = "SELECT max(id) from process";
         this.preparedStatements.put(MAX_PROCESS, connection.prepareStatement(maxProcessIdQuery));
+
+        String getAllProcessFromUser = "select * from projects,users,process where projects.id = project_id and user_id = ?;";
+        this.preparedStatements.put(SELECT_ALL_PROCESS, connection.prepareStatement(getAllProcessFromUser));
     }
 
     public User getUser(int id) throws SQLException {
@@ -546,6 +550,27 @@ public class VerySimpleDbConnector {
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
                     ex.getCause());
         }
+    }
+
+    public ArrayList<Process> getProcessFromUser(int userID) throws SQLException {
+
+        PreparedStatement ps = this.preparedStatements.get(SELECT_ALL_PROCESS);
+        ps.setString(1, String.valueOf(userID));
+
+        ArrayList<Process> results = new ArrayList<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            String type = rs.getString("type");
+            Project project = getProject(rs.getInt("project_id"));
+            ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
+            project.setLabeledFiles(files);
+
+            Process process = new Process(project.getProjectId(), type);
+            process.setProject(project);
+            results.add(process);
+        }
+
+        return results;
     }
 
 //    public User getUser(String userName, String userPass) throws DatabaseException  {

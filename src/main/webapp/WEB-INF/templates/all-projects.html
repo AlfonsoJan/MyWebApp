@@ -311,10 +311,24 @@
     function downloadProject(item) {
         var files = [];
         var projectName = $(item).parent().parent().parent().parent().find("#title #project-title-header").html();
+        let id = selected.parentElement.children.item(0).id;
         $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
             files.push($(this).find("#fileNameH").data("name"));
         });
+        console.log(id)
         console.log(`Download started for ${projectName} ${files}`)
+        $.ajax({
+            type: 'GET',
+            url: 'download',
+            data: {project: id, allFiles: files},
+            success: function () {
+                toastr.success(`yey!`);
+                selected.parentElement.parentElement.remove();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
     }
     function deleteProject(item) {
         let id = selected.parentElement.children.item(0).id;
