@@ -509,7 +509,8 @@ public class VerySimpleDbConnector {
             PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
 
             //set data on the "?" placeholders of the prepared statement
-            ps.setString(type, projectId);
+            ps.setString(1, type);
+            ps.setInt(2, projectId);
 
             //do the actual insert
             ps.executeUpdate();
