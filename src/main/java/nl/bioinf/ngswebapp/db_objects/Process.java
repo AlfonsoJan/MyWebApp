@@ -5,6 +5,35 @@ public class Process {
     private int id;
     private int projectId;
     private String type;
+    private String projectName;
+    private Project project;
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Process(int id, String type, int projectId) {
+        this.id = id;
+        this.projectId = projectId;
+        this.type = type;
+    }
+
+    public Process(int id, String type) {
+        this.id = id;
+        this.type = type;
+    }
 
     public int getId() {
         return id;

@@ -1,5 +1,7 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -16,11 +18,13 @@ import java.util.UUID;
 public class DownloadServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
+        System.out.println("B");
+        int projectId = Integer.parseInt(request.getParameter("project"));
+        System.out.println("AAA");
         String resourcePath = request.getServletContext().getInitParameter("resourcePath");
-
+        System.out.println(allFiles.length);
         FileInputStream fileInputStream = null;
         OutputStream responseOutputStream = null;
-
         if (allFiles.length == 1) {
             try {
                 String filePath = resourcePath + allFiles[0];
@@ -49,7 +53,19 @@ public class DownloadServlet extends HttpServlet {
                 responseOutputStream.close();
             }
         } else if (allFiles.length > 1) {
-            JobRunner zipper = new JobRunner(UUID.randomUUID(), resourcePath, allFiles, "zip");
+            Process process;
+            System.out.println("YE");
+            try {
+                System.out.println("A");
+                VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
+                System.out.println("B");
+                process = connector.insertProcess("download", projectId);
+                System.out.println("C");
+            } catch (Exception e) {
+                System.out.println(e);
+                throw new RuntimeException(e);
+            }
+            JobRunner zipper = new JobRunner(process.getId(), resourcePath, allFiles, "zip");
             zipper.startJob();
         }
     }

@@ -50,7 +50,7 @@ create table process
 (
     id int auto_increment not null,
     type varchar(100) not null,
-    project_id int not null,
+    project_id int,
     primary key(id),
     foreign key(project_id)
         references projects(id)
