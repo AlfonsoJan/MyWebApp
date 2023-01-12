@@ -6,6 +6,17 @@ public class Process {
     private int projectId;
     private String type;
 
+    public Process(int id, String type, int projectId) {
+        this.id = id;
+        this.projectId = projectId;
+        this.type = type;
+    }
+
+    public Process(int id, String type) {
+        this.id = id;
+        this.type = type;
+    }
+
     public int getId() {
         return id;
     }

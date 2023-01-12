@@ -1,5 +1,7 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -49,7 +51,15 @@ public class DownloadServlet extends HttpServlet {
                 responseOutputStream.close();
             }
         } else if (allFiles.length > 1) {
-            JobRunner zipper = new JobRunner(UUID.randomUUID(), resourcePath, allFiles, "zip");
+            Process process;
+            try {
+                VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
+                process = connector.insertProcess("download_without_project");
+            } catch (Exception e) {
+                System.out.println(e);
+                throw new RuntimeException(e);
+            }
+            JobRunner zipper = new JobRunner(process.getId(), resourcePath, allFiles, "zip");
             zipper.startJob();
         }
     }

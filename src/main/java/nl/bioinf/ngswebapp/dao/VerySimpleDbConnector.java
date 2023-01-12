@@ -1,5 +1,6 @@
 package nl.bioinf.ngswebapp.dao;
 
+import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.db_utils.DbCredentials;
 import nl.bioinf.ngswebapp.db_utils.DbUser;
 import nl.bioinf.ngswebapp.db_objects.LabeledFile;
@@ -46,6 +47,8 @@ public class VerySimpleDbConnector {
     private static final String SELECT_LABEL_FILES_FROM_USER = "select_labeled_from_user";
 
     private static final String INSERT_PROCESS = "insert_process";
+    private static final String INSERT_PROCESS_NO_PROJECT = "insert_process_no_project";
+    private static final String MAX_PROCESS = "max_process";
     /**
      * a main for demonstration purposes
      *
@@ -159,6 +162,12 @@ public class VerySimpleDbConnector {
 
         String processInsertQuery = "INSERT INTO process (type, project_id) VALUES (?, ?)";
         this.preparedStatements.put(INSERT_PROCESS, connection.prepareStatement(processInsertQuery));
+
+        String processInsertWithoutProjectQuery = "INSERT INTO process (type) VALUES (?)";
+        this.preparedStatements.put(INSERT_PROCESS_NO_PROJECT, connection.prepareStatement(processInsertWithoutProjectQuery));
+
+        String maxProcessIdQuery = "SELECT max(id) from process";
+        this.preparedStatements.put(MAX_PROCESS, connection.prepareStatement(maxProcessIdQuery));
     }
 
     public User getUser(int id) throws SQLException {
@@ -502,21 +511,18 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public Process insertProcess(String type, int projectId) throws DatabaseException {
+    public Process insertProcess(String type, Integer projectId) throws DatabaseException {
         try{
-            //Prepare statement
-            //!! Doing this within this method is extremely inefficient !!
             PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
-
-            //set data on the "?" placeholders of the prepared statement
             ps.setString(1, type);
             ps.setInt(2, projectId);
-
-            //do the actual insert
             ps.executeUpdate();
 
-            //close resources
-            ps.close();
+            PreparedStatement preparedStatement = this.preparedStatements.get(MAX_PROCESS);
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+            int id = rs.getInt("max(id)");
+            return new Process(id, type, projectId);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -524,6 +530,23 @@ public class VerySimpleDbConnector {
         }
     }
 
+    public Process insertProcess(String type) throws DatabaseException {
+        try{
+            PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS_NO_PROJECT);
+            ps.setString(1, type);
+            ps.executeUpdate();
+
+            PreparedStatement preparedStatement = this.preparedStatements.get(MAX_PROCESS);
+            ResultSet rs = preparedStatement.executeQuery();
+            rs.next();
+            int id = rs.getInt("max(id)");
+            return new Process(id, type);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
 
 //    public User getUser(String userName, String userPass) throws DatabaseException  {
 //        try {

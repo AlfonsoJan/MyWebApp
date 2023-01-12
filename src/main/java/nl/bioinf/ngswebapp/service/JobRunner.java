@@ -12,13 +12,13 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class JobRunner implements CommandConstructor {
-    private final UUID uniqueId;
+    private final int uniqueId;
     private final String resourcePath;
     private final String[] files;
     private final String jobType;
     private final List<String> paths;
 
-    public JobRunner(UUID uniqueId, String resourcePath, String[] files, String jobType) {
+    public JobRunner(int uniqueId, String resourcePath, String[] files, String jobType) {
         this.uniqueId = uniqueId;
         this.resourcePath = resourcePath;
         this.files = files;
