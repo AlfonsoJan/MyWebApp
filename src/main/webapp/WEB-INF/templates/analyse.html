@@ -213,27 +213,59 @@
             $(this).toggleClass('rotated');
         });
         $(function () {
-            var isAllDone = false;
-
-            var checkProjectDone = function () {
-                var json = {};
-                $.each($("#analysis-done #analysis-tile"), function(){
-                    var projectName = $(this).find("#analysis-title p").html();
-                    json[projectName] = [];
-                    $.each($(this).find("#analysis-info #analysis-files p"), function(){
-                        json[projectName].push($(this).data("filename"));
-                    });
+            var isAllDone = true;
+            var get_data = function() {
+                $.when(
+                    $.getJSON("/analysedone", function (data) {
+                        processing = data;
+                    })
+                ).then(function () {
+                    parseResult(processing);
                 });
-                $.ajax({
-                    url: "analysedone",
-                    type: "GET",
-                    dataType: "json",
-                    data: {json: JSON.stringify(json)}
-                });
-                //$.get("analysedone", {analyseInfo: id});
-            }
+            };
+            var parseResult = function(data) {
+                $.each(data, function( i, val ) {
+                    var search = $( "#analysis-tile #analysis-title p" ).filter( function () {
+                        return $(this).text() == val[0];
+                    }).first();
+                    switch(val[1]) {
+                        case "true":
+                            var elem = $(search).parent().find("#status-button");
+                            $(elem).find("#finished-icon").show();
+                            $(elem).find("#running-icon").hide();
+                            $(elem).find("#cant-find-anaylse").hide();
+                            $(elem).find("#loading-analyse-icon").hide();
+                            break;
+                        case "false":
+                            var elem = $(search).parent().find("#status-button");
+                            $(elem).find("#finished-icon").hide();
+                            $(elem).find("#running-icon").show();
+                            $(elem).find("#cant-find-anaylse").hide();
+                            $(elem).find("#loading-analyse-icon").hide();
+                            break;
+                        default:
+                            var elem = $(search).parent().find("#status-button");
+                            $(elem).find("#finished-icon").hide();
+                            $(elem).find("#running-icon").hide();
+                            $(elem).find("#cant-find-anaylse").show();
+                            $(elem).find("#loading-analyse-icon").hide();
+                            break;
+                    }
+                    console.log("Hi")
+                    // if (val[1] == "false") {
+                    //     isAllDone = false;
+                    //     return;
+                    // }
+                })
+            };
+            setTimeout( function(){
+                get_data();
+            }  , 4000 );
 
-            checkProjectDone();
+            // window.setInterval(function(){
+            //     if (!isAllDone)
+            //         get_data();
+            // }, 1000);
         });
     });
 </script>

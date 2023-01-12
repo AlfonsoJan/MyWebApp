@@ -1,24 +1,55 @@
 package nl.bioinf.ngswebapp.service;
 
+import nl.bioinf.ngswebapp.model.AnalyseInfo;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FastQCResultsParser implements FastQCResults {
 
     @Override
-    public List<List<Object>> isFinished(String[] uniqueID, String folderPath) {
-        //uniqueID..map(ResultFilter::filterRunningBenchmarkResults);
-        System.out.println(Arrays.stream(uniqueID).map(ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList()));
-        return null;
+    public List<List<String>> isFinished(ArrayList<AnalyseInfo> analyseInfos) {
+        return analyseInfos.stream().map(ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
     }
 
     public static class ResultFilter {
-        public static List<String> filterRunningBenchmarkResults(String id) {
+        public static List<String> filterRunningBenchmarkResults(AnalyseInfo analyse) {
             List<String> tabledResults = new ArrayList<>();
-            tabledResults.add(id);
+            tabledResults.add(analyse.getProjectName());
+            tabledResults.add(isDone(analyse.getFiles(), analyse.getSessionID()));
+
             return tabledResults;
+        }
+        public static String isDone(String[] file, String id) {
+            // TODO: Method to check for errors
+            Path path = Paths.get("/students/2022-2023/Thema10/ngs_dummyfiles/temp/" + id + "/output.log");
+            List<String> doneFiles;
+            try {
+                BufferedReader reader = Files.newBufferedReader(path);
+                doneFiles = new ArrayList<>();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.startsWith("Analysis complete")) {
+                        String fileDone = line.split(" ")[3];
+                        doneFiles.add(fileDone);
+                    }
+                }
+                reader.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            for (String f: file) {
+                if (!doneFiles.contains(f)) {
+                    return "false";
+                }
+            }
+            return "true";
         }
     }
 
