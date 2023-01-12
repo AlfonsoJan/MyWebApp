@@ -16,7 +16,7 @@ public class FastqFiles {
             Arrays.sort(filesList, Comparator.comparingLong(File::lastModified).reversed());
         }
         for (File file: filesList) {
-            if (file.isFile() && file.getName().endsWith(".fastq.gz")) {
+            if (file.isFile() && (file.getName().endsWith(".fastq") || file.getName().endsWith(".fastq.gz") )) {
                 ArrayList<String> tmp = new ArrayList<>();
                 tmp.add(file.getName());
                 BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
