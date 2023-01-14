@@ -14,14 +14,8 @@
         li.selected {
             outline: 2px solid darkblue;
         }
-        .low-used {
+        .used {
             background-color: #F7E7A6;
-        }
-        .medium-used {
-            background-color: #F8CBB0;
-        }
-        .high-used {
-            background-color: #F7A9A6;
         }
     </style>
     <script>
@@ -139,9 +133,7 @@
                 <select name="file-filters" id="file-filters" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 block p-2">
                     <option value="0">All Files</option>
                     <option value="1">Never used</option>
-                    <option value="2">Low Useage</option>
-                    <option value="3">Medium Usage</option>
-                    <option value="4">High Usage</option>
+                    <option value="2">Used</option>
                 </select>
                 <input type="search" onkeyup="filterFileFunction()" id="filterFileInput" class="block text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search File...">
             </div>
@@ -158,17 +150,11 @@
                                     <line x1="12" y1="17" x2="12" y2="16"></line>
                                     <line x1="15" y1="17" x2="15" y2="14"></line>
                                 </svg>
-                                <th:block th:if="${files[2] == 'NONE'}">
+                                <th:block th:if="${files[2] == 'NOT_USED'}">
                                     <span id="fileName" class="text-bold mr-auto none-used" th:text="${files[0]}"></span>
                                 </th:block>
-                                <th:block th:if="${files[2] == 'LOW'}">
-                                    <span id="fileName" class="text-bold mr-auto low-used" th:text="${files[0]}"></span>
-                                </th:block>
-                                <th:block th:if="${files[2] == 'MEDIUM'}">
-                                    <span id="fileName" class="text-bold mr-auto medium-used" th:text="${files[0]}"></span>
-                                </th:block>
-                                <th:block th:if="${files[2] == 'HIGH'}">
-                                    <span id="fileName" class="text-bold mr-auto high-used" th:text="${files[0]}"></span>
+                                <th:block th:if="${files[2] == 'USED'}">
+                                    <span id="fileName" class="text-bold mr-auto used" th:text="${files[0]}"></span>
                                 </th:block>
                                 <span th:text="${files[1]}"></span>
                             </li>
@@ -199,16 +185,16 @@
                     </div>
                 </div>
             </div>
-            <div class="overflow-y-auto row-start-3 row-end-17" id="files"></div>
-            <div type="button" onclick="getFiles()" class="row-start-17 row-end-19 rounded-md bg-[#808080] text-[#D3D3D3] font-bold text-xl hover:text-white flex items-center justify-center" id="download-button">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
-                    <polyline points="7 11 12 16 17 11"></polyline>
-                    <line x1="12" y1="4" x2="12" y2="16"></line>
-                </svg>
-                <h3>Download</h3>
-            </div>
+            <div class="overflow-y-auto row-start-3 row-end-19" id="files"></div>
+<!--            <div type="button" onclick="getFiles()" class="row-start-17 row-end-19 rounded-md bg-[#808080] text-[#D3D3D3] font-bold text-xl hover:text-white flex items-center justify-center" id="download-button">-->
+<!--                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-download" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">-->
+<!--                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>-->
+<!--                    <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>-->
+<!--                    <polyline points="7 11 12 16 17 11"></polyline>-->
+<!--                    <line x1="12" y1="4" x2="12" y2="16"></line>-->
+<!--                </svg>-->
+<!--                <h3>Download</h3>-->
+<!--            </div>-->
             <div class="row-start-19 row-end-21 rounded-md bg-[#808080] text-[#D3D3D3] font-bold text-xl hover:text-white flex items-center justify-center" id="add-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="lightgray" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
@@ -240,6 +226,9 @@
         </li>
         <li>
             <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
+        </li>
+        <li>
+            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
         </li>
     </ul>
 </div>
@@ -298,33 +287,7 @@
             }
             if (value == 2) {
                 $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('low-used')) {
-                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
-                            $(this).show()
-                        } else {
-                            $(this).hide()
-                        }
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 3) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('medium-used')) {
-                        if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
-                            $(this).show()
-                        } else {
-                            $(this).hide()
-                        }
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 4) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('high-used')) {
+                    if ($(this).find('#fileName').hasClass('used')) {
                         if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
                             $(this).show()
                         } else {
@@ -339,28 +302,28 @@
     }
     $("#icon-add-file").hide();
     $("#existing-project").hide();
-    function getFiles() {
-        var url = "download?";
-        var elements = $("#chosen-content #files");
-        var fileNames = [];
-        $.each($("#chosen-content #files").find("p"), function () {
-            fileNames.push($(this).data("name"))
-        });
-        if (fileNames.length < 1) {
-            toastr.warning("Please select at least one file");
-            return;
-        }
-        $.each(fileNames, function (index, val) {
-            url += `allFiles=${val}&`;
-        });
-        $.each($("#chosen-content #files").find("p"), function () {
-            $(this).remove()
-        });
-        url = url.slice(0, -1);
-        var link = document.createElement('a');
-        link.href = url;
-        link.click();
-    }
+    // function getFiles() {
+    //     var url = "download?";
+    //     var elements = $("#chosen-content #files");
+    //     var fileNames = [];
+    //     $.each($("#chosen-content #files").find("p"), function () {
+    //         fileNames.push($(this).data("name"))
+    //     });
+    //     if (fileNames.length < 1) {
+    //         toastr.warning("Please select at least one file");
+    //         return;
+    //     }
+    //     $.each(fileNames, function (index, val) {
+    //         url += `allFiles=${val}&`;
+    //     });
+    //     $.each($("#chosen-content #files").find("p"), function () {
+    //         $(this).remove()
+    //     });
+    //     url = url.slice(0, -1);
+    //     var link = document.createElement('a');
+    //     link.href = url;
+    //     link.click();
+    // }
     function addFileToProject(fileNames) {
         var projectName = $("#projects-names option:selected" ).val();
         if (projectName.toLowerCase() === "select a project") {
@@ -404,6 +367,16 @@
             }
         });
     }
+    $(function(){
+        $("#file-filters").val("1").change();
+        $.each($("#current-files li"), function(){
+            if ($(this).find('#fileName').hasClass('none-used')) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
     $(document).ready(function(){
         $(document).on('click', '#add-button', function (e) {
             e.preventDefault();
@@ -536,25 +509,7 @@
             }
             if (value == 2) {
                 $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('low-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 3) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('medium-used')) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            }
-            if (value == 4) {
-                $.each($("#current-files li"), function(){
-                    if ($(this).find('#fileName').hasClass('high-used')) {
+                    if ($(this).find('#fileName').hasClass('used')) {
                         $(this).show();
                     } else {
                         $(this).hide();

@@ -4,10 +4,10 @@ import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.db_objects.Process;
-import nl.bioinf.ngswebapp.model.AnalyseInfo;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,12 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-@WebServlet(name = "AnalyseServlet", urlPatterns = "/analyse")
-public class AnalyseServlet extends HttpServlet {
+@WebServlet(name = "AllDownloadServlet", urlPatterns = "/all-download")
+public class AllDownloadServlet extends HttpServlet {
     private TemplateEngine templateEngine;
     private static VerySimpleDbConnector connector;
 
@@ -36,18 +35,18 @@ public class AnalyseServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-
         ArrayList<Process> processes;
         try {
             processes = connector.getProcessFromUser(1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        processes = (ArrayList<Process>) processes.stream().filter(p -> p.getType().equals("fastqc")).collect(Collectors.toList());
+        processes = (ArrayList<Process>) processes.stream().filter(p -> p.getType().equals("download")).collect(Collectors.toList());
         ctx.setVariable("processes", processes);
-        templateEngine.process("analyse", ctx, response.getWriter());
+        templateEngine.process("all-download", ctx, response.getWriter());
     }
 
     public static VerySimpleDbConnector getConnector() {

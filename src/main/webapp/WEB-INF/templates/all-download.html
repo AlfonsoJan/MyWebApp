@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Analyse</title>
+    <title>Download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
@@ -91,14 +91,14 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="search" onkeyup="filterAnalyseFunction()" id="filterAnalyseInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Analysis...">
+                    <input type="search" onkeyup="filterDownloadFunction()" id="filterDownloadInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Downloads...">
                 </div>
             </form>
         </div>
-        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="analysis-done">
+        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="download-done">
             <th:block th:each="process :  ${processes}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${process.id}">
-                    <div class="flex items-center justify-between" id="analysis-title">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="download-tile" th:attr="data-id=${process.id}">
+                    <div class="flex items-center justify-between" id="download-title">
                         <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
                         <div class="flex" id="status-button">
                             <div id="finished-icon" class="hidden">
@@ -113,13 +113,13 @@
                                         Running
                                     </span>
                             </div>
-                            <div id="cant-find-anaylse" class="hidden">
+                            <div id="cant-find-download" class="hidden">
                                     <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-900 text-red-300">
                                         <span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span>
                                         Absent
                                     </span>
                             </div>
-                            <div class="h-6 w-6 group" id="show-analysis-icon">
+                            <div class="h-6 w-6 group" id="show-download-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -127,13 +127,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-2 hidden" id="analysis-info">
-                        <div id="analysis-files">
+                    <div class="mb-2 hidden" id="download-info">
+                        <div id="download-files">
                             <th:block th:each="files :  ${process.project.labeledFiles}">
                                 <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files.fullPath}" th:text="'- ' + ${files.label}"></p>
                             </th:block>
                         </div>
-                        <div class="w-full" id="analysis-download">
+                        <div class="w-full" id="download-download">
                             <div id="done" class="hidden">
                                 <p>Download a summary of the FastQC: <span id="download-link" class="rounded-md px-4 py-1.5 mx-1 bg-orange-300 hover:cursor-pointer hover:bg-orange-400">here</span></p>
                             </div>
@@ -182,96 +182,7 @@
 
 <!-- Scripts -->
 <script>
-    toastr.options = {
-        "closeButton": true,
-        "debug": false,
-        "newestOnTop": true,
-        "progressBar": false,
-        "positionClass": "toast-bottom-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "1000",
-        "timeOut": "5000",
-        "extendedTimeOut": "1000",
-        "showEasing": "linear",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
-    function filterAnalyseFunction() {
-        var input = $("#filterAnalyseInput").val().toUpperCase();
-        $.each($("#analysis-done #analysis-tile"), function(){
-            var text = $(this).find("#analysis-title #title-header").html();
-            if (text.toUpperCase().indexOf(input) >= 0) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
-    }
-    $(document).ready(function(){
-        $(document).on('click', "#show-analysis-icon", function () {
-            $(this).parent().parent().parent().find("#analysis-info").toggle("fast");
-            $(this).toggleClass('rotated');
-        });
-        $(function () {
-            var isAllDone = true;
-            var get_data = function() {
-                $.when(
-                    $.getJSON("/analysedone", function (data) {
-                        processing = data;
-                    })
-                ).then(function () {
-                    parseResult(processing);
-                });
-            };
-            var parseResult = function(data) {
-                $.each(data, function( i, val ) {
-                    var search = $( "#analysis-tile #analysis-title p" ).filter( function () {
-                        return $(this).text() == val[0];
-                    }).first();
-                    switch(val[1]) {
-                        case "true":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").show();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            break;
-                        case "false":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").show();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            break;
-                        default:
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").show();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            break;
-                    }
-                    console.log("Hi")
-                    // if (val[1] == "false") {
-                    //     isAllDone = false;
-                    //     return;
-                    // }
-                })
-            };
-            setTimeout( function(){
-                get_data();
-            }  , 4000 );
 
-            // window.setInterval(function(){
-            //     if (!isAllDone)
-            //         get_data();
-            // }, 1000);
-        });
-    });
 </script>
-
 </body>
 </html>

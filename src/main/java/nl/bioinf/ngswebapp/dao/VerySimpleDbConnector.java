@@ -505,13 +505,9 @@ public class VerySimpleDbConnector {
         }
 
         if (count < 1) {
-            return Enums.Used.NONE;
-        } else if (count < 2) {
-            return Enums.Used.LOW;
-        } else if (count < 5) {
-            return Enums.Used.MEDIUM;
+            return Enums.Used.NOT_USED;
         } else {
-            return Enums.Used.HIGH;
+            return Enums.Used.USED;
         }
     }
 
