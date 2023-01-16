@@ -2,6 +2,7 @@ package nl.bioinf.ngswebapp.model;
 
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.servlets.NewFileTabServlet;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class FastqFiles {
-
-    private static VerySimpleDbConnector connector;
 
     public static ArrayList<ArrayList<String>> getFiles(String filePath) throws IOException {
         ArrayList<ArrayList<String>> listOfFiles = new ArrayList<>();
@@ -41,13 +40,9 @@ public class FastqFiles {
 
     public static Enums.Used getEnum(String file){
         try {
-            connector = new VerySimpleDbConnector();
-            return connector.getTimesHardFileIsUsed(file);
-        } catch (SQLException | DatabaseException | IOException | NoSuchFieldException e) {
+            return NewFileTabServlet.getConnector().getTimesHardFileIsUsed(file);
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-    public static VerySimpleDbConnector getConnector() {
-        return connector;
     }
 }

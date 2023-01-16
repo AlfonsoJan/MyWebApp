@@ -1,5 +1,6 @@
 package nl.bioinf.ngswebapp.service;
 
+import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.model.AnalyseInfo;
 
 import java.io.BufferedReader;
@@ -14,16 +15,15 @@ import java.util.stream.Collectors;
 public class FastQCResultsParser implements FastQCResults {
 
     @Override
-    public List<List<String>> isFinished(ArrayList<AnalyseInfo> analyseInfos) {
+    public List<List<String>> isFinished(ArrayList<Process> analyseInfos) {
         return analyseInfos.stream().map(ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
     }
 
     public static class ResultFilter {
-        public static List<String> filterRunningBenchmarkResults(AnalyseInfo analyse) {
+        public static List<String> filterRunningBenchmarkResults(Process analyse) {
             List<String> tabledResults = new ArrayList<>();
-            tabledResults.add(analyse.getProjectName());
-            tabledResults.add(isDone(analyse.getFiles(), analyse.getSessionID()));
-
+            tabledResults.add(analyse.getProject().getName());
+            //tabledResults.add(isDone(analyse.getFiles(), analyse.getSessionID()));
             return tabledResults;
         }
         public static String isDone(String[] file, String id) {
@@ -44,8 +44,8 @@ public class FastQCResultsParser implements FastQCResults {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            for (String f: file) {
-                if (!doneFiles.contains(f)) {
+            for (String fileName: file) {
+                if (!doneFiles.contains(fileName)) {
                     return "false";
                 }
             }
