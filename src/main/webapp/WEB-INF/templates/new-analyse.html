@@ -130,7 +130,7 @@
                                 <div class="hidden" id="project-files">
                                     <p class="font-bold mx-0 my-2 last:pb-2">Files:</p>
                                     <th:block th:each="file : ${project.labeledFiles}">
-                                        <p class="mx-0 my-2 last:pb-2" id="file-name-projects" th:text="${file.label}" th:attr="fullPath=${file.fullPath}"></p>
+                                        <p class="mx-0 my-2 last:pb-2" id="file-name-projects" th:text="${file.label}" th:attr="data-origfilename=${file.fullPath}"></p>
                                     </th:block>
                                 </div>
                             </li>
@@ -236,9 +236,9 @@
             var files = [];
             var option = options.find("#analyse-tile-info #analyse-tile-title").html();
             $.each($("#selected-files-for-analyse #placeholder-selected-files > p").filter(':not(.font-bold)'), function(){
-                files.push($(this).html().substring($(this).html().indexOf(" ") + 1, $(this).html().length));
+                files.push($(this).data("origfilename"))
             });
-            console.log(files);
+
             $.ajax({
                 url: "runfastqc",
                 type: "GET",
@@ -271,7 +271,7 @@
             var nameHolder = `<p class="font-bold mx-0 my-2">Files: </p>`;
             $.each(element.find("#project-files > p").filter(':not(.font-bold)'), function(){
                 var name = $(this).html().substring($(this).html().indexOf(" ") + 1, $(this).html().length);
-                nameHolder = nameHolder + `<p class="mx-0 my-2">- ${name}</p>`
+                nameHolder = nameHolder + `<p class="mx-0 my-2" data-origfilename="${$(this).data("origfilename")}">- ${name}</p>`
             });
             var container = `<div class="m-1 py-1 px-4 rounded-md shadow-3xl" id="placeholder-selected-files"><div id="selected-project-header"><p class="font-bold mx-0 my-2">${projectName} ${del}</p></div>${nameHolder}</div>`;
             $("#selected-files-for-analyse").append(container);
@@ -321,7 +321,7 @@
                     var nameHolder = `<p class="font-bold mx-0 my-2">Files: </p>`;
                     $.each($(ui.draggable).find("#project-files > p").filter(':not(.font-bold)'), function(){
                         var name = $(this).html().substring($(this).html().indexOf(" ") + 1, $(this).html().length);
-                        nameHolder = nameHolder + `<p class="mx-0 my-2">- ${name}</p>`
+                        nameHolder = nameHolder + `<p class="mx-0 my-2" data-origfilename="${$(this).data("origfilename")}">- ${name}</p>`
                     });
                     var container = `<div class="m-1 py-1 px-4 rounded-md shadow-3xl" id="placeholder-selected-files"><div id="selected-project-header"><p class="font-bold mx-0 my-2">${projectName} ${del}</p></div>${nameHolder}</div>`;
                     $("#selected-files-for-analyse").append(container);

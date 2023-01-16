@@ -4,7 +4,6 @@ import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.db_objects.Process;
-import nl.bioinf.ngswebapp.model.AnalyseInfo;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,7 @@ public class AnalyseServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        //TODO: CREATE QUERY TO GET ALL FASTQC
         processes = (ArrayList<Process>) processes.stream().filter(p -> p.getType().equals("fastqc")).collect(Collectors.toList());
         ctx.setVariable("processes", processes);
         templateEngine.process("analyse", ctx, response.getWriter());

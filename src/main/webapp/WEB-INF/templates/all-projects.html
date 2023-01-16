@@ -117,7 +117,7 @@
                             <th:block th:each="file : ${project.labeledFiles}">
                                 <div class="flex items-center justify-between last:pb-3" id="analyse-file">
                                     <div th:id="${file.fileId}"></div>
-                                    <p class="mt-2 mx-0" id="fileNameH" th:attr="data-name=${file.label}" th:text="'- ' + ${file.label}"></p>
+                                    <p class="mt-2 mx-0" id="fileNameH" th:attr="data-name=${file.fullPath}" th:text="'- ' + ${file.label}"></p>
                                     <button onclick="updateSelected( this, true)" id="dropdownFileOptionsButton" th:attr="data-dropdown-toggle=${file.fileId} + ${project.projectId}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
                                         <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                                     </button>
@@ -309,6 +309,7 @@
         let id = selected.parentElement.children.item(0).id;
         $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
             files.push($(this).find("#fileNameH").data("name"));
+            console.log($(this).find("#fileNameH").data())
         });
         $.ajax({
             type: 'GET',
