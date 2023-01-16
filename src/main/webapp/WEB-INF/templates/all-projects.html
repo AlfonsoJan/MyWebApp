@@ -198,14 +198,6 @@
                         <label id="origFileName" for="fileName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Filename)</label>
                         <input type="text" name="fileName" id="fileName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Filename...">
                     </div>
-                    <!--<div class="flex items-center justify-between">
-                        <label id="origLabel" for="label" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Label)</label>
-                        <input type="text" name="label" id="label" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Label...">
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <label id="origRead" for="read" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old read)</label>
-                        <input type="text" name="read" pattern="[12-]{1,}" id="read" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Read...">
-                    </div>!-->
                     <button type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="update(this)">Update File</button>
                 </form>
             </div>
@@ -314,20 +306,17 @@
     }
     function downloadProject(item) {
         var files = [];
-        var projectName = $(item).parent().parent().parent().parent().find("#title #project-title-header").html();
         let id = selected.parentElement.children.item(0).id;
         $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
             files.push($(this).find("#fileNameH").data("name"));
         });
-        console.log(id)
-        console.log(`Download started for ${projectName} ${files}`)
         $.ajax({
             type: 'GET',
             url: 'download',
-            data: {project: id, allFiles: files},
+            data: {project: id, projectFiles: files},
             success: function () {
-                toastr.success(`yey!`);
-                selected.parentElement.parentElement.remove();
+                toastr.success(`Download started!`);
+                window.setTimeout(function(){ window.location = "all-download"; }, 2000);
             },
             error: function () {
                 toastr.error('There was an error!');

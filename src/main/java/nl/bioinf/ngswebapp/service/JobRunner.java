@@ -3,7 +3,6 @@ package nl.bioinf.ngswebapp.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,36 +11,28 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class JobRunner implements CommandConstructor {
-    private final int uniqueId;
+    private final UUID uniqueId;
     private final String resourcePath;
+    private final String outPath;
     private final String[] files;
     private final String jobType;
-    private final List<String> paths;
 
-    public JobRunner(int uniqueId, String resourcePath, String[] files, String jobType) {
+    public JobRunner(UUID uniqueId, String resourcePath, String[] files, String jobType, String outPath) {
         this.uniqueId = uniqueId;
         this.resourcePath = resourcePath;
         this.files = files;
         this.jobType = jobType;
-        this.paths = fileNamesToPath();
-    }
-
-    private List<String> fileNamesToPath() {
-        List<String> paths = new ArrayList<>();
-        for (String fileName : files) {
-            paths.add(resourcePath + fileName);
-        }
-        return paths;
+        this.outPath = outPath;
     }
 
     private String[] constructCommandPrefix() throws IOException {
-        String uniquePath = resourcePath + "temp/" + uniqueId;
-        Files.createDirectories(Paths.get(resourcePath + "temp/"));
+        String uniquePath = outPath + uniqueId;
+        Files.createDirectories(Paths.get(outPath));
         switch (jobType) {
             case "fastqc":
                 Files.createDirectories(Paths.get(uniquePath));
                 return new String[]{"fastqc", "-o", uniquePath};
-            case "zip":
+            case "download":
                 return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", "-C", resourcePath};
             default:
                 return null;
@@ -61,11 +52,11 @@ public class JobRunner implements CommandConstructor {
         String outFile;
         String errFile;
         if ("fastqc".equals(jobType)) {
-            outFile = resourcePath + "temp/" + uniqueId + "/output.log";
-            errFile = resourcePath + "temp/" + uniqueId + "/error.log";
+            outFile = outPath + uniqueId + "/output.log";
+            errFile = outPath + uniqueId + "/error.log";
         } else {
-            outFile = resourcePath + "temp/" + uniqueId + ".output.log";
-            errFile = resourcePath + "temp/" + uniqueId + ".error.log";
+            outFile = outPath + uniqueId + ".output.log";
+            errFile = outPath + uniqueId + ".error.log";
         }
 
         // Get the job command

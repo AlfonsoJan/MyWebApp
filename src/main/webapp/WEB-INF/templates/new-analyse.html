@@ -242,7 +242,7 @@
             $.ajax({
                 url: "runfastqc",
                 type: "GET",
-                data: {fileNames: files, analyseType: option, project: [selected_project]},
+                data: {fileNames: files, analyseType: option, project: selected_project},
                 beforeSend: function() {
                     toastr.info(`Starting: ${option} on ${files.length} file(s)`);
                 },

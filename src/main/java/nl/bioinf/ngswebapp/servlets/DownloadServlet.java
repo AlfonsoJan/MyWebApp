@@ -1,5 +1,6 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import com.mysql.cj.util.StringUtils;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.service.JobRunner;
@@ -12,20 +13,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.UUID;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download")
 public class DownloadServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
-        System.out.println("B");
-        int projectId = Integer.parseInt(request.getParameter("project"));
-        System.out.println("AAA");
-        String resourcePath = request.getServletContext().getInitParameter("resourcePath");
-        System.out.println(allFiles.length);
-        FileInputStream fileInputStream = null;
-        OutputStream responseOutputStream = null;
-        if (allFiles.length == 1) {
+        String[] projectFiles = request.getParameterValues("projectFiles[]");
+        int projectId = StringUtils.isNullOrEmpty(request.getParameter("project")) ? -1 : Integer.parseInt(request.getParameter("project"));
+        String resourcePath = request.getServletContext().getInitParameter("file.location");
+        String outPath = request.getServletContext().getInitParameter("analyse.folder");
+
+        if (allFiles != null) {
+            FileInputStream fileInputStream = null;
+            OutputStream responseOutputStream = null;
             try {
                 String filePath = resourcePath + allFiles[0];
                 File file = new File(filePath);
@@ -37,7 +41,6 @@ public class DownloadServlet extends HttpServlet {
                 response.setContentType(mimeType);
                 response.addHeader("Content-Disposition", "attachment; filename=" + allFiles[0]);
                 response.setContentLength((int) file.length());
-
                 fileInputStream = new FileInputStream(file);
                 responseOutputStream = response.getOutputStream();
                 int bytes;
@@ -52,20 +55,25 @@ public class DownloadServlet extends HttpServlet {
                 assert responseOutputStream != null;
                 responseOutputStream.close();
             }
-        } else if (allFiles.length > 1) {
-            Process process;
-            System.out.println("YE");
-            try {
-                System.out.println("A");
-                VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
-                System.out.println("B");
-                process = connector.insertProcess("download", projectId);
-                System.out.println("C");
-            } catch (Exception e) {
-                System.out.println(e);
-                throw new RuntimeException(e);
+        } else {
+            UUID randomID;
+            while (true) {
+                randomID = UUID.randomUUID();
+                Path path = Path.of(outPath + randomID);
+                if (Files.notExists(path)) {
+                    break;
+                }
             }
-            JobRunner zipper = new JobRunner(process.getId(), resourcePath, allFiles, "zip");
+            //Process process;
+            //TODO: Add unique ID to DB
+//            try {
+//                VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
+//                process = connector.insertProcess("download", projectId);
+//            } catch (Exception e) {
+//                System.out.println(e);
+//                throw new RuntimeException(e);
+//            }
+            JobRunner zipper = new JobRunner(randomID, resourcePath, projectFiles, "download", outPath);
             zipper.startJob();
         }
     }

@@ -1,5 +1,6 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
@@ -35,15 +36,21 @@ public class NewFileTabServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        String resourcePath = request.getServletContext().getInitParameter("resourcePath");
-        ArrayList<ArrayList<String>> listOfFiles = FastqFiles.getFiles(resourcePath);
-        ctx.setVariable("filesList", listOfFiles);
         try {
             ctx.setVariable("projects", connector.getProjectsFromUser(1).keySet());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         templateEngine.process("new-files", ctx, response.getWriter());
+    }
+
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String resourcePath = request.getServletContext().getInitParameter("file.location");
+        ArrayList<ArrayList<String>> listOfFiles = FastqFiles.getFiles(resourcePath);
+        String json = new Gson().toJson(listOfFiles);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(json);
     }
 
     public static VerySimpleDbConnector getConnector() {
