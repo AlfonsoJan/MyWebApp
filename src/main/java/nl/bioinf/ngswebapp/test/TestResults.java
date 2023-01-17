@@ -22,9 +22,7 @@ public class TestResults {
         }
         ArrayList<Process> processes;
         try {
-            processes = (ArrayList<Process>) connector
-                    .getProcessFromUser(1).stream()
-                    .filter(p -> p.getType().equals("fastqc")).collect(Collectors.toList());
+            processes = connector.getProcessFromUser(1, "fastqc");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

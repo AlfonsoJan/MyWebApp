@@ -309,7 +309,6 @@
         let id = selected.parentElement.children.item(0).id;
         $.each($(item).parent().parent().parent().parent().find("#project-info-files #analysis-files #analyse-file"), function(){
             files.push($(this).find("#fileNameH").data("name"));
-            console.log($(this).find("#fileNameH").data())
         });
         $.ajax({
             type: 'GET',

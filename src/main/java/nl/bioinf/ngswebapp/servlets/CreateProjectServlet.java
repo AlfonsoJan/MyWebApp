@@ -26,18 +26,12 @@ public class CreateProjectServlet extends HttpServlet {
         if (files == null || files.length < 1) return;
         try {
             projectId = NewFileTabServlet.getConnector().getProject(projectName, 1).getProjectId();
-        } catch (SQLException e) {
-            System.out.println(e);
-            throw new RuntimeException(e);
-        }
-        try {
             for (String path : files) {
                 NewFileTabServlet.getConnector().insertLabeledFile(path, path, projectId);
             }
-        } catch (DatabaseException e) {
+        } catch (SQLException | DatabaseException e) {
             System.out.println(e);
             throw new RuntimeException(e);
         }
-
     }
 }

@@ -1,7 +1,7 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
-import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet(name = "RunFastQCServlet", urlPatterns = "/runfastqc")
@@ -35,23 +35,13 @@ public class RunFastQCServlet extends HttpServlet {
                 break;
             }
         }
-
-        //TODO: ADD unique id to project process
-
-//        Process process;
-//        try {
-//            VerySimpleDbConnector connector = NewAnalyseServlet.getConnector();
-//            int projectId = connector.getProject(project, 1).getProjectId();
-//            process = connector.insertProcess(analyseType, projectId);
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println(process.getId());
-
-
-
-
+        try {
+            VerySimpleDbConnector connector = NewAnalyseServlet.getConnector();
+            int projectId = connector.getProject(project, 1).getProjectId();
+            connector.insertProcess(analyseType, projectId, randomID.toString());
+        } catch (SQLException | DatabaseException e) {
+            throw new RuntimeException(e);
+        }
         JobRunner fastqc = new JobRunner(randomID, resourcePath, files, analyseType, outPath);
         fastqc.startJob();
     }

@@ -39,12 +39,10 @@ public class AnalyseServlet extends HttpServlet {
 
         ArrayList<Process> processes;
         try {
-            processes = connector.getProcessFromUser(1);
+            processes = connector.getProcessFromUser(1, "fastqc");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        //TODO: CREATE QUERY TO GET ALL FASTQC
-        processes = (ArrayList<Process>) processes.stream().filter(p -> p.getType().equals("fastqc")).collect(Collectors.toList());
         ctx.setVariable("processes", processes);
         templateEngine.process("analyse", ctx, response.getWriter());
     }

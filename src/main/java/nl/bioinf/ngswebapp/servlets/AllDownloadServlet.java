@@ -40,11 +40,10 @@ public class AllDownloadServlet extends HttpServlet {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
         ArrayList<Process> processes;
         try {
-            processes = connector.getProcessFromUser(1);
+            processes = connector.getProcessFromUser(1, "zip");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        processes = (ArrayList<Process>) processes.stream().filter(p -> p.getType().equals("download")).collect(Collectors.toList());
         ctx.setVariable("processes", processes);
         templateEngine.process("all-download", ctx, response.getWriter());
     }

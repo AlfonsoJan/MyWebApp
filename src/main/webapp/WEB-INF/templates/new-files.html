@@ -149,7 +149,9 @@
                     <p class="hidden italic text-slate-700" id="placeholderText">There are no files to be found</p>
                 </div>
                 <div class="max-h-full overflow-y-auto px-0 py-1.5 hidden" id="all-files">
-                    <ul id="current-files" class="p-0 mx-4 mt-2 mb-4"></ul>
+                    <ul id="current-files" class="p-0 mx-4 mt-2 mb-4">
+                        <li id="placeholder_li"></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -345,6 +347,7 @@
                 }
                 $('#skeleton').hide();
                 $('#all-files').show();
+                $('#placeholder_li').remove();
                 $.each(processing, function( i, val ) {
                     $('#current-files').append(`<li class="flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200">${fileIcon} <span id="fileName" class="text-bold mr-auto ${val[2]}">${val[0]}</span> <span>${val[1]}</span></li>`);
                 });
@@ -356,33 +359,33 @@
                         $(this).hide();
                     }
                 });
-            };
-            $("#current-files li").draggable({
-                containment: "window",
-                cursor: 'clone',
-                helper: function(){
-                    $("#icon-add-file").show();
-                    var selected = $("#current-files li.selected");
-                    if (selected.length == 0){
-                        selected = $(this).addClass('selected');
+                // Drag Functions
+                $("#current-files li").draggable({
+                    containment: "window",
+                    cursor: 'clone',
+                    helper: function(){
+                        $("#icon-add-file").show();
+                        $(this).addClass('selected');
+                        var selected = $("#current-files li.selected");
+                        var w = $(this).css('width');
+                        var h = $(this).css('height');
+                        var container = $('<div/>').attr('id', 'draggingContainer');
+                        container.append(selected.clone().removeClass("selected").css('width', w).css('height', h));
+                        return container;
                     }
-                    var w = $(this).css('width');
-                    var h = $(this).css('height');
-                    var container = $('<div/>').attr('id', 'draggingContainer');
-                    container.append(selected.clone().removeClass("selected").css('width', w).css('height', h));
-                    return container;
-                }
-            });
-            $("#chosen-content #files").droppable({
-                drop: function(event, ui) {
-                    $.each($("#current-files li").filter('.selected'), function(){
-                        var fileName = $(this).find('#fileName').html();
-                        $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
-                        $(this).removeClass("selected");
-                    });
-                    $("#icon-add-file").hide();
-                }
-            });
+                });
+                $("#chosen-content #files").droppable({
+                    drop: function(event, ui) {
+                        $.each($("#current-files li").filter('.selected'), function(){
+                            var fileName = $(this).find('#fileName').html();
+                            $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
+                            $(this).removeClass("selected");
+                        });
+                        $("#icon-add-file").hide();
+                    }
+                });
+            };
+
         });
         $(document).on('click', '#add-button', function (e) {
             e.preventDefault();
@@ -434,35 +437,6 @@
             });
             $("#icon-add-file").hide();
         });
-        // Drag functions
-        // $(function(){
-        //     $("#current-files li").draggable({
-        //         containment: "window",
-        //         cursor: 'clone',
-        //         helper: function(){
-        //             $("#icon-add-file").show();
-        //             var selected = $("#current-files li.selected");
-        //             if (selected.length == 0){
-        //                 selected = $(this).addClass('selected');
-        //             }
-        //             var w = $(this).css('width');
-        //             var h = $(this).css('height');
-        //             var container = $('<div/>').attr('id', 'draggingContainer');
-        //             container.append(selected.clone().removeClass("selected").css('width', w).css('height', h));
-        //             return container;
-        //         }
-        //     });
-        //     $("#chosen-content #files").droppable({
-        //         drop: function(event, ui) {
-        //             $.each($("#current-files li").filter('.selected'), function(){
-        //                 var fileName = $(this).find('#fileName').html();
-        //                 $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
-        //                 $(this).removeClass("selected");
-        //             });
-        //             $("#icon-add-file").hide();
-        //         }
-        //     });
-        // });
         // Select files functions
         lastChecked = null;
         $(document).on('click', "#current-files li", function (e) {

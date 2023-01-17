@@ -7,6 +7,15 @@ public class Process {
     private String type;
     private String projectName;
     private Project project;
+    private String uniqueID;
+
+    public String getUniqueID() {
+        return uniqueID;
+    }
+
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
+    }
 
     public String getProjectName() {
         return projectName;
@@ -24,15 +33,10 @@ public class Process {
         this.project = project;
     }
 
-    public Process(int id, String type, int projectId) {
-        this.id = id;
-        this.projectId = projectId;
-        this.type = type;
-    }
-
-    public Process(int id, String type) {
+    public Process(int id, String type, String uniqueID) {
         this.id = id;
         this.type = type;
+        this.uniqueID = uniqueID;
     }
 
     public int getId() {

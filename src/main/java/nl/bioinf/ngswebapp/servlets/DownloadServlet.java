@@ -1,8 +1,8 @@
 package nl.bioinf.ngswebapp.servlets;
 
 import com.mysql.cj.util.StringUtils;
+import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
-import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.UUID;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download")
@@ -59,21 +58,20 @@ public class DownloadServlet extends HttpServlet {
             UUID randomID;
             while (true) {
                 randomID = UUID.randomUUID();
-                Path path = Path.of(outPath + randomID);
+                Path path = Path.of(outPath + randomID + ".tar.gz");
                 if (Files.notExists(path)) {
                     break;
                 }
             }
-            //Process process;
-            //TODO: Add unique ID to DB
-//            try {
-//                VerySimpleDbConnector connector = NewFileTabServlet.getConnector();
-//                process = connector.insertProcess("download", projectId);
-//            } catch (Exception e) {
-//                System.out.println(e);
-//                throw new RuntimeException(e);
-//            }
-            JobRunner zipper = new JobRunner(randomID, resourcePath, projectFiles, "download", outPath);
+            String analyseType = "zip".toLowerCase();
+            try {
+                VerySimpleDbConnector connector = AllPersonalProjectsServlet.getConnector();
+                connector.insertProcess(analyseType, projectId, randomID.toString());
+            } catch (DatabaseException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            JobRunner zipper = new JobRunner(randomID, resourcePath, projectFiles, "zipper", outPath);
             zipper.startJob();
         }
     }
