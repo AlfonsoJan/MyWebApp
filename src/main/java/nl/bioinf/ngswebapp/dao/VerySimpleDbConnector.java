@@ -50,6 +50,9 @@ public class VerySimpleDbConnector {
     private static final String INSERT_PROCESS_NO_PROJECT = "insert_process_no_project";
     private static final String MAX_PROCESS = "max_process";
     private static final String SELECT_ALL_PROCESS = "select_process";
+
+    private static final String SELECT_ALL_PROCESS_FROM_PROJECT = "select_process_project";
+    private static final String DELETE_PROCESS_QUERY = "delete_process";
     /**
      * a main for demonstration purposes
      *
@@ -172,6 +175,12 @@ public class VerySimpleDbConnector {
 
         String getAllProcessFromUser = "select * from projects,users,process where projects.id = project_id and user_id = ? and process.type = ?;";
         this.preparedStatements.put(SELECT_ALL_PROCESS, connection.prepareStatement(getAllProcessFromUser));
+
+        String getAllProcessFromProject = "select * from process where project_id = ?";
+        this.preparedStatements.put(SELECT_ALL_PROCESS_FROM_PROJECT, connection.prepareStatement(getAllProcessFromProject));
+
+        String deleteProcessQuery = "DELETE from labeled_files where id = ?";
+        this.preparedStatements.put(DELETE_PROCESS_QUERY, connection.prepareStatement(deleteProcessQuery));
     }
 
     public User getUser(int id) throws SQLException {
@@ -537,12 +546,47 @@ public class VerySimpleDbConnector {
             Project project = getProject(rs.getInt("project_id"));
             ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
             project.setLabeledFiles(files);
-            Process process = new Process(project.getProjectId(), type, rs.getString("unique_id"));
+            Process process = new Process(rs.getInt("process.id"), type, project.getProjectId(), rs.getString("unique_id"));
             process.setProject(project);
             results.add(process);
         }
 
         return results;
+    }
+
+    public ArrayList<Process> getAllProcessFromProject(int projectID) throws SQLException {
+
+        PreparedStatement ps = this.preparedStatements.get(SELECT_ALL_PROCESS_FROM_PROJECT);
+        ps.setString(1, String.valueOf(projectID));
+
+        ArrayList<Process> results = new ArrayList<>();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String type = rs.getString("type");
+            String uniqueUUID = rs.getString("unique_id");
+            Process process = new Process(id, type, projectID, uniqueUUID);
+            results.add(process);
+        }
+
+        return results;
+    }
+
+    public void deleteProcess(int processId) throws DatabaseException {
+        try{
+            //Prepare statement
+            PreparedStatement ps = this.preparedStatements.get(DELETE_PROCESS_QUERY);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setInt(1, processId);
+
+            //do the actual insert
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
     }
 
 //    public User getUser(String userName, String userPass) throws DatabaseException  {

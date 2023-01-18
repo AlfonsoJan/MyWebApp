@@ -8,6 +8,7 @@ public class Project {
     private int userId;
     private ArrayList<LabeledFile> labeledFiles = new ArrayList<>();
 
+    private int processes;
     private int fileSize;
 
     public Project(int projectId, String name, int userId) {
@@ -52,4 +53,13 @@ public class Project {
     public int getFileSize() {
         return labeledFiles.size();
     }
+
+    public int getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(int processes) {
+        this.processes = processes;
+    }
+
 }

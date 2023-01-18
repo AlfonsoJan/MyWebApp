@@ -57,5 +57,7 @@ create table process
     primary key(id),
     foreign key(project_id)
         references projects(id)
-        on delete restrict
+    foreign key(user_id) not null.
+        references users(id)
+        on delete restrict,
 );

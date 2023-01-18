@@ -3,6 +3,7 @@ package nl.bioinf.ngswebapp.servlets;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.db_objects.LabeledFile;
+import nl.bioinf.ngswebapp.db_objects.Process;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,6 +23,9 @@ public class DeleteProjectServlet extends HttpServlet {
             ArrayList<LabeledFile> files = connector.getLabelFilesFromProject(id);
             for (LabeledFile file : files) {
                 connector.deleteLabeledFile(file.getFileId());
+            }
+            for (Process process : connector.getAllProcessFromProject(id)) {
+                connector.deleteProcess(process.getId());
             }
             connector.deleteProject(id);
         } catch (DatabaseException | SQLException e) {

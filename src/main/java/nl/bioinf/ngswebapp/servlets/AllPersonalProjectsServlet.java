@@ -47,7 +47,13 @@ public class AllPersonalProjectsServlet extends HttpServlet {
         ArrayList<Project> projectsInfo = new ArrayList<>();
         for (Project project : projectLabeledFileHashMap.keySet()) {
             for (LabeledFile labeledFile : projectLabeledFileHashMap.get(project)) {
+                System.out.println(labeledFile.getLabel());
                 project.addLabeledFile(labeledFile);
+            }
+            try {
+                project.setProcesses(connector.getAllProcessFromProject(project.getProjectId()).size());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
             projectsInfo.add(project);
         }

@@ -33,9 +33,10 @@ public class Process {
         this.project = project;
     }
 
-    public Process(int id, String type, String uniqueID) {
+    public Process(int id, String type, int projectId, String uniqueID) {
         this.id = id;
         this.type = type;
+        this.projectId = projectId;
         this.uniqueID = uniqueID;
     }
 
