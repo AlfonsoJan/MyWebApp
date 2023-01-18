@@ -2,6 +2,7 @@ package nl.bioinf.ngswebapp.service;
 
 import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.model.AnalyseInfo;
+import nl.bioinf.ngswebapp.test.ResultParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,9 +16,15 @@ import java.util.stream.Collectors;
 public class FastQCResultsParser implements FastQCResults {
 
     @Override
-    public List<List<String>> isFinished(ArrayList<Process> analyseInfos) {
+    public List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos) {
         return analyseInfos.stream().map(ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
     }
+
+    @Override
+    public List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos) {
+        return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
+    }
+
 
     public static class ResultFilter {
         public static List<String> filterRunningBenchmarkResults(Process analyse) {

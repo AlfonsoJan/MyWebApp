@@ -7,5 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface FastQCResults {
-    List<List<String>> isFinished(ArrayList<Process> analyseInfos);
+    List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos);
+    List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos);
 }

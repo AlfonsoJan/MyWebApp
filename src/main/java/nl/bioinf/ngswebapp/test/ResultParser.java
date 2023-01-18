@@ -17,7 +17,12 @@ import java.util.stream.Collectors;
 public class ResultParser implements FastQCResults {
 
     @Override
-    public List<List<String>> isFinished(ArrayList<Process> analyseInfos) {
+    public List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos) {
+        return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos) {
         return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
     }
 

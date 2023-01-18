@@ -28,7 +28,7 @@ public class TestResults {
         }
 
         ResultParser resultParser = new ResultParser();
-        List<List<String>> results = resultParser.isFinished(processes);
+        List<List<String>> results = resultParser.isFinishedFastQC(processes);
         //FastQCResultsParser fastQCResultsParser = new FastQCResultsParser();
         System.out.println(results);
     }
