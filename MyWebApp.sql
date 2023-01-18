@@ -4,6 +4,7 @@ Remove the tables if they exist
 drop table if exists labeled_files;
 drop table if exists projects;
 drop table if exists users;
+drop table if exists process;
 
 /*
 Creates the table users, to give every user an id.
