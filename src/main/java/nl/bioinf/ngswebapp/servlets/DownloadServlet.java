@@ -66,7 +66,7 @@ public class DownloadServlet extends HttpServlet {
             String analyseType = "zip".toLowerCase();
             try {
                 VerySimpleDbConnector connector = AllPersonalProjectsServlet.getConnector();
-                connector.insertProcess(analyseType, projectId, randomID.toString());
+                connector.insertProcess(analyseType, 1, projectId, randomID.toString());
             } catch (DatabaseException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);

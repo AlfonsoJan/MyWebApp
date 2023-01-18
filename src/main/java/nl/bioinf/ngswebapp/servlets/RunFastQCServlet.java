@@ -38,7 +38,7 @@ public class RunFastQCServlet extends HttpServlet {
         try {
             VerySimpleDbConnector connector = NewAnalyseServlet.getConnector();
             int projectId = connector.getProject(project, 1).getProjectId();
-            connector.insertProcess(analyseType, projectId, randomID.toString());
+            connector.insertProcess(analyseType, 1, projectId, randomID.toString());
         } catch (SQLException | DatabaseException e) {
             throw new RuntimeException(e);
         }

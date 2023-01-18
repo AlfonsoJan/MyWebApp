@@ -2,6 +2,7 @@ package nl.bioinf.ngswebapp.db_objects;
 
 public class Process {
 
+    private int userId;
     private int id;
     private int projectId;
     private String type;
@@ -33,9 +34,10 @@ public class Process {
         this.project = project;
     }
 
-    public Process(int id, String type, int projectId, String uniqueID) {
+    public Process(int id, String type, int userId, int projectId, String uniqueID) {
         this.id = id;
         this.type = type;
+        this.userId = userId;
         this.projectId = projectId;
         this.uniqueID = uniqueID;
     }
@@ -62,5 +64,13 @@ public class Process {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

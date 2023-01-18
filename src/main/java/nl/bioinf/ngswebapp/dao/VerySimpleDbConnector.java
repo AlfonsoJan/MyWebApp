@@ -164,7 +164,7 @@ public class VerySimpleDbConnector {
         String labeledFetchQueryFromUser = "SELECT * from labeled_files,projects where labeled_files.project_id = projects.id and user_id = ?";
         this.preparedStatements.put(SELECT_LABEL_FILES_FROM_USER, connection.prepareStatement(labeledFetchQueryFromUser));
 
-        String processInsertQuery = "INSERT INTO process (type, project_id, unique_id) VALUES (?, ?, ?)";
+        String processInsertQuery = "INSERT INTO process (type, user_id, project_id, unique_id) VALUES (?, ?, ?, ?)";
         this.preparedStatements.put(INSERT_PROCESS, connection.prepareStatement(processInsertQuery));
 
         String processInsertWithoutProjectQuery = "INSERT INTO process (type) VALUES (?)";
@@ -173,7 +173,7 @@ public class VerySimpleDbConnector {
         String maxProcessIdQuery = "SELECT max(id) from process";
         this.preparedStatements.put(MAX_PROCESS, connection.prepareStatement(maxProcessIdQuery));
 
-        String getAllProcessFromUser = "select * from projects,users,process where projects.id = project_id and user_id = ? and process.type = ?;";
+        String getAllProcessFromUser = "select * from process where user_id = ? and process.type = ?;";
         this.preparedStatements.put(SELECT_ALL_PROCESS, connection.prepareStatement(getAllProcessFromUser));
 
         String getAllProcessFromProject = "select * from process where project_id = ?";
@@ -520,12 +520,13 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public void insertProcess(String type, Integer projectId, String randomID) throws DatabaseException {
+    public void insertProcess(String type, int userId, Integer projectId, String randomID) throws DatabaseException {
         try{
             PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
             ps.setString(1, type);
-            ps.setInt(2, projectId);
-            ps.setString(3, randomID);
+            ps.setInt(2, userId);
+            ps.setInt(3, projectId);
+            ps.setString(4, randomID);
             ps.executeUpdate();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -546,7 +547,7 @@ public class VerySimpleDbConnector {
             Project project = getProject(rs.getInt("project_id"));
             ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
             project.setLabeledFiles(files);
-            Process process = new Process(rs.getInt("process.id"), type, project.getProjectId(), rs.getString("unique_id"));
+            Process process = new Process(rs.getInt("process.id"), type, 1, project.getProjectId(), rs.getString("unique_id"));
             process.setProject(project);
             results.add(process);
         }
@@ -565,7 +566,8 @@ public class VerySimpleDbConnector {
             int id = rs.getInt("id");
             String type = rs.getString("type");
             String uniqueUUID = rs.getString("unique_id");
-            Process process = new Process(id, type, projectID, uniqueUUID);
+            int userId = rs.getInt("user_id");
+            Process process = new Process(id, type, userId, projectID, uniqueUUID);
             results.add(process);
         }
 

@@ -53,11 +53,12 @@ create table process
     id int auto_increment not null,
     type varchar(100) not null,
     project_id int,
+    user_id int not null,
     unique_id varchar(36) not null,
     primary key(id),
     foreign key(project_id)
-        references projects(id)
-    foreign key(user_id) not null.
+        references projects(id),
+    foreign key(user_id)
         references users(id)
-        on delete restrict,
+        on delete restrict
 );
