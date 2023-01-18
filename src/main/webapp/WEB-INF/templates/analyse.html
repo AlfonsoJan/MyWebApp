@@ -100,8 +100,8 @@
                 <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${process.id}">
                     <div class="flex items-center justify-between" id="analysis-title">
                         <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
-                        <div class="flex" id="status-button" onclick="deleteAnalyse()">
-                            <div class="h-6 w-6 group mr-1" id="delete-analyse-button">
+                        <div class="flex" id="status-button">
+                            <div class="h-6 w-6 group mr-1" id="delete-analyse-button" onclick="deleteAnalysis(this)">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <line x1="4" y1="7" x2="20" y2="7"></line>
@@ -224,6 +224,22 @@
                 $(this).show();
             } else {
                 $(this).hide();
+            }
+        });
+    }
+    function deleteAnalysis(item) {
+        let id = item.parentElement.parentElement.parentElement.getAttribute("data-id");
+        console.log(id);
+        $.ajax({
+            type: 'GET',
+            url: 'deleteprocess',
+            data: {processid: [id]},
+            success: function () {
+                toastr.success(`Successfully deleted this analysis!`);
+                item.parentElement.parentElement.parentElement.remove();
+            },
+            error: function () {
+                toastr.error('There was an error!');
             }
         });
     }
