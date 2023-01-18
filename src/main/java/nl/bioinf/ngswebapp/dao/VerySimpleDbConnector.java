@@ -53,6 +53,8 @@ public class VerySimpleDbConnector {
 
     private static final String SELECT_ALL_PROCESS_FROM_PROJECT = "select_process_project";
     private static final String DELETE_PROCESS_QUERY = "delete_process";
+    private static final String UPDATE_PROCESS = "update_process";
+
     /**
      * a main for demonstration purposes
      *
@@ -181,6 +183,9 @@ public class VerySimpleDbConnector {
 
         String deleteProcessQuery = "DELETE from labeled_files where id = ?";
         this.preparedStatements.put(DELETE_PROCESS_QUERY, connection.prepareStatement(deleteProcessQuery));
+
+        String updateProcessRemoveProject = "UPDATE process set project_id = null where id = ?;";
+        this.preparedStatements.put(UPDATE_PROCESS, connection.prepareStatement(updateProcessRemoveProject));
     }
 
     public User getUser(int id) throws SQLException {
@@ -544,11 +549,19 @@ public class VerySimpleDbConnector {
         ArrayList<Process> results = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            Project project = getProject(rs.getInt("project_id"));
-            ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
-            project.setLabeledFiles(files);
-            Process process = new Process(rs.getInt("process.id"), type, 1, project.getProjectId(), rs.getString("unique_id"));
-            process.setProject(project);
+            Process process;
+            try {
+                Project project = getProject(rs.getInt("project_id"));
+                ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
+                project.setLabeledFiles(files);
+                process = new Process(rs.getInt("process.id"), type, 1, project.getProjectId(), rs.getString("unique_id"));
+                process.setProject(project);
+            } catch (SQLException e) {
+                process = new Process(rs.getInt("process.id"), type, 1, null, rs.getString("unique_id"));
+                process.setProject(new Project(0, "NonExistingProject", 1));
+            }
+
+
             results.add(process);
         }
 
@@ -578,6 +591,24 @@ public class VerySimpleDbConnector {
         try{
             //Prepare statement
             PreparedStatement ps = this.preparedStatements.get(DELETE_PROCESS_QUERY);
+
+            //set data on the "?" placeholders of the prepared statement
+            ps.setInt(1, processId);
+
+            //do the actual insert
+            ps.executeUpdate();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw new DatabaseException("Something is wrong with the database, see cause Exception",
+                    ex.getCause());
+        }
+    }
+
+    public void updateProcess(int processId) throws DatabaseException {
+        try{
+            //Prepare statement
+            //!! Doing this within this method is extremely inefficient !!
+            PreparedStatement ps = this.preparedStatements.get(UPDATE_PROCESS);
 
             //set data on the "?" placeholders of the prepared statement
             ps.setInt(1, processId);

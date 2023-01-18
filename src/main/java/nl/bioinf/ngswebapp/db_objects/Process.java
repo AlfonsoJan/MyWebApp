@@ -4,7 +4,7 @@ public class Process {
 
     private int userId;
     private int id;
-    private int projectId;
+    private Integer projectId;
     private String type;
     private String projectName;
     private Project project;
@@ -34,7 +34,7 @@ public class Process {
         this.project = project;
     }
 
-    public Process(int id, String type, int userId, int projectId, String uniqueID) {
+    public Process(int id, String type, int userId, Integer projectId, String uniqueID) {
         this.id = id;
         this.type = type;
         this.userId = userId;

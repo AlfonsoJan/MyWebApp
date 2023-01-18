@@ -102,7 +102,6 @@
                     <div class="flex items-center justify-between" id="title">
                         <div th:id="${project.projectId}"></div>
                         <p class="font-bold mx-0 my-4" id="project-title-header" th:text="${project.name}"></p>
-                        <div th:id="${project.processes}"></div>
                         <button onclick="updateSelected(this, false)" id="dropdownProjectOptionsButton" th:attr="data-dropdown-toggle=${project.name}" data-dropdown-placement="left" class="group ml-auto inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button">
                             <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
                         </button>
@@ -327,35 +326,18 @@
     function deleteProject(item) {
         let id = selected.parentElement.children.item(0).id;
         var origFileName = selected.parentElement.children.item(1).textContent;
-        var html = "<button type='button'></button>";
-        let processes = parseInt(selected.parentElement.children.item(2).id);
-        let message;
-        if (processes < 1) {
-            message = "Are you sure you want to remove this project?";
-        } else {
-            message = `Are you sure you want to remove this project? Be aware: this project has ${processes} downloads/analysis that will be removed!`;
-        }
-        toastr.warning(html, message,
-            {
-                allowHtml: true,
-                timeOut: 50000,
-                tapToDismiss: false,
-                extendedTimeOut: 100000,
-                onclick:function(){
-                    $.ajax({
-                        type: 'GET',
-                        url: 'deleteproject',
-                        data: {id: [id]},
-                        success: function () {
-                            toastr.success(`Successfully deleted ${origFileName}!`);
-                            selected.parentElement.parentElement.remove();
-                        },
-                        error: function () {
-                            toastr.error('There was an error!');
-                        }
-                    });
-                }
-            });
+        $.ajax({
+            type: 'GET',
+            url: 'deleteproject',
+            data: {id: [id]},
+            success: function () {
+                toastr.success(`Successfully deleted ${origFileName}!`);
+                selected.parentElement.parentElement.remove();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
     }
     function filterProjectFunction() {
         var input = $("#filterProjectsInput").val().toUpperCase();
