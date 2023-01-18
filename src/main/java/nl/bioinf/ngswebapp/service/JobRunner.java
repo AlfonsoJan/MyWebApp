@@ -1,12 +1,10 @@
 package nl.bioinf.ngswebapp.service;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -27,13 +25,12 @@ public class JobRunner implements CommandConstructor {
 
     private String[] constructCommandPrefix() throws IOException {
         String uniquePath = outPath + uniqueId;
-        Files.createDirectories(Paths.get(outPath));
         switch (jobType) {
             case "fastqc":
                 Files.createDirectories(Paths.get(uniquePath));
                 return new String[]{"fastqc", "-o", uniquePath};
             case "zipper":
-                return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", "-C", resourcePath};
+                return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", String.format("--checkpoint=%s", files.length), "-C", resourcePath};
             default:
                 return null;
         }
@@ -61,7 +58,6 @@ public class JobRunner implements CommandConstructor {
 
         // Get the job command
         ProcessBuilder job = constructCommand();
-
         // Redirect output (note: some tools 'log' to the error stream..)
         job.redirectOutput(new File(outFile));
         job.redirectError(new File(errFile));
@@ -69,6 +65,12 @@ public class JobRunner implements CommandConstructor {
         try {
             // Run non-blocking
             final Process p = job.start();
+//            p.waitFor();
+//            if ("zipper".equals(jobType)) {
+//                FileWriter myWriter = new FileWriter(outFile);
+//                myWriter.write("Done");
+//                myWriter.close();
+//            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
