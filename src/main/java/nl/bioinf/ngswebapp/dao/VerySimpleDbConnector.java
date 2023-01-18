@@ -181,7 +181,7 @@ public class VerySimpleDbConnector {
         String getAllProcessFromProject = "select * from process where project_id = ?";
         this.preparedStatements.put(SELECT_ALL_PROCESS_FROM_PROJECT, connection.prepareStatement(getAllProcessFromProject));
 
-        String deleteProcessQuery = "DELETE from labeled_files where id = ?";
+        String deleteProcessQuery = "DELETE from process where id = ?";
         this.preparedStatements.put(DELETE_PROCESS_QUERY, connection.prepareStatement(deleteProcessQuery));
 
         String updateProcessRemoveProject = "UPDATE process set project_id = null where id = ?;";
