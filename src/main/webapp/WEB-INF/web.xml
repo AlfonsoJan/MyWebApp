@@ -4,7 +4,12 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
     <context-param>
-        <param-name>resourcePath</param-name>
+        <param-name>file.location</param-name>
         <param-value>/students/2022-2023/Thema10/ngs_dummyfiles/</param-value>
     </context-param>
+    <context-param>
+        <param-name>analyse.folder</param-name>
+        <param-value>/students/2022-2023/Thema10/ngs_dummyfiles/temp/</param-value>
+    </context-param>
+
 </web-app>

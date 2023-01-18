@@ -1,13 +1,13 @@
 package nl.bioinf.ngswebapp.servlets;
 
-import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
-import nl.bioinf.ngswebapp.model.FastqFiles;
+import nl.bioinf.ngswebapp.db_objects.Process;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +16,10 @@ import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-@WebServlet(name = "NewFileTabServlet", urlPatterns = "/new-files", loadOnStartup = 1)
-public class NewFileTabServlet extends HttpServlet {
+@WebServlet(name = "AllDownloadServlet", urlPatterns = "/all-download")
+public class AllDownloadServlet extends HttpServlet {
     private TemplateEngine templateEngine;
     private static VerySimpleDbConnector connector;
 
@@ -34,23 +35,17 @@ public class NewFileTabServlet extends HttpServlet {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
+        ArrayList<Process> processes;
         try {
-            ctx.setVariable("projects", connector.getProjectsFromUser(1).keySet());
+            processes = connector.getProcessFromUser(1, "zip");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        templateEngine.process("new-files", ctx, response.getWriter());
-    }
-
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String resourcePath = request.getServletContext().getInitParameter("file.location");
-        ArrayList<ArrayList<String>> listOfFiles = FastqFiles.getFiles(resourcePath);
-        String json = new Gson().toJson(listOfFiles);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(json);
+        ctx.setVariable("processes", processes);
+        templateEngine.process("all-download", ctx, response.getWriter());
     }
 
     public static VerySimpleDbConnector getConnector() {

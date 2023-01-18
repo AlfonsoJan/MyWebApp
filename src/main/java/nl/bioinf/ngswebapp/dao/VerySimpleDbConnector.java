@@ -161,7 +161,7 @@ public class VerySimpleDbConnector {
         String labeledFetchQueryFromUser = "SELECT * from labeled_files,projects where labeled_files.project_id = projects.id and user_id = ?";
         this.preparedStatements.put(SELECT_LABEL_FILES_FROM_USER, connection.prepareStatement(labeledFetchQueryFromUser));
 
-        String processInsertQuery = "INSERT INTO process (type, project_id) VALUES (?, ?)";
+        String processInsertQuery = "INSERT INTO process (type, project_id, unique_id) VALUES (?, ?, ?)";
         this.preparedStatements.put(INSERT_PROCESS, connection.prepareStatement(processInsertQuery));
 
         String processInsertWithoutProjectQuery = "INSERT INTO process (type) VALUES (?)";
@@ -170,7 +170,7 @@ public class VerySimpleDbConnector {
         String maxProcessIdQuery = "SELECT max(id) from process";
         this.preparedStatements.put(MAX_PROCESS, connection.prepareStatement(maxProcessIdQuery));
 
-        String getAllProcessFromUser = "select * from projects,users,process where projects.id = project_id and user_id = ?;";
+        String getAllProcessFromUser = "select * from projects,users,process where projects.id = project_id and user_id = ? and process.type = ?;";
         this.preparedStatements.put(SELECT_ALL_PROCESS, connection.prepareStatement(getAllProcessFromUser));
     }
 
@@ -505,28 +505,19 @@ public class VerySimpleDbConnector {
         }
 
         if (count < 1) {
-            return Enums.Used.NONE;
-        } else if (count < 2) {
-            return Enums.Used.LOW;
-        } else if (count < 5) {
-            return Enums.Used.MEDIUM;
+            return Enums.Used.NOT_USED;
         } else {
-            return Enums.Used.HIGH;
+            return Enums.Used.USED;
         }
     }
 
-    public Process insertProcess(String type, Integer projectId) throws DatabaseException {
+    public void insertProcess(String type, Integer projectId, String randomID) throws DatabaseException {
         try{
             PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
             ps.setString(1, type);
             ps.setInt(2, projectId);
+            ps.setString(3, randomID);
             ps.executeUpdate();
-
-            PreparedStatement preparedStatement = this.preparedStatements.get(MAX_PROCESS);
-            ResultSet rs = preparedStatement.executeQuery();
-            rs.next();
-            int id = rs.getInt("max(id)");
-            return new Process(id, type, projectId);
         } catch (Exception ex) {
             ex.printStackTrace();
             throw new DatabaseException("Something is wrong with the database, see cause Exception",
@@ -534,38 +525,19 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public Process insertProcess(String type) throws DatabaseException {
-        try{
-            PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS_NO_PROJECT);
-            ps.setString(1, type);
-            ps.executeUpdate();
-
-            PreparedStatement preparedStatement = this.preparedStatements.get(MAX_PROCESS);
-            ResultSet rs = preparedStatement.executeQuery();
-            rs.next();
-            int id = rs.getInt("max(id)");
-            return new Process(id, type);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new DatabaseException("Something is wrong with the database, see cause Exception",
-                    ex.getCause());
-        }
-    }
-
-    public ArrayList<Process> getProcessFromUser(int userID) throws SQLException {
+    public ArrayList<Process> getProcessFromUser(int userID, String type) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(SELECT_ALL_PROCESS);
         ps.setString(1, String.valueOf(userID));
+        ps.setString(2, type);
 
         ArrayList<Process> results = new ArrayList<>();
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-            String type = rs.getString("type");
             Project project = getProject(rs.getInt("project_id"));
             ArrayList<LabeledFile> files = getLabelFilesFromProject(project.getProjectId());
             project.setLabeledFiles(files);
-
-            Process process = new Process(project.getProjectId(), type);
+            Process process = new Process(project.getProjectId(), type, rs.getString("unique_id"));
             process.setProject(project);
             results.add(process);
         }

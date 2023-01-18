@@ -23,9 +23,7 @@ public class DeleteFileFromProjectServlet extends HttpServlet {
             if (connector.getLabelFilesFromProject(file.getProjectId()).size() < 1) {
                 connector.deleteProject(file.getProjectId());
             }
-        } catch (DatabaseException e) {
-            throw new RuntimeException(e);
-        } catch (SQLException e) {
+        } catch (DatabaseException | SQLException e) {
             throw new RuntimeException(e);
         }
     }

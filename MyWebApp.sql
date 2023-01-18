@@ -1,6 +1,7 @@
 /* 
 Remove the tables if they exist
 */
+drop table if exists process;
 drop table if exists labeled_files;
 drop table if exists projects;
 drop table if exists users;
@@ -52,6 +53,7 @@ create table process
     id int auto_increment not null,
     type varchar(100) not null,
     project_id int,
+    unique_id varchar(36) not null,
     primary key(id),
     foreign key(project_id)
         references projects(id)

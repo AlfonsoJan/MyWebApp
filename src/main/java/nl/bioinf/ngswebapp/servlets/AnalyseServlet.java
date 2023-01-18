@@ -4,7 +4,6 @@ import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.db_objects.Process;
-import nl.bioinf.ngswebapp.model.AnalyseInfo;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -15,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @WebServlet(name = "AnalyseServlet", urlPatterns = "/analyse")
 public class AnalyseServlet extends HttpServlet {
@@ -40,7 +39,7 @@ public class AnalyseServlet extends HttpServlet {
 
         ArrayList<Process> processes;
         try {
-            processes = connector.getProcessFromUser(1);
+            processes = connector.getProcessFromUser(1, "fastqc");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

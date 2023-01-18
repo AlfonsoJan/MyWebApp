@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Analyse</title>
+    <title>Download</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
@@ -91,17 +91,17 @@
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                         <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="search" onkeyup="filterAnalyseFunction()" id="filterAnalyseInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Analysis...">
+                    <input type="search" onkeyup="filterDownloadFunction()" id="filterDownloadInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-orange-200 focus:border-orange-200" placeholder="Search Downloads...">
                 </div>
             </form>
         </div>
-        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="analysis-done">
+        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="download-done">
             <th:block th:each="process :  ${processes}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${process.id}">
-                    <div class="flex items-center justify-between" id="analysis-title">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="download-tile" th:attr="data-id=${process.id}">
+                    <div class="flex items-center justify-between" id="download-title">
                         <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
                         <div class="flex" id="status-button">
-                            <div class="h-6 w-6 group mr-1 hidden" id="delete-analyse-button">
+                            <div class="h-6 w-6 group mr-1 hidden" id="delete-download-button">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <line x1="4" y1="7" x2="20" y2="7"></line>
@@ -109,14 +109,6 @@
                                     <line x1="14" y1="11" x2="14" y2="17"></line>
                                     <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                </svg>
-                            </div>
-                            <div class="h-6 w-6 group mr-1 hidden" id="rerun-analyse-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-refresh-dot" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
-                                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
-                                    <circle cx="12" cy="12" r="1"></circle>
                                 </svg>
                             </div>
                             <div id="finished-icon" class="hidden">
@@ -131,13 +123,13 @@
                                         Running
                                     </span>
                             </div>
-                            <div id="cant-find-anaylse" class="hidden">
+                            <div id="cant-find-download" class="hidden">
                                     <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-900 text-red-300">
                                         <span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span>
                                         Absent
                                     </span>
                             </div>
-                            <div class="h-6 w-6 group" id="show-analysis-icon">
+                            <div class="h-6 w-6 group" id="show-download-icon">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                     <polyline points="6 9 12 15 18 9"></polyline>
@@ -145,18 +137,19 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mb-2 hidden" id="analysis-info">
-                        <div id="analysis-files">
+                    <div class="mb-2 hidden" id="download-info">
+                        <div id="download-files">
                             <th:block th:each="files :  ${process.project.labeledFiles}">
                                 <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files.fullPath}" th:text="'- ' + ${files.label}"></p>
                             </th:block>
                         </div>
-                        <div class="w-full" id="analysis-download">
+                        <div class="w-full" id="download-download">
                             <div id="done" class="hidden">
-                                <p>Download a summary of the FastQC: <span id="download-link" class="rounded-md px-4 py-1.5 mx-1 bg-orange-300 hover:cursor-pointer hover:bg-orange-400">here</span></p>
+                                <p>Download the tar.gz file: <span id="download-link" class="rounded-md px-4 py-1.5 mx-1 bg-orange-300 hover:cursor-pointer hover:bg-orange-400">here</span></p>
                             </div>
+
                             <div class="flex items-center" id="still-performing">
-                                <p class="pr-1 italic text-[#323232]">Still performing the QC on the file(s)</p>
+                                <p class="pr-1 italic text-[#323232]">Still zipping the files</p>
                                 <div role="status">
                                     <svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-orange-500 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
@@ -216,10 +209,10 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-    function filterAnalyseFunction() {
-        var input = $("#filterAnalyseInput").val().toUpperCase();
-        $.each($("#analysis-done #analysis-tile"), function(){
-            var text = $(this).find("#analysis-title #title-header").html();
+    function filterDownloadFunction() {
+        var input = $("#filterDownloadInput").val().toUpperCase();
+        $.each($("#download-done #download-tile"), function(){
+            var text = $(this).find("#download-title #title-header").html();
             if (text.toUpperCase().indexOf(input) >= 0) {
                 $(this).show();
             } else {
@@ -228,77 +221,11 @@
         });
     }
     $(document).ready(function(){
-        $(document).on('click', "#show-analysis-icon", function () {
-            $(this).parent().parent().parent().find("#analysis-info").toggle("fast");
+        $(document).on('click', "#show-download-icon", function () {
+            $(this).parent().parent().parent().find("#download-info").toggle("fast");
             $(this).toggleClass('rotated');
-        });
-        $(function () {
-            var isAllDone = true;
-            var get_data = function() {
-                $.when(
-                    $.getJSON("/analysedone", function (data) {
-                        processing = data;
-                    })
-                ).then(function () {
-                    parseResult(processing);
-                });
-            };
-            var parseResult = function(data) {
-                $.each(data, function( i, val ) {
-                    var search = $( "#analysis-tile #analysis-title p" ).filter( function () {
-                        return $(this).text() == val[0];
-                    }).first();
-                    switch(val[1]) {
-                        case "true":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").show();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").show();
-                            $(elem).find("#rerun-analyse-button").show();
-                            break;
-                        case "false":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").show();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").hide();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                        case "missing":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").show();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").show();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                        default:
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").show();
-                            $(elem).find("#delete-analyse-button").hide();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                    }
-                })
-            };
-            setTimeout( function(){
-                get_data();
-            }  , 4000 );
-
-            // window.setInterval(function(){
-            //     if (!isAllDone)
-            //         get_data();
-            // }, 1000);
         });
     });
 </script>
-
 </body>
 </html>
