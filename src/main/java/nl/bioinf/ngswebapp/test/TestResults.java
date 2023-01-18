@@ -27,8 +27,9 @@ public class TestResults {
             throw new RuntimeException(e);
         }
 
-        FastQCResultsParser fastQCResultsParser = new FastQCResultsParser();
-        List<List<String>> results = fastQCResultsParser.isFinished(processes);
+        ResultParser resultParser = new ResultParser();
+        List<List<String>> results = resultParser.isFinished(processes);
+        //FastQCResultsParser fastQCResultsParser = new FastQCResultsParser();
         System.out.println(results);
     }
     public static VerySimpleDbConnector getConnector() {

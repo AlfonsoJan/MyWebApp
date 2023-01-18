@@ -65,13 +65,13 @@ public class JobRunner implements CommandConstructor {
         try {
             // Run non-blocking
             final Process p = job.start();
-//            p.waitFor();
-//            if ("zipper".equals(jobType)) {
-//                FileWriter myWriter = new FileWriter(outFile);
-//                myWriter.write("Done");
-//                myWriter.close();
-//            }
-        } catch (IOException ex) {
+            if ("zipper".equals(jobType)) {
+                p.waitFor();
+                FileWriter myWriter = new FileWriter(outFile);
+                myWriter.write("Done");
+                myWriter.close();
+            }
+        } catch (IOException | InterruptedException ex) {
             ex.printStackTrace();
         }
     }

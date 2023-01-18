@@ -314,9 +314,12 @@
             type: 'GET',
             url: 'download',
             data: {project: id, projectFiles: files},
+            beforeSend: function() {
+                toastr.info(`Download started!`);
+            },
             success: function () {
-                toastr.success(`Download started!`);
-                window.setTimeout(function(){ window.location = "all-download"; }, 2000);
+                //toastr.success(`Download started!`);
+                //window.setTimeout(function(){ window.location = "all-download"; }, 2000);
             },
             error: function () {
                 toastr.error('There was an error!');
