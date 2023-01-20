@@ -21,7 +21,7 @@ public class FastQCResultsParser implements FastQCResults {
 
     @Override
     public List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos) {
-        return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
+        return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningDownload).collect(Collectors.toList());
     }
 
 

@@ -26,10 +26,12 @@ public class TestResults {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
+        if (processes == null) {
+            System.out.println(new ArrayList<>());
+            return;
+        }
         ResultParser resultParser = new ResultParser();
         List<List<String>> results = resultParser.isFinishedFastQC(processes);
-        //FastQCResultsParser fastQCResultsParser = new FastQCResultsParser();
         System.out.println(results);
     }
     public static VerySimpleDbConnector getConnector() {
