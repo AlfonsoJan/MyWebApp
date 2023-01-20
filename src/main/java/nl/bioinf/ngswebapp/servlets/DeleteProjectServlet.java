@@ -24,9 +24,6 @@ public class DeleteProjectServlet extends HttpServlet {
             for (LabeledFile file : files) {
                 connector.deleteLabeledFile(file.getFileId());
             }
-            for (Process process : connector.getAllProcessFromProject(id)) {
-                connector.updateProcess(process.getId());
-            }
             connector.deleteProject(id);
         } catch (DatabaseException | SQLException e) {
             throw new RuntimeException(e);
