@@ -56,9 +56,14 @@ create table process
     user_id int not null,
     unique_id varchar(36) not null,
     primary key(id),
-    foreign key(project_id)
-        references projects(id),
+    constraint `Can't delete process`
+        foreign key(project_id)
+            references projects(id)
+            on delete restrict,
     foreign key(user_id)
         references users(id)
         on delete restrict
 );
+
+-- Inserts a test user into the database
+INSERT INTO users (username) VALUES ('test_user')
