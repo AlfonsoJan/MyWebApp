@@ -77,16 +77,14 @@ public class VerySimpleDbConnector {
         }
     }
 
-    public static VerySimpleDbConnector getConnector(String connector) {
-        switch(connector) {
-            case "all-files":
-                return AllPersonalFilesServlet.getConnector();
-            case "all-projects":
-                return AllPersonalProjectsServlet.getConnector();
-        }
-        return NewFileTabServlet.getConnector();
-    }
-
+    /**
+     * The constructor, this will create a databaseconnection for the information that is within
+     * your .my.cnf file!
+     *
+     * @throws DatabaseException
+     * @throws IOException
+     * @throws NoSuchFieldException
+     */
     public VerySimpleDbConnector() throws DatabaseException, IOException, NoSuchFieldException {
         DbUser credentialsFinder = DbCredentials.getMySQLuser();
 
@@ -98,6 +96,11 @@ public class VerySimpleDbConnector {
         connect();
     }
 
+    /**
+     * A function that does the connecting itself.
+     *
+     * @throws DatabaseException
+     */
     private void connect() throws DatabaseException {
         try {
             //load driver class
@@ -113,7 +116,11 @@ public class VerySimpleDbConnector {
         }
     }
 
-
+    /**
+     * This function creates all preparestatements. When adding new statements, put them in here.
+     *
+     * @throws SQLException
+     */
     private void prepareStatements() throws SQLException {
         String userNameFetchQuery = "SELECT * FROM users WHERE id = ?";
         this.preparedStatements.put(GET_USER_USING_ID, connection.prepareStatement(userNameFetchQuery));
@@ -188,6 +195,13 @@ public class VerySimpleDbConnector {
         this.preparedStatements.put(UPDATE_PROCESS, connection.prepareStatement(updateProcessRemoveProject));
     }
 
+    /**
+     * Gets a user by giving a specific user id.
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public User getUser(int id) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_ID);
@@ -207,6 +221,13 @@ public class VerySimpleDbConnector {
         return new User(id, userName);
     }
 
+    /**
+     * Gets a user by giving a specific username.
+     *
+     * @param userName
+     * @return
+     * @throws SQLException
+     */
     public User getUser(String userName) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(GET_USER_USING_NAME);
@@ -222,6 +243,12 @@ public class VerySimpleDbConnector {
         return new User(rs.getInt("id"), userName);
     }
 
+    /**
+     * Inserts a new user in the database
+     *
+     * @param userName
+     * @throws DatabaseException
+     */
     public void insertUser(String userName) throws DatabaseException {
         try{
             //Prepare statement
@@ -243,6 +270,13 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Gets a project object by giving an id
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Project getProject(int id) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_USING_PROJECT_ID);
@@ -262,6 +296,14 @@ public class VerySimpleDbConnector {
         return new Project(id, projectName, userId);
     }
 
+    /**
+     * Gets a project from a specific user by giving a project name and userid.
+     *
+     * @param name
+     * @param userID
+     * @return
+     * @throws SQLException
+     */
     public Project getProject(String name, int userID) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(SELECT_PROJECT_FROM_NAME);
@@ -281,6 +323,13 @@ public class VerySimpleDbConnector {
         return new Project(id, name, userID);
     }
 
+    /**
+     * Inserts a project into the database
+     *
+     * @param projectName
+     * @param userId
+     * @throws DatabaseException
+     */
     public void insertProject(String projectName, int userId) throws DatabaseException {
         try{
             //Prepare statement
@@ -301,6 +350,13 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Updates a project by giving it a new name.
+     *
+     * @param newName
+     * @param projectId
+     * @throws DatabaseException
+     */
     public void updateProject(String newName, int projectId) throws DatabaseException {
         try{
             //Prepare statement
@@ -320,6 +376,12 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Deletes a project from the database.
+     *
+     * @param projectId
+     * @throws DatabaseException
+     */
     public void deleteProject(int projectId) throws DatabaseException {
         try{
             //Prepare statement
@@ -337,6 +399,13 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Gets a labeled file by giving an id.
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public LabeledFile getLabeledFile(int id) throws SQLException {
         // prepare query statement
         PreparedStatement ps = this.preparedStatements.get(GET_FILE_USING_FILE_ID);
@@ -357,6 +426,14 @@ public class VerySimpleDbConnector {
         return new LabeledFile(id, label, path, userId);
     }
 
+    /**
+     * Inserts a labeled file into the database
+     *
+     * @param label
+     * @param path
+     * @param projectId
+     * @throws DatabaseException
+     */
     public void insertLabeledFile(String label, String path, int projectId) throws DatabaseException {
         try{
             //Prepare statement
@@ -377,6 +454,13 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Updates a labeled file by giving it a new label.
+     *
+     * @param newLabel
+     * @param labelId
+     * @throws DatabaseException
+     */
     public void updateLabelName(String newLabel, int labelId) throws DatabaseException {
         try{
             //Prepare statement
@@ -395,6 +479,12 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Deletes a specific labeled file from the database
+     *
+     * @param labelId
+     * @throws DatabaseException
+     */
     public void deleteLabeledFile(int labelId) throws DatabaseException {
         try{
             //Prepare statement
@@ -412,7 +502,14 @@ public class VerySimpleDbConnector {
         }
     }
 
-
+    /**
+     * Gets a hashmap of all the projects from a specific user. It consists of the project and all the labeled file
+     * that are in the project. Example: {SomeProject: [labeledFile1, labeledFile2, labeledFile3]}
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Map<Project, ArrayList<LabeledFile>> getProjectsFromUser(int id) throws SQLException {
 
         PreparedStatement preparedStatement = this.preparedStatements.get(SELECT_PROJECTS_FROM_USER);
@@ -467,6 +564,13 @@ public class VerySimpleDbConnector {
         return results;
     }
 
+    /**
+     * Gets all the labeled files from a specific project. As an arraylist
+     *
+     * @param projectId
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<LabeledFile> getLabelFilesFromProject(int projectId) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECTS_USING_PROJECT_ID);
@@ -485,6 +589,13 @@ public class VerySimpleDbConnector {
         return results;
     }
 
+    /**
+     * Gets all the labeled files from a specific user.
+     *
+     * @param userID
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<LabeledFile> getLabeledFromUser(int userID) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(SELECT_LABEL_FILES_FROM_USER);
@@ -503,6 +614,14 @@ public class VerySimpleDbConnector {
         return results;
     }
 
+    /**
+     * Gets the number of times a hard file (File path) is used.
+     * By used it means it will see how much database labeled files have that specific path as their path.
+     *
+     * @param path
+     * @return
+     * @throws SQLException
+     */
     public Enums.Used getTimesHardFileIsUsed(String path) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(GET_ALL_LABEL_FILES);
@@ -525,6 +644,15 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Inserts a process into the database
+     *
+     * @param type
+     * @param userId
+     * @param projectId
+     * @param randomID
+     * @throws DatabaseException
+     */
     public void insertProcess(String type, int userId, Integer projectId, String randomID) throws DatabaseException {
         try{
             PreparedStatement ps = this.preparedStatements.get(INSERT_PROCESS);
@@ -540,6 +668,14 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * Gets all processes from a specific user. As an arrayList.
+     *
+     * @param userID
+     * @param type
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Process> getProcessFromUser(int userID, String type) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(SELECT_ALL_PROCESS);
@@ -568,6 +704,13 @@ public class VerySimpleDbConnector {
         return results;
     }
 
+    /**
+     * Gets all processes from a specific project. This could be used to see if a project already has processes active.
+     *
+     * @param projectID
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Process> getAllProcessFromProject(int projectID) throws SQLException {
 
         PreparedStatement ps = this.preparedStatements.get(SELECT_ALL_PROCESS_FROM_PROJECT);
@@ -587,6 +730,12 @@ public class VerySimpleDbConnector {
         return results;
     }
 
+    /**
+     * Deletes a process from the database.
+     *
+     * @param processId
+     * @throws DatabaseException
+     */
     public void deleteProcess(int processId) throws DatabaseException {
         try{
             //Prepare statement
@@ -604,6 +753,12 @@ public class VerySimpleDbConnector {
         }
     }
 
+    /**
+     * When a processes project gets deleted this function needs to be used. It will set the foreign key to null.
+     *
+     * @param processId
+     * @throws DatabaseException
+     */
     public void updateProcess(int processId) throws DatabaseException {
         try{
             //Prepare statement
@@ -621,66 +776,6 @@ public class VerySimpleDbConnector {
                     ex.getCause());
         }
     }
-
-//    public User getUser(String userName, String userPass) throws DatabaseException  {
-//        try {
-//            //Prepare the SQL statement. The question marks are placeholders for repeated use with different data
-//            //!! Doing this within this method is extremely inefficient !!
-//            String fetchQuery = "SELECT * FROM Users WHERE user_name = ? AND user_password = ?";
-//            PreparedStatement ps = connection.prepareStatement(fetchQuery);
-//
-//            //set data on the "?" placeholders of the prepared statement
-//            ps.setString(1, userName);
-//            ps.setString(2, userPass);
-//
-//            //execute
-//            ResultSet rs = ps.executeQuery();
-//
-//            //if there is data, process it
-//            while (rs.next()) {
-//                String userMail = rs.getString("user_email");
-//                String userIdStr = rs.getString("user_id");
-//                String userRoleStr = rs.getString("user_role");
-//                Role role = Role.valueOf(userRoleStr);
-//                User user = new User(userName, userMail, userPass, role);
-//                return user;
-//            }
-//
-//            //close resources
-//            rs.close();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            throw new DatabaseException("Something is wrong with the database, see cause Exception",
-//                    e.getCause());
-//        }
-//        return null;
-//    }
-//
-//    public void insertUser(String userName, String userPass, String email, Role role) throws DatabaseException  {
-//        try{
-//            //Prepare statement
-//            //!! Doing this within this method is extremely inefficient !!
-//            String insertQuery = "INSERT INTO Users (user_name, user_password, user_email, user_role) "
-//                    + " VALUES (?, ?, ?, ?)";
-//            PreparedStatement ps = connection.prepareStatement(insertQuery);
-//
-//            //set data on the "?" placeholders of the prepared statement
-//            ps.setString(1, userName);
-//            ps.setString(2, userPass);
-//            ps.setString(3, email);
-////            ps.setString(4, role.toString());
-//
-//            //do the actual insert
-//            ps.executeUpdate();
-//
-//            //close resources
-//            ps.close();
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            throw new DatabaseException("Something is wrong with the database, see cause Exception",
-//                    ex.getCause());
-//        }
-//    }
 
     /**
      * close the connection!
