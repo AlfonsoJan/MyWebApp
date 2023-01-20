@@ -97,7 +97,7 @@
         </div>
         <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="analysis-done">
             <th:block th:each="process :  ${processes}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile" th:attr="data-id=${process.id}">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="analysis-tile"  th:attr="data-id=${process.uniqueID}">
                     <div class="flex items-center justify-between" id="analysis-title">
                         <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
                         <div class="flex" id="status-button">
@@ -249,7 +249,6 @@
             $(this).toggleClass('rotated');
         });
         $(function () {
-            var isAllDone = true;
             var get_data = function() {
                 $.when(
                     $.getJSON("/analysedone", function (data) {
@@ -260,59 +259,78 @@
                 });
             };
             var parseResult = function(data) {
-                $.each(data, function( i, val ) {
-                    var search = $( "#analysis-tile #analysis-title p" ).filter( function () {
-                        return $(this).text() == val[0];
-                    }).first();
-                    switch(val[1]) {
-                        case "true":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").show();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").show();
-                            $(elem).find("#rerun-analyse-button").show();
-                            break;
-                        case "false":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").show();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").hide();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                        case "missing":
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").show();
-                            $(elem).find("#loading-analyse-icon").hide();
-                            $(elem).find("#delete-analyse-button").show();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                        default:
-                            var elem = $(search).parent().find("#status-button");
-                            $(elem).find("#finished-icon").hide();
-                            $(elem).find("#running-icon").hide();
-                            $(elem).find("#cant-find-anaylse").hide();
-                            $(elem).find("#loading-analyse-icon").show();
-                            $(elem).find("#delete-analyse-button").hide();
-                            $(elem).find("#rerun-analyse-button").hide();
-                            break;
-                    }
-                })
-            };
-            setTimeout( function(){
-                get_data();
-            }  , 4000 );
-
-            // window.setInterval(function(){
-            //     if (!isAllDone)
-            //         get_data();
-            // }, 1000);
+                console.log(data);
+                // $.each(data, function( i, val ) {
+                //     console.log(val);
+                // });
+            }
+            get_data();
         });
+        // $(function () {
+        //     var isAllDone = true;
+        //     var get_data = function() {
+        //         $.when(
+        //             $.getJSON("/analysedone", function (data) {
+        //                 processing = data;
+        //             })
+        //         ).then(function () {
+        //             parseResult(processing);
+        //         });
+        //     };
+        //     var parseResult = function(data) {
+        //         $.each(data, function( i, val ) {
+        //             var search = $( "#analysis-tile #analysis-title p" ).filter( function () {
+        //                 return $(this).text() == val[0];
+        //             }).first();
+        //             switch(val[1]) {
+        //                 case "true":
+        //                     var elem = $(search).parent().find("#status-button");
+        //                     $(elem).find("#finished-icon").show();
+        //                     $(elem).find("#running-icon").hide();
+        //                     $(elem).find("#cant-find-anaylse").hide();
+        //                     $(elem).find("#loading-analyse-icon").hide();
+        //                     $(elem).find("#delete-analyse-button").show();
+        //                     $(elem).find("#rerun-analyse-button").show();
+        //                     break;
+        //                 case "false":
+        //                     var elem = $(search).parent().find("#status-button");
+        //                     $(elem).find("#finished-icon").hide();
+        //                     $(elem).find("#running-icon").show();
+        //                     $(elem).find("#cant-find-anaylse").hide();
+        //                     $(elem).find("#loading-analyse-icon").hide();
+        //                     $(elem).find("#delete-analyse-button").hide();
+        //                     $(elem).find("#rerun-analyse-button").hide();
+        //                     break;
+        //                 case "missing":
+        //                     var elem = $(search).parent().find("#status-button");
+        //                     $(elem).find("#finished-icon").hide();
+        //                     $(elem).find("#running-icon").hide();
+        //                     $(elem).find("#cant-find-anaylse").show();
+        //                     $(elem).find("#loading-analyse-icon").hide();
+        //                     $(elem).find("#delete-analyse-button").show();
+        //                     $(elem).find("#rerun-analyse-button").hide();
+        //                     break;
+        //                 default:
+        //                     var elem = $(search).parent().find("#status-button");
+        //                     $(elem).find("#finished-icon").hide();
+        //                     $(elem).find("#running-icon").hide();
+        //                     $(elem).find("#cant-find-anaylse").hide();
+        //                     $(elem).find("#loading-analyse-icon").show();
+        //                     $(elem).find("#delete-analyse-button").hide();
+        //                     $(elem).find("#rerun-analyse-button").hide();
+        //                     break;
+        //             }
+        //         })
+        //     };
+        //     setTimeout( function(){
+        //         get_data();
+        //     }  , 4000 );
+        //
+        //     // window.setInterval(function(){
+        //     //     if (!isAllDone)
+        //     //         get_data();
+        //     // }, 1000);
+        // });
     });
 </script>
 

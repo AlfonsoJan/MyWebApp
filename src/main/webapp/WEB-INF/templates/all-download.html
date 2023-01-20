@@ -97,7 +97,7 @@
         </div>
         <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="download-done">
             <th:block th:each="process :  ${processes}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="download-tile" th:attr="data-id=${process.id}">
+                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="download-tile" th:attr="data-id=${process.uniqueID}">
                     <div class="flex items-center justify-between" id="download-title">
                         <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
                         <div class="flex" id="status-button">
