@@ -13,23 +13,17 @@ import java.sql.SQLException;
 public class CreateProjectServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String projectName = request.getParameterValues("projectname[]")[0];
+        String projectName = request.getParameter("projectname");
         String[] files = request.getParameterValues("files[]");
+        int projectId;
         try {
             NewFileTabServlet.getConnector().insertProject(projectName, 1);
-        } catch (DatabaseException e) {
-            System.out.println(e);
-            throw new RuntimeException(e);
-        }
-        int projectId;
-
-        if (files == null || files.length < 1) return;
-        try {
+            if (files == null || files.length < 1) return;
             projectId = NewFileTabServlet.getConnector().getProject(projectName, 1).getProjectId();
             for (String path : files) {
                 NewFileTabServlet.getConnector().insertLabeledFile(path, path, projectId);
             }
-        } catch (SQLException | DatabaseException e) {
+        } catch (DatabaseException | SQLException e) {
             System.out.println(e);
             throw new RuntimeException(e);
         }

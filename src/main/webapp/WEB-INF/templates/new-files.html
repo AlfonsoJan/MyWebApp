@@ -200,6 +200,9 @@
         <li>
             <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
         </li>
+        <li>
+            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
+        </li>
     </ul>
 </div>
 <div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
@@ -209,9 +212,6 @@
         </li>
         <li>
             <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
-        </li>
-        <li>
-            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
         </li>
     </ul>
 </div>
@@ -235,9 +235,9 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-    document.getElementById("radio-button-new").checked = true;
-    var fileIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path><line x1="9" y1="17" x2="9" y2="12"></line><line x1="12" y1="17" x2="12" y2="16"></line><line x1="15" y1="17" x2="15" y2="14"></line></svg>';
-    var del = "<span id='readDelete' class='w-6 h-6 relative flex items-center justify-center float-right group'><svg xmlns='http://www.w3.org/2000/svg' class='hover:stroke-black hover:cursor-pointer icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
+    $('#radio-button-new')[0].checked = true;
+    const fileIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path><line x1="9" y1="17" x2="9" y2="12"></line><line x1="12" y1="17" x2="12" y2="16"></line><line x1="15" y1="17" x2="15" y2="14"></line></svg>';
+    const del = "<span id='readDelete' class='w-6 h-6 relative flex items-center justify-center float-right group'><svg xmlns='http://www.w3.org/2000/svg' class='hover:stroke-black hover:cursor-pointer icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
     function filterFileFunction() {
         var input = $('#filterFileInput').val().toUpperCase();
         var value = $('#file-filters').val();
@@ -292,11 +292,10 @@
             toastr.warning("Please select a project");
             return;
         }
-        console.log(projectName)
         $.ajax({
             type: 'GET',
             url: 'addfilestoproject',
-            data: {projectname: [projectName], files: fileNames},
+            data: {projectname: projectName, files: fileNames},
             success: function () {
                 toastr.success(`Successfully added ${fileNames.length} files to ${projectName}!`);
                 $.each($("#chosen-content #files").find("p"), function(){
@@ -317,7 +316,7 @@
         $.ajax({
             type: 'GET',
             url: 'createproject',
-            data: {projectname: [projectName], files: fileNames},
+            data: {projectname: projectName, files: fileNames},
             success: function () {
                 toastr.success(`Successfully added ${projectName} to your account with ${fileNames.length} files!`);
                 $("#projects-names").append($('<option>', {value: projectName, text: projectName}));
@@ -349,7 +348,21 @@
                 $('#all-files').show();
                 $('#placeholder_li').remove();
                 $.each(processing, function( i, val ) {
-                    $('#current-files').append(`<li class="flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200">${fileIcon} <span id="fileName" class="text-bold mr-auto ${val[2]}">${val[0]}</span> <span>${val[1]}</span></li>`);
+                    var list_container = $("<li />", {
+                        "class": "flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200"
+                    });
+                    list_container.append(
+                        `${fileIcon}`,
+                        $("<span />", {
+                            "class": `text-bold mr-auto ${val[2]}`,
+                            "id": "fileName",
+                            "text": `${val[0]}`
+                        }),
+                        $("<span />", {
+                            "text": `${val[1]}`
+                        })
+                    )
+                    $('#current-files').append(list_container);
                 });
                 $("#file-filters").val("1").change();
                 $.each($("#current-files li"), function(){
