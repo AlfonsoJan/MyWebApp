@@ -1,7 +1,5 @@
 package nl.bioinf.ngswebapp.model;
 
-import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
 import nl.bioinf.ngswebapp.servlets.NewFileTabServlet;
 
 import java.io.File;

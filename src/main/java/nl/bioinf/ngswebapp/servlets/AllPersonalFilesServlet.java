@@ -1,8 +1,10 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
+import nl.bioinf.ngswebapp.db_objects.LabeledFile;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -13,18 +15,18 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "AllPersonalFilesServlet", urlPatterns = "/all-files")
 public class AllPersonalFilesServlet extends HttpServlet {
     private TemplateEngine templateEngine;
-    private static VerySimpleDbConnector connector;
+    private static DatabaseConnector connector;
 
     @Override
     public void init(){
         this.templateEngine = WebConfig.getTemplateEngine();
         try {
-            connector = new VerySimpleDbConnector();
+            connector = new DatabaseConnector();
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -34,15 +36,23 @@ public class AllPersonalFilesServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        try {
-            ctx.setVariable("filesList", connector.getLabeledFromUser(1));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         templateEngine.process("all-files", ctx, response.getWriter());
     }
 
-    public static VerySimpleDbConnector getConnector() {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<LabeledFile> labeledFiles;
+        try {
+            labeledFiles = connector.getAllLabeledFiles(1);
+            String json = new Gson().toJson(labeledFiles);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DatabaseConnector getConnector() {
         return connector;
     }
 }

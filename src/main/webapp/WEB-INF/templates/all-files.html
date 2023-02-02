@@ -5,6 +5,7 @@
     <title>All Files</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
     <script src="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
@@ -12,6 +13,19 @@
     <style>
         .rotated {
             transform: rotate(180deg);
+        }
+        .dropdown:focus-within .dropdown-menu {
+            opacity:1;
+            transform: translate(0) scale(1);
+            visibility: visible;
+            z-index: 100;
+        }
+        .toast-info {
+            background-color: rgb(80, 80, 80);
+            color: white;
+        }
+        .dropdown:focus-within:focus-within + .dropdown-menu, .dropdown-menu:hover {
+            display: block;
         }
     </style>
     <script>
@@ -61,27 +75,9 @@
     </script>
 </head>
 <body class="font-sans mm-0 p-0">
-<!-- Navbar -->
-<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
-    <div class="mr-auto">
-        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
-    </div>
-    <div class="flex items-center justify-center">
-        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            New Files
-        </button>
-        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Personal
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Analysis
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
-    </div>
-</nav>
-
+<div th:replace="template :: nav_bar"></div>
+<div th:replace="template :: nav_drop_personal"></div>
+<div th:replace="template :: nav_drop_analyse"></div>
 
 <!-- Main Content -->
 <div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10" id="container">
@@ -89,102 +85,24 @@
         <div class="row-start-1 row-end-3 flex items-center justify-start px-2.5" id="search-files">
             <input class="border-0 shadow-[0_0_50px_4px_rgba(0,0,0,0.06)] h-7 p-1 rounded-md" type="text" placeholder="Search.." onkeyup="filterFilesFunction()" id="filterFilesInput">
         </div>
-        <div class="row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="personal-files-all">
-            <th:block th:each="file : ${filesList}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="file-container">
-                    <div class="flex items-center justify-between" id="file-title">
-                        <p class="font-bold mx-0 my-4" id="file-header" th:text="${file.label}"></p>
-                        <p class="ml-auto italic overflow-hidden whitespace-nowrap text-ellipsis max-w-[18rem]" id="orig-file-header" th:text="'Originalname: ' + ${file.fullPath}"></p>
-                        <div class="pl-3" th:id="${file.fileId}">
-                            <button id="dropdownMenuOptionsButton" th:attr="data-dropdown-toggle=${file.label}" class="group inline-flex items-center p-2 text-sm font-medium text-center text-gray-900" type="button" onclick="updateSelected(this)">
-                                <svg class="w-5 h-5 group-hover:stroke-black" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>
-                            </button>
-                        </div>
-                        <!--<div class="h-6 w-6 group" id="show-project-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </div>!-->
-                    </div>
-                    <!--<div class="mb-2 hidden" id="info-files">
-                        <p id="label" th:text="'Label: ' + ${file[1]}"></p>
-                        <th:block th:if="${file[2]} gt 0">
-                            <p id="read" th:text="'Read: ' + ${file[2]}"></p>
-                        </th:block>
-                        <th:block th:if="${file[2]} lt 1">
-                            <p id="read">Read: -</p>
-                        </th:block>
-                    </div>!-->
-                    <div th:id="${file.label}" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-                        <ul class="py-1 text-sm text-gray-700" aria-labelledby="dropdownMenuOptionsButton">
-                            <li>
-                                <a onclick="editFile(this)" class="block px-4 py-2 hover:bg-gray-200">Edit</a>
-                            </li>
-                            <li>
-                                <a onclick="downloadFile(this)" class="block px-4 py-2 hover:bg-gray-200">Download</a>
-                            </li>
-                            <li>
-                                <a onclick="deleteFile(this)" class="block px-4 py-2 hover:bg-gray-200">Delete</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </th:block>
-        </div>
-    </div>
-</div>
 
+        <div class="row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-2" id="personal-files-all"></div>
 
-<!-- The dropdowns for the navbar -->
-<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
-        <li>
-            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
-        </li>
-        <li>
-            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
-        </li>
-    </ul>
-</div>
-<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
-        <li>
-            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
-        </li>
-        <li>
-            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
-        </li>
-        <li>
-            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
-        </li>
-    </ul>
-</div>
-
-<!-- Modal for EDIT -->
-<div id="modalEl" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full">
-    <div class="relative w-full h-full max-w-2xl md:h-auto">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-md shadow">
-            <button id="modelHide"  type="button" class="absolute top-3 right-2.5 text-gray-800 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-            <div class="px-6 py-6 lg:px-8" id="fileOptions">
-                <h3 class="mb-4 text-xl font-medium text-gray-900">Update (filename)</h3>
-                <form class="space-y-6" id="editButtonSubmit">
-                    <div class="flex items-center justify-between" id="fileNameDiv">
-                        <label id="origFileName" for="fileName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]">(Old Filename)</label>
-                        <input type="text" name="fileName" id="fileName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Filename...">
-                    </div>
-                    <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="updateFile(this)">Update File</button>
-                </form>
+        <div class="row-start-3 row-end-21 bg-gray-200 flex justify-center items-center rounded-md" id="skeleton-placeholder">
+            <div role="status" id="loader-skeleton">
+                <svg aria-hidden="true" class="inline w-10 h-10 mr-2 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Loading...</span>
             </div>
+            <p class="hidden italic text-slate-700" id="placeholderText">There are no files to be found</p>
         </div>
     </div>
 </div>
 
-<!-- Scripts -->
+<div th:replace="template :: model_file_edit"></div>
+
 <script>
     toastr.options = {
         "closeButton": true,
@@ -203,33 +121,108 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-    var modelElem = $("#modalEl")[ 0 ];
-    var selected;
-    var options = {
+    let modelElem = $("#modalEl")[ 0 ];
+    let selected;
+    let options = {
         placement: 'center',
         backdrop: 'dynamic',
         backdropClasses: 'bg-gray-900 bg-opacity-70 fixed inset-0 z-40',
     }
-    var modal = new Modal(modelElem, options);
-    function editFile(item) {
-        var origFileName = $(item).parent().parent().parent().parent().find("#file-title #file-header").html();
-        //var origRead = $(item).parent().parent().parent().parent().find("#info-files #read").html();
-        //origRead = origRead.substring(origRead.indexOf(":") + 1, origRead.length).replace(/ /g,'');
-        //var origLabel = $(item).parent().parent().parent().parent().find("#info-files #label").html();
-        //origLabel = origLabel.substring(origLabel.indexOf(":") + 1, origLabel.length).replace(/ /g,'');
-        $("#modalEl div div #fileOptions h3").text(`Update: ${origFileName}`);
-        $("#modalEl div div #fileOptions form div #origFileName").text(`Current name: ${origFileName}`);
-        //$("#modalEl div div #fileOptions form div #origLabel").text(`Current label: ${origLabel}`);
-        //$("#modalEl div div #fileOptions form div #origRead").text(`Current read: ${origRead}`);
-        modal.show()
-    }
+    let modal = new Modal(modelElem, options);
     function downloadFile(item) {
-        var file = $(item).parent().parent().parent().parent().find("#file-title #orig-file-header").html();
+        let file = $(item).parent().parent().parent().parent().parent().parent().find("#orig-file-header").html();
         file = file.substring(file.indexOf(":") + 1, file.length).replace(/ /g,'');
-        var url = `download?allFiles=${file}`;
-        var link = document.createElement('a');
+        let url = `download?allFiles=${file}`;
+        let link = document.createElement('a');
         link.href = url;
         link.click();
+    }
+    function resetPlaceholder() {
+        let length = $("#personal-files-all").children().length;
+        if (length < 1) {
+            $("#personal-files-all").hide();
+            $("#skeleton-placeholder").show();
+            $("#loader-skeleton").hide();
+            $("#placeholderText").show();
+        }
+    }
+    function deleteFile(element) {
+        let fileId = $(element).parent().parent().parent().parent().parent().parent().find("#file_id").data("fileId");
+        let filename = $(element).parent().parent().parent().parent().parent().parent().find("#file-header").html();
+        $.ajax({
+            type: 'GET',
+            url: 'delete',
+            data: {id: fileId, type: "files"},
+            success: function (data) {
+                if (data == "true") {
+                    deleteFileAll(fileId, filename, element);
+                    return;
+                }
+                toastr.success(`Successfully deleted ${filename}`);
+                $(element).parent().parent().parent().parent().parent().parent().remove();
+                resetPlaceholder();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
+    }
+    function deleteFileAll(id, name, element){
+        toastr.info(
+            '<div class="flex gap-1 justify-between items-center"><button type="button" id="deleteFileButton" class="rounded-md bg-blue-700 hover:bg-blue-900 p-2">Delete Everything</button></div>',
+            '<p class="text-white text-bold pb-1.5">Since it is the last file continuing will also deletes the project and all analyses run on it.</p>', {
+                allowHtml: true,
+                onShown: function (toast) {
+                    $('#deleteFileButton').one('click', function(){
+                        $.ajax({
+                            type: 'GET',
+                            url: 'delete',
+                            data: {id: id, type: "files.all"},
+                            success: function () {
+                                toastr.success(`Successfully deleted ${name}`);
+                                $(element).parent().parent().parent().parent().parent().parent().remove();
+                                resetPlaceholder();
+                            },
+                            error: function () {
+                                toastr.error('There was an error!');
+                            }
+                        });
+                    });
+                },
+                closeButton: true
+            });
+    }
+    function updateFile(element) {
+        let newName = $(element).siblings("#fileNameDiv").find("#fileName").val().replace(/ /g,'');
+        if (newName.length < 3) {
+            toastr.error("Please pick a name with at least 3 characters!");
+            return;
+        }
+        let id = $(element).siblings("#fileNameDiv").find("#origFileName").data("file-id");
+        var search = $( "#file-container #file-title #file_id" ).filter( function () {
+            return $(this).data("file-id") == id;
+        }).first();
+        $.ajax({
+            type: 'GET',
+            url: 'changename',
+            data: {id: id, newName: newName, type: "file"},
+            success: function () {
+                toastr.success(`Successfully changed the name to ${newName}`);
+                $(search).siblings("#file-header").text(newName)
+                modal.hide();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+        });
+    }
+    function editFile(element) {
+        let fileName = $(element).parent().parent().parent().parent().parent().parent().find("#file-header").html();
+        let fileId = $(element).parent().parent().parent().parent().parent().parent().find("#file_id").data("fileId");
+        $("#modalEl div div #fileOptions h3").text(`Update: ${fileName}`);
+        $("#modalEl div div #fileOptions div div #origFileName").text(`Current name: ${fileName}`);
+        $("#modalEl div div #fileOptions div div #origFileName").attr("data-file-id", fileId);
+        modal.show();
     }
     function filterFilesFunction() {
         var input = $("#filterFilesInput").val().toUpperCase();
@@ -242,65 +235,110 @@
             }
         });
     }
-    function updateFile(element) {
-        let newName = element.parentElement.children.item(0).children.item(1).value;
-        let id = selected.parentElement.children.item(2).id;
-        if (newName.length < 2) {
-            toastr.error("Please pick a name with at least 3 characters!");
-            return;
-        }
-        $.ajax({
-            type: 'GET',
-            url: 'changefilename',
-            data: {id: [id], newName: [newName]},
-            success: function () {
-                toastr.success(`Successfully changed the name to ${newName}`);
-                selected.textContent = newName;
-            },
-            error: function () {
-                toastr.error('There was an error!');
-            }
-        });
-    }
-    function deleteFile(element) {
-        let the_id = selected.parentElement.children.item(2).id; // is a number as string
-        console.log(the_id)
-        $.ajax({
-            type: 'GET',
-            url: 'deletefile',
-            data: {id: [the_id]},
-            success: function () {
-                toastr.success(`Successfully deleted ${selected.textContent}`);
-                selected.parentElement.parentElement.remove();
-            },
-            error: function () {
-                toastr.error('There was an error!');
-            }
-        });
-    }
-    function  updateSelected(element) {
-        selected = element.parentElement.parentElement.children.item(0);
-    }
+    $("#personal-files-all").hide();
     $(document).ready(function(){
-        $("#editButtonSubmit").submit(function(e) {
-            e.preventDefault();
-            var fileElem = $("#modalEl div div #fileOptions form div #fileName").val().replace(/ /g,'');
-            var labelElem = $("#modalEl div div #fileOptions form div #label").val().replace(/ /g,'');
-            var readElem = $("#modalEl div div #fileOptions form div #read").val().replace(/ /g,'');
-            if (fileElem.length > 0 || labelElem.length > 0 || readElem.length > 0) {
-                // TODO: De aangepaste values pakken en update
-                console.log("Continue");
-            } else {
-                toastr.warning("Fill in at least one field!");
-                return;
+        $(function(){
+            $.when(
+                $.post('all-files', function( data ) {
+                    processing = data;
+                }, "json")
+            ).then(function () {
+                addFiles(processing);
+            });
+            var addFiles = function (data) {
+                if (data.length < 1) {
+                    $('#loader-skeleton').hide();
+                    $('#placeholderText').show();
+                    return;
+                }
+                $("#skeleton-placeholder").hide()
+                $("#personal-files-all").show();
+                $.each(data, function( i, val ) {
+                    var list_container = $("<div />", {
+                        "class": "m-2 py-0 px-2.5 rounded-md shadow-3xl",
+                        "id": "file-container"
+                    })
+                    list_container.append(
+                        $("<div />", {
+                            "class": "flex items-center justify-between",
+                            "id": "file-title"
+                        }).append(
+                            $("<p />", {
+                                "class": "font-bold mx-0 my-4",
+                                "id": "file-header",
+                                "text": `${val["label"]}`
+                            }),
+                            $("<p />", {
+                                "class": "ml-auto italic overflow-hidden whitespace-nowrap text-ellipsis max-w-[18rem]",
+                                "id": "orig-file-header",
+                                "text": `Originalname: ${val["fullPath"]}`
+                            }),
+                            $("<div />", {
+                                "class": "pl-3",
+                                "id": "file_id",
+                                "data-file-id": `${val["fileId"]}`
+                            }).append(
+                                $("<div />", {
+                                    "class": "relative inline-block text-left dropdown"
+                                }).append(
+                                    $("<div />", {
+
+                                    }).append(
+                                        $("<button />", {
+                                            "type": "button",
+                                            "aria-haspopup": "true",
+                                            "aria-controls": "headlessui-menu-items-117",
+                                            "class": "rouned-md focus:ring-2 focus:outline-none focus:ring-orange-500 group inline-flex items-center p-2 text-sm font-medium text-center text-gray-900"
+                                        }).append('<svg class="w-5 h-5 group-hover:stroke-black hover:cursor-pointer" aria-hidden="true" fill="rgb(160, 160, 160)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path></svg>')
+                                    ),
+                                    $("<div />", {
+                                        "class": "opacity-0 bg-white invisible dropdown-menu absolute transition-all duration-100 transform origin-top-right -translate-y-1 scale-95 right-10 -top-7 w-32 mx-2 my-3 border-2 border-orange-200 rounded-md shadow-lg"
+                                    }).append(
+                                        $("<div />", {
+                                            "class": "flex justify-center flex-col items-center divide-y divide-gray-100",
+                                            "aria-labelledby": "headlessui-menu-button-1",
+                                            "role": "menu",
+                                            "id": "headlessui-menu-items-117"
+                                        }).append(
+                                            $("<div />", {
+                                                "class": "hover:bg-gray-200 hover:cursor-pointer w-full flex justify-center items-center py-1",
+                                                "onclick": "editFile(this)"
+                                            }).append(
+                                                $("<p />", {
+                                                    "class": "leading-5",
+                                                    "text": "Edit File"
+                                                })
+                                            ),
+                                            $("<div />", {
+                                                "class": "hover:bg-gray-200 hover:cursor-pointer w-full flex justify-center items-center py-1",
+                                                "onclick": "downloadFile(this)"
+                                            }).append(
+                                                $("<p />", {
+                                                    "class": "leading-5",
+                                                    "text": "Download File"
+                                                })
+                                            ),
+                                            $("<div />", {
+                                                "class": "hover:bg-gray-200 hover:cursor-pointer w-full flex justify-center items-center py-1",
+                                                "onclick": "deleteFile(this)"
+                                            }).append(
+                                                $("<p />", {
+                                                    "class": "leading-5",
+                                                    "text": "Delete File"
+                                                })
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                    $("#personal-files-all").append(list_container)
+                });
             }
         });
         $(document).on('click', "#modelHide", function () {
             modal.hide();
-        });
-        $(document).on('click', "#show-project-icon", function () {
-            $(this).parent().parent().find("#info-files").toggle("fast");
-            $(this).toggleClass('rotated');
         });
     });
 </script>

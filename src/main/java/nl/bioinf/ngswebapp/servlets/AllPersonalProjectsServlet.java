@@ -1,8 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.db_objects.LabeledFile;
 import nl.bioinf.ngswebapp.db_objects.Project;
 import org.thymeleaf.TemplateEngine;
@@ -16,19 +17,19 @@ import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @WebServlet(name = "AllPersonalProjectsServlet", urlPatterns = "/all-projects")
 public class AllPersonalProjectsServlet extends HttpServlet {
     private TemplateEngine templateEngine;
-    private static VerySimpleDbConnector connector;
+    private static DatabaseConnector connector;
 
     @Override
     public void init(){
         this.templateEngine = WebConfig.getTemplateEngine();
         try {
-            connector = new VerySimpleDbConnector();
+            connector = new DatabaseConnector();
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -38,30 +39,23 @@ public class AllPersonalProjectsServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-        Map<Project, ArrayList<LabeledFile>> projectLabeledFileHashMap;
-        try {
-            projectLabeledFileHashMap = connector.getProjectsFromUser(1);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        ArrayList<Project> projectsInfo = new ArrayList<>();
-        for (Project project : projectLabeledFileHashMap.keySet()) {
-            for (LabeledFile labeledFile : projectLabeledFileHashMap.get(project)) {
-                System.out.println(labeledFile.getLabel());
-                project.addLabeledFile(labeledFile);
-            }
-            try {
-                project.setProcesses(connector.getAllProcessFromProject(project.getProjectId()).size());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            projectsInfo.add(project);
-        }
-        ctx.setVariable("projects", projectsInfo);
         templateEngine.process("all-projects", ctx, response.getWriter());
     }
 
-    public static VerySimpleDbConnector getConnector() {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        List<Project> projectList;
+        try {
+            projectList = connector.getAllProjects(1);
+            String json = new Gson().toJson(projectList);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DatabaseConnector getConnector() {
         return connector;
     }
 }

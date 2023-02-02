@@ -30,7 +30,7 @@ public class JobRunner implements CommandConstructor {
                 Files.createDirectories(Paths.get(uniquePath));
                 return new String[]{"fastqc", "-o", uniquePath};
             case "zipper":
-                return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", String.format("--checkpoint=%s", files.length), "-C", resourcePath};
+                return new String[]{"tar", "-czvf", uniquePath + ".tar.gz", "-C", resourcePath};
             default:
                 return null;
         }

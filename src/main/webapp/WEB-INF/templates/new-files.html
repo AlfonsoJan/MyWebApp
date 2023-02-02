@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>New Files</title>
+    <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -65,28 +65,10 @@
     </script>
 </head>
 <body class="font-sans mm-0 p-0">
-<!-- Navbar -->
-<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
-    <div class="mr-auto">
-        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
-    </div>
-    <div class="flex items-center justify-center">
-        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            New Files
-        </button>
-        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Personal
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Analysis
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
-    </div>
-</nav>
+<div th:replace="template :: nav_bar"></div>
+<div th:replace="template :: nav_drop_personal"></div>
+<div th:replace="template :: nav_drop_analyse"></div>
 
-<!-- Main Content -->
 <div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10">
     <div class="col-end-24 col-start-2 row-start-1 row-end-2 grid grid-cols-24">
         <div class="col-end-11 col-start-1 flex items-end justify-center m-2">
@@ -172,7 +154,7 @@
                     <div class="" id="existing-project">
                         <select name="projects-names" id="projects-names" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-200 focus:border-orange-200 block p-2">
                             <option Selected>Select a Project</option>
-                                <option th:each="project : ${projects}" th:value="${project.name}" th:text="${project.name}"></option>
+                            <option th:each="project : ${projects}" th:value="${project}" th:text="${project}"></option>
                         </select>
                     </div>
                 </div>
@@ -190,32 +172,6 @@
         </div>
     </div>
 </div>
-
-<!-- The dropdowns for the navbar -->
-<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
-        <li>
-            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
-        </li>
-        <li>
-            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
-        </li>
-    </ul>
-</div>
-<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
-        <li>
-            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
-        </li>
-        <li>
-            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
-        </li>
-        <li>
-            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
-        </li>
-    </ul>
-</div>
-
 
 <script>
     toastr.options = {
@@ -235,12 +191,12 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
-    document.getElementById("radio-button-new").checked = true;
-    var fileIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path><line x1="9" y1="17" x2="9" y2="12"></line><line x1="12" y1="17" x2="12" y2="16"></line><line x1="15" y1="17" x2="15" y2="14"></line></svg>';
-    var del = "<span id='readDelete' class='w-6 h-6 relative flex items-center justify-center float-right group'><svg xmlns='http://www.w3.org/2000/svg' class='hover:stroke-black hover:cursor-pointer icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
+    $("#radio-button-new")[0].checked = true;
+    const fileIcon = '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-analytics" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M14 3v4a1 1 0 0 0 1 1h4"></path><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path><line x1="9" y1="17" x2="9" y2="12"></line><line x1="12" y1="17" x2="12" y2="16"></line><line x1="15" y1="17" x2="15" y2="14"></line></svg>';
+    const del = "<span id='readDelete' class='w-6 h-6 relative flex items-center justify-center float-right group'><svg xmlns='http://www.w3.org/2000/svg' class='hover:stroke-black hover:cursor-pointer icon icon-tabler icon-tabler-x' width='20' height='20' viewBox='0 0 24 24' stroke-width='2' stroke='rgb(160,160,160)' fill='none' stroke-linecap='round' stroke-linejoin='round'><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><line x1='18' y1='6' x2='6' y2='18'></line><line x1='6' y1='6' x2='18' y2='18'></line></svg></span>";
     function filterFileFunction() {
-        var input = $('#filterFileInput').val().toUpperCase();
-        var value = $('#file-filters').val();
+        let input = $('#filterFileInput').val().toUpperCase();
+        let value = $('#file-filters').val();
         $.each($("#current-files li"), function(){
             if ($(this).find("#fileName").html().toUpperCase().indexOf(input) >= 0) {
                 $(this).show()
@@ -287,16 +243,15 @@
     $("#icon-add-file").hide();
     $("#existing-project").hide();
     function addFileToProject(fileNames) {
-        var projectName = $("#projects-names option:selected" ).val();
+        let projectName = $("#projects-names option:selected" ).val();
         if (projectName.toLowerCase() === "select a project") {
             toastr.warning("Please select a project");
             return;
         }
-        console.log(projectName)
         $.ajax({
             type: 'GET',
-            url: 'addfilestoproject',
-            data: {projectname: [projectName], files: fileNames},
+            url: 'add-files-account',
+            data: {projectname: projectName, files: fileNames, type: "add"},
             success: function () {
                 toastr.success(`Successfully added ${fileNames.length} files to ${projectName}!`);
                 $.each($("#chosen-content #files").find("p"), function(){
@@ -309,16 +264,21 @@
         });
     }
     function createProject(fileNames) {
-        var projectName = $('#projectname').val();
+        let projectName = $('#projectname').val().replace(/ /g,'');
+        $('#projectname').val("");
         if (projectName < 1) {
             toastr.warning('Please type in a project name!');
             return;
         }
         $.ajax({
             type: 'GET',
-            url: 'createproject',
-            data: {projectname: [projectName], files: fileNames},
-            success: function () {
+            url: 'add-files-account',
+            data: {projectname: projectName, files: fileNames, type: "create"},
+            success: function (data) {
+                if (data == "true") {
+                    toastr.error('This project already exists!');
+                    return;
+                }
                 toastr.success(`Successfully added ${projectName} to your account with ${fileNames.length} files!`);
                 $("#projects-names").append($('<option>', {value: projectName, text: projectName}));
                 $.each($("#chosen-content #files").find("p"), function(){
@@ -326,7 +286,7 @@
                 });
             },
             error: function () {
-                toastr.error('This project already exists!');
+                toastr.error('Something went wrong!');
             }
         });
     }
@@ -349,7 +309,21 @@
                 $('#all-files').show();
                 $('#placeholder_li').remove();
                 $.each(processing, function( i, val ) {
-                    $('#current-files').append(`<li class="flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200">${fileIcon} <span id="fileName" class="text-bold mr-auto ${val[2]}">${val[0]}</span> <span>${val[1]}</span></li>`);
+                    let list_container = $("<li />", {
+                        "class": "flex justify-between items-center m-0 mb-2 px-0 py-1 border-b border-[#8C8C8C] select-none hover:cursor-pointer hover:bg-gray-200"
+                    });
+                    list_container.append(
+                        `${fileIcon}`,
+                        $("<span />", {
+                            "class": `text-bold mr-auto ${val[2]}`,
+                            "id": "fileName",
+                            "text": `${val[0]}`
+                        }),
+                        $("<span />", {
+                            "text": `${val[1]}`
+                        })
+                    )
+                    $('#current-files').append(list_container);
                 });
                 $("#file-filters").val("1").change();
                 $.each($("#current-files li"), function(){
@@ -366,10 +340,10 @@
                     helper: function(){
                         $("#icon-add-file").show();
                         $(this).addClass('selected');
-                        var selected = $("#current-files li.selected");
-                        var w = $(this).css('width');
-                        var h = $(this).css('height');
-                        var container = $('<div/>').attr('id', 'draggingContainer');
+                        let selected = $("#current-files li.selected");
+                        let w = $(this).css('width');
+                        let h = $(this).css('height');
+                        let container = $('<div/>').attr('id', 'draggingContainer');
                         container.append(selected.clone().removeClass("selected").css('width', w).css('height', h));
                         return container;
                     }
@@ -377,19 +351,18 @@
                 $("#chosen-content #files").droppable({
                     drop: function(event, ui) {
                         $.each($("#current-files li").filter('.selected'), function(){
-                            var fileName = $(this).find('#fileName').html();
+                            let fileName = $(this).find('#fileName').html();
                             $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
                             $(this).removeClass("selected");
                         });
                         $("#icon-add-file").hide();
                     }
                 });
-            };
-
+            }
         });
         $(document).on('click', '#add-button', function (e) {
             e.preventDefault();
-            var fileNames = [];
+            let fileNames = [];
             $.each($("#chosen-content #files").find("p"), function(){
                 fileNames.push($(this).data("name"))
             });
@@ -397,7 +370,7 @@
                 toastr.warning("Please select at least one file");
                 return;
             }
-            var newProject = $("#add-button h3").html().toLowerCase() === "add project to your account";
+            let newProject = $("#add-button h3").html().toLowerCase() === "add project to your account";
             switch (newProject) {
                 case true:
                     createProject(fileNames);
@@ -431,7 +404,7 @@
         $(document).on('click', "#icon-add-file", function (e) {
             e.preventDefault();
             $.each($("#current-files li").filter('.selected'), function(){
-                var fileName = $(this).find('#fileName').html();
+                let fileName = $(this).find('#fileName').html();
                 $("#chosen-content #files").append(`<p data-name="${fileName}" class="w-full pb-0 pt-1.5 px-2.5 m-0 mb-1.5 file-name">${fileName} ${del}</p>`);
                 $(this).removeClass("selected");
             });
@@ -454,10 +427,10 @@
                 return;
             }
             if (e.shiftKey){
-                var from = $("#current-files li").index(this);
-                var to = $("#current-files li").index(lastChecked);
-                var start = Math.min(from, to);
-                var end = Math.max(from, to) + 1;
+                let from = $("#current-files li").index(this);
+                let to = $("#current-files li").index(lastChecked);
+                let start = Math.min(from, to);
+                let end = Math.max(from, to) + 1;
                 $.each($("#current-files li").slice(start, end).filter(':not(.selected)'), function(){
                     $(this).addClass("selected");
                 });
@@ -471,7 +444,7 @@
         });
         // Show the files with the correct class
         $('#file-filters').on('change', function() {
-            var value = $(this).val();
+            let value = $(this).val();
             $('#filterFileInput').val('');
             if (value == 0){
                 $.each($("#current-files li"), function(){

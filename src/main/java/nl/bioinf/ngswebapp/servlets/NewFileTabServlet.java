@@ -3,7 +3,7 @@ package nl.bioinf.ngswebapp.servlets;
 import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.model.FastqFiles;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -20,24 +20,23 @@ import java.util.ArrayList;
 @WebServlet(name = "NewFileTabServlet", urlPatterns = "/new-files", loadOnStartup = 1)
 public class NewFileTabServlet extends HttpServlet {
     private TemplateEngine templateEngine;
-    private static VerySimpleDbConnector connector;
-
+    private static DatabaseConnector connector;
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Override
     public void init(){
         this.templateEngine = WebConfig.getTemplateEngine();
         try {
-            connector = new VerySimpleDbConnector();
+            connector = new DatabaseConnector();
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
     }
-    @Serial
-    private static final long serialVersionUID = 1L;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
         try {
-            ctx.setVariable("projects", connector.getProjectsFromUser(1).keySet());
+            ctx.setVariable("projects", connector.getProjectNames(1));
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -53,7 +52,7 @@ public class NewFileTabServlet extends HttpServlet {
         response.getWriter().write(json);
     }
 
-    public static VerySimpleDbConnector getConnector() {
+    public static DatabaseConnector getConnector() {
         return connector;
     }
 }

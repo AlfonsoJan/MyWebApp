@@ -1,0 +1,100 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="headerFragment">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>_TITLE_</title>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8" th:fragment="nav_bar">
+    <div class="mr-auto">
+        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
+    </div>
+    <div class="flex items-center justify-center">
+        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            New Files
+        </button>
+        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Personal
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
+            Analysis
+            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+        </button>
+        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
+    </div>
+</nav>
+<!-- The dropdowns for the navbar -->
+<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200" th:fragment="nav_drop_personal">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
+        <li>
+            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
+        </li>
+        <li>
+            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
+        </li>
+        <li>
+            <a href="all-downloads" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
+        </li>
+    </ul>
+</div>
+<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200" th:fragment="nav_drop_analyse">
+    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
+        <li>
+            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
+        </li>
+        <li>
+            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Modal for EDIT -->
+<div id="modalEl" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full" th:fragment="model_file_edit">
+    <div class="relative w-full h-full max-w-2xl md:h-auto">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-md shadow">
+            <button id="modelHide"  type="button" class="absolute top-3 right-2.5 text-gray-800 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="px-6 py-6 lg:px-8" id="fileOptions">
+                <h3 class="mb-4 text-xl font-medium text-gray-900">Update (filename)</h3>
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between" id="fileNameDiv">
+                        <label id="origFileName" for="fileName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]" data-file-id="-1">(Old Filename)</label>
+                        <input type="text" name="fileName" id="fileName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Filename...">
+                    </div>
+                    <button type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="updateFile(this)">Update File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalProject" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full" th:fragment="model_project_edit">
+    <div class="relative w-full h-full max-w-2xl md:h-auto">
+        <div class="relative bg-white rounded-md shadow">
+            <button id="modalClose"  type="button" class="absolute top-3 right-2.5 text-gray-800 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="px-6 py-6 lg:px-8" id="projectOptions">
+                <h3 class="mb-4 text-xl font-medium text-gray-900">Update (project name)</h3>
+                <div class="space-y-6">
+                    <div class="flex items-center justify-between" id="projectNameDiv">
+                        <label id="origProjectName" for="projectName" class="block mb-2 text-sm font-medium text-gray-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[15rem]" data-project-id="-1">(Old Project Name)</label>
+                        <input type="text" name="projectName" id="ProjectName" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-3/6 p-2.5" placeholder="New Project name...">
+                    </div>
+                    <button type="button" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center" onclick="updateProject(this)">Update File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

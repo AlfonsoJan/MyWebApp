@@ -2,7 +2,7 @@ package nl.bioinf.ngswebapp.servlets;
 
 import com.mysql.cj.util.StringUtils;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -15,22 +15,33 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.UUID;
 
 @WebServlet(name = "DownloadServlet", urlPatterns = "/download")
 public class DownloadServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String[] allFiles = request.getParameterValues("allFiles");
-        String[] projectFiles = request.getParameterValues("projectFiles[]");
         int projectId = StringUtils.isNullOrEmpty(request.getParameter("project")) ? -1 : Integer.parseInt(request.getParameter("project"));
         String resourcePath = request.getServletContext().getInitParameter("file.location");
         String outPath = request.getServletContext().getInitParameter("analyse.folder");
+        String[] zipDownload = request.getParameterValues("zipDownload");
+        String analyseType = "zip".toLowerCase();
 
-        if (allFiles != null) {
+        if (allFiles != null || zipDownload != null) {
             FileInputStream fileInputStream = null;
             OutputStream responseOutputStream = null;
+            String filePath;
+            String fileName;
+            if (allFiles != null) {
+                filePath = resourcePath + allFiles[0];
+                fileName = allFiles[0];
+            } else {
+                filePath = outPath + zipDownload[0];
+                fileName = zipDownload[0];
+            }
+
             try {
-                String filePath = resourcePath + allFiles[0];
                 File file = new File(filePath);
 
                 String mimeType = request.getServletContext().getMimeType(filePath);
@@ -38,7 +49,7 @@ public class DownloadServlet extends HttpServlet {
                     mimeType = "application/octet-stream";
                 }
                 response.setContentType(mimeType);
-                response.addHeader("Content-Disposition", "attachment; filename=" + allFiles[0]);
+                response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
                 response.setContentLength((int) file.length());
                 fileInputStream = new FileInputStream(file);
                 responseOutputStream = response.getOutputStream();
@@ -55,24 +66,22 @@ public class DownloadServlet extends HttpServlet {
                 responseOutputStream.close();
             }
         } else {
-            UUID randomID;
-            while (true) {
-                randomID = UUID.randomUUID();
-                Path path = Path.of(outPath + randomID + ".tar.gz");
-                if (Files.notExists(path)) {
-                    break;
-                }
-            }
-            String analyseType = "zip".toLowerCase();
             try {
-                VerySimpleDbConnector connector = AllPersonalProjectsServlet.getConnector();
-                connector.insertProcess(analyseType, 1, projectId, randomID.toString());
-            } catch (DatabaseException e) {
-                e.printStackTrace();
+                UUID randomID;
+                while (true) {
+                    randomID = UUID.randomUUID();
+                    Path path = Path.of(outPath + randomID + ".tar.gz");
+                    if (Files.notExists(path)) {
+                        break;
+                    }
+                }
+                String[] files = NewFileTabServlet.getConnector().getFilesProject(1, projectId).toArray(new String[0]);
+                NewFileTabServlet.getConnector().insertProcess(analyseType, randomID.toString(), projectId);
+                JobRunner zipper = new JobRunner(randomID, resourcePath, files, "zipper", outPath);
+                zipper.startJob();
+            } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            JobRunner zipper = new JobRunner(randomID, resourcePath, projectFiles, "zipper", outPath);
-            zipper.startJob();
         }
     }
 }

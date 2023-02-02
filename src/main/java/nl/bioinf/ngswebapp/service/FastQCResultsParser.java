@@ -1,47 +1,107 @@
 package nl.bioinf.ngswebapp.service;
 
+import nl.bioinf.ngswebapp.db_objects.LabeledFile;
 import nl.bioinf.ngswebapp.db_objects.Process;
-import nl.bioinf.ngswebapp.test.ResultParser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FastQCResultsParser implements FastQCResults {
-
-    @Override
-    public List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos) {
-        return analyseInfos.stream().map(ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
+    private static <T, U, R> List<R> listCombiner(
+            List<T> list1, String location, BiFunction<T, U, R> combiner) {
+        List<R> result = new ArrayList<>();
+        for (int i = 0; i < list1.size(); i++) {
+            result.add(combiner.apply(list1.get(i), (U) location));
+        }
+        return result;
     }
 
     @Override
-    public List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos) {
-        return analyseInfos.stream().map(ResultParser.ResultFilter::filterRunningBenchmarkResults).collect(Collectors.toList());
+    public List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos, String loc) {
+        return listCombiner(analyseInfos, loc, FastQCResultsParser.ResultFilter::filterRunningFastqc);
     }
 
+    @Override
+    public List<List<String>> isFinishedDownload(ArrayList<Process> downloadInfo, String loc) {
+        return listCombiner(downloadInfo, loc, FastQCResultsParser.ResultFilter::filterRunningDownload);
+    }
 
     public static class ResultFilter {
-        public static List<String> filterRunningBenchmarkResults(Process analyse) {
+
+        public static List<String> filterRunningDownload(Process download, String loc) {
             List<String> tabledResults = new ArrayList<>();
-            tabledResults.add(analyse.getProject().getName());
-            //tabledResults.add(isDone(analyse.getFiles(), analyse.getSessionID()));
+            tabledResults.add(download.getProject().getName());
+            tabledResults.add(isDownloadDone(download.getUniqueID(), loc));
+            tabledResults.add(String.valueOf(download.getUniqueID()));
             return tabledResults;
         }
-        public static String isDone(String[] file, String id) {
-            // TODO: Method to check for errors
-            Path path = Paths.get("/students/2022-2023/Thema10/ngs_dummyfiles/temp/" + id + "/output.log");
+        public static List<String> filterRunningFastqc(Process analyse, String location) {
+            List<String> tabledResults = new ArrayList<>();
+            tabledResults.add(analyse.getProject().getName());
+            tabledResults.add(isFastqcDone(analyse.getProject().getLabeledFiles(), analyse.getUniqueID(), location));
+            tabledResults.add(String.valueOf(analyse.getUniqueID()));
+            return tabledResults;
+        }
+
+        public static String isDownloadDone(String id, String loc) {
+            Path pathFile = Paths.get(loc + id + ".tar.gz");
+            Path pathLog = Paths.get(loc + id + ".output.log");
+            Path pathError = Paths.get(loc + id + ".error.log");
+            if (Files.notExists(pathFile)) {
+                return "missing";
+            }
+            Reader reader = null;
+            BufferedReader readlog;
+            try {
+                reader = new FileReader(String.valueOf(pathError));
+                int readSize = reader.read();
+                if (readSize != -1) {
+                    return "error";
+                }
+                reader.close();
+
+                String line;
+                BufferedReader readLog = Files.newBufferedReader(pathLog);
+
+                while ((line = readLog.readLine()) != null) {
+                    if (line.toLowerCase().startsWith("done")) {
+                        return "done";
+                    }
+                }
+                readLog.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return "running";
+        }
+
+        public static String isFastqcDone(ArrayList<LabeledFile> file, String id, String loc) {
+            Path path = Paths.get(loc + id + "/output.log");
+            Path pathError = Paths.get(loc + id + "/error.log");
+            if (Files.notExists(path)) {
+                return "missing";
+            }
             List<String> doneFiles;
             try {
+                String line;
+                BufferedReader readerError = Files.newBufferedReader(pathError);
+                while ((line = readerError.readLine()) != null) {
+                    if (line.toLowerCase().startsWith("failed")) {
+                        return "failed";
+                    }
+                }
+                readerError.close();
                 BufferedReader reader = Files.newBufferedReader(path);
                 doneFiles = new ArrayList<>();
-                String line;
+
                 while ((line = reader.readLine()) != null) {
-                    if (line.startsWith("Analysis complete")) {
+                    if (line.toLowerCase().startsWith("analysis complete")) {
                         String fileDone = line.split(" ")[3];
                         doneFiles.add(fileDone);
                     }
@@ -50,17 +110,12 @@ public class FastQCResultsParser implements FastQCResults {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            for (String fileName: file) {
-                if (!doneFiles.contains(fileName)) {
-                    return "false";
+            for (LabeledFile fileName: file) {
+                if (!doneFiles.contains(fileName.getFullPath())) {
+                    return "running";
                 }
             }
-            return "true";
+            return "done";
         }
-    }
-
-    public static void main(String[] args) {
-        String loc = "/students/2022-2023/Thema10/ngs_dummyfiles/temp/";
-        String[] id = new String[]{"78992c54-4bdd-4bbb-9854-1f8f1da6475d"};
     }
 }
