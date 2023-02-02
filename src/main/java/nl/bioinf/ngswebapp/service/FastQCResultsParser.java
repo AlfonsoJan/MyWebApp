@@ -13,37 +13,32 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FastQCResultsParser implements FastQCResults {
+    private static <T, U, R> List<R> listCombiner(
+            List<T> list1, String location, BiFunction<T, U, R> combiner) {
+        List<R> result = new ArrayList<>();
+        for (int i = 0; i < list1.size(); i++) {
+            result.add(combiner.apply(list1.get(i), (U) location));
+        }
+        return result;
+    }
 
     @Override
     public List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos, String loc) {
         return listCombiner(analyseInfos, loc, FastQCResultsParser.ResultFilter::filterRunningFastqc);
     }
 
-    //    @Override
-//    public static List<List<String>> isFinishedFastQC(ArrayList<Process> analyseInfos, String loc) {
-//        return listCombiner(analyseInfos, loc, FastQCResultsParser.ResultFilter::filterRunningFastqc);
-//    }
-    private static <T, U, R> List<R> listCombiner(
-            List<T> list1, String list2, BiFunction<T, U, R> combiner) {
-        List<R> result = new ArrayList<>();
-        for (int i = 0; i < list1.size(); i++) {
-            result.add(combiner.apply(list1.get(i), (U) list2));
-        }
-        return result;
-    }
-
     @Override
-    public List<List<String>> isFinishedDownload(ArrayList<Process> analyseInfos, String loc) {
-        return analyseInfos.stream().map(FastQCResultsParser.ResultFilter::filterRunningDownload).collect(Collectors.toList());
+    public List<List<String>> isFinishedDownload(ArrayList<Process> downloadInfo, String loc) {
+        return listCombiner(downloadInfo, loc, FastQCResultsParser.ResultFilter::filterRunningDownload);
     }
 
     public static class ResultFilter {
 
-        public static List<String> filterRunningDownload(Process analyse) {
+        public static List<String> filterRunningDownload(Process download, String loc) {
             List<String> tabledResults = new ArrayList<>();
-            tabledResults.add(analyse.getProject().getName());
-            tabledResults.add(isDownloadDone(analyse.getProject().getLabeledFiles(), analyse.getUniqueID(), "/students/2022-2023/Thema10/ngs_dummyfiles/temp/"));
-            tabledResults.add(String.valueOf(analyse.getUniqueID()));
+            tabledResults.add(download.getProject().getName());
+            tabledResults.add(isDownloadDone(download.getUniqueID(), loc));
+            tabledResults.add(String.valueOf(download.getUniqueID()));
             return tabledResults;
         }
         public static List<String> filterRunningFastqc(Process analyse, String location) {
@@ -54,21 +49,20 @@ public class FastQCResultsParser implements FastQCResults {
             return tabledResults;
         }
 
-        public static String isDownloadDone(ArrayList<LabeledFile> file, String id, String loc) {
+        public static String isDownloadDone(String id, String loc) {
             Path pathFile = Paths.get(loc + id + ".tar.gz");
-            Path pathLog = Paths.get(loc + id + "/output.log");
-            Path pathError = Paths.get(loc + id + "/error.log");
+            Path pathLog = Paths.get(loc + id + ".output.log");
+            Path pathError = Paths.get(loc + id + ".error.log");
             if (Files.notExists(pathFile)) {
                 return "missing";
             }
-
             Reader reader = null;
             BufferedReader readlog;
             try {
                 reader = new FileReader(String.valueOf(pathError));
                 int readSize = reader.read();
                 if (readSize != -1) {
-                    return "Error";
+                    return "error";
                 }
                 reader.close();
 

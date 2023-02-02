@@ -5,21 +5,17 @@ import java.util.ArrayList;
 public class Project {
     private int projectId;
     private String name;
-    private int userId;
     private ArrayList<LabeledFile> labeledFiles = new ArrayList<>();
 
-    private int processes;
-    private int fileSize;
-
-    public Project(int projectId, String name, int userId) {
+    public Project(int projectId, String name, ArrayList<LabeledFile> labeledFiles) {
         this.projectId = projectId;
         this.name = name;
-        this.userId = userId;
+        this.labeledFiles = labeledFiles;
     }
 
     @Override
     public String toString() {
-        return name;
+        return name + " " + projectId;
     }
 
     public int getProjectId() {
@@ -42,24 +38,8 @@ public class Project {
         return labeledFiles;
     }
 
-    public void addLabeledFile(LabeledFile labeledFile) {
-        labeledFiles.add(labeledFile);
-    }
-
     public void setLabeledFiles(ArrayList<LabeledFile> labeledFiles) {
         this.labeledFiles = labeledFiles;
-    }
-
-    public int getFileSize() {
-        return labeledFiles.size();
-    }
-
-    public int getProcesses() {
-        return processes;
-    }
-
-    public void setProcesses(int processes) {
-        this.processes = processes;
     }
 
 }

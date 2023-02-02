@@ -1,8 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
 
+import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.db_objects.Process;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -15,18 +16,17 @@ import java.io.IOException;
 import java.io.Serial;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @WebServlet(name = "AnalyseServlet", urlPatterns = "/analyse")
 public class AnalyseServlet extends HttpServlet {
     private TemplateEngine templateEngine;
-    private static VerySimpleDbConnector connector;
+    private static DatabaseConnector connector;
 
     @Override
     public void init(){
         this.templateEngine = WebConfig.getTemplateEngine();
         try {
-            connector = new VerySimpleDbConnector();
+            connector = new DatabaseConnector();
         } catch (DatabaseException | IOException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -36,18 +36,23 @@ public class AnalyseServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         WebContext ctx = new WebContext(request, response, request.getServletContext(), request.getLocale());
-
-        ArrayList<Process> processes;
-        try {
-            processes = connector.getProcessFromUser(1, "fastqc");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        ctx.setVariable("processes", processes);
         templateEngine.process("analyse", ctx, response.getWriter());
     }
 
-    public static VerySimpleDbConnector getConnector() {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ArrayList<Process> processList;
+        try {
+            processList = connector.getProcess(1, "fastqc");
+            String json = new Gson().toJson(processList);
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(json);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DatabaseConnector getConnector() {
         return connector;
     }
 }

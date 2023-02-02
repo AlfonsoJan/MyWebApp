@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Download</title>
+    <title>All Downloads</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/flowbite@1.6.0/dist/flowbite.min.css" />
@@ -62,26 +62,9 @@
     </script>
 </head>
 <body class="font-sans mm-0 p-0">
-<!-- Navbar -->
-<nav class="flex items-center justify-center h-16 bg-[#D3D3D3] p-8 gap-8">
-    <div class="mr-auto">
-        <img class="logo" src="/images/logo.png" th:src="@{/images/logo.png}" alt="Hanze Logo" style="height: 3.5rem;">
-    </div>
-    <div class="flex items-center justify-center">
-        <button onclick="location.href='&#47;new-files'" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            New Files
-        </button>
-        <button id="dropdownPersonalButton" data-dropdown-toggle="dropDownPersonal" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Personal
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button id="dropdownAnalyseButton" data-dropdown-toggle="dropDownAnalyse" type="button" class="font-medium text-base text-center inline-flex items-center focus:ring-2 focus:outline-none focus:ring-orange-500 text-black hover:text-white hover:bg-orange-500 py-1.5 px-4 rounded-md">
-            Analysis
-            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-        </button>
-        <button type="button" class="font-medium text-base inline-block text-white hover:text-white bg-[#00008B] py-1.5 px-4 rounded-md ml-2">Logout</button>
-    </div>
-</nav>
+<div th:replace="template :: nav_bar"></div>
+<div th:replace="template :: nav_drop_personal"></div>
+<div th:replace="template :: nav_drop_analyse"></div>
 
 <div class="bg-[#F5F5F5] h-[calc(100vh-4rem)] w-screen grid grid-cols-24 grid-rows-10" id="container">
     <div class="col-end-24 col-start-2 row-start-2 row-end-10 max-h-full grid grid-rows-20">
@@ -95,102 +78,20 @@
                 </div>
             </form>
         </div>
-        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="download-done">
-            <th:block th:each="process :  ${processes}">
-                <div class="m-2 py-0 px-2.5 rounded-md shadow-3xl" id="download-tile" th:attr="data-id=${process.uniqueID}">
-                    <div class="flex items-center justify-between" id="download-title">
-                        <p class="font-bold mx-0 my-4" id="title-header" th:text="${process.project.name}"></p>
-                        <div class="flex" id="status-button">
-                            <div class="h-6 w-6 group mr-1 hidden" id="delete-download-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <line x1="4" y1="7" x2="20" y2="7"></line>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                </svg>
-                            </div>
-                            <div id="finished-icon" class="hidden">
-                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-900 text-green-300">
-                                        <span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span>
-                                        Finished
-                                    </span>
-                            </div>
-                            <div id="running-icon" class="">
-                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-orange-900 text-orange-300">
-                                        <span class="w-2 h-2 mr-1 bg-orange-500 rounded-full"></span>
-                                        Running
-                                    </span>
-                            </div>
-                            <div id="cant-find-download" class="hidden">
-                                    <span class="inline-flex items-center text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-900 text-red-300">
-                                        <span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span>
-                                        Absent
-                                    </span>
-                            </div>
-                            <div class="h-6 w-6 group" id="show-download-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <polyline points="6 9 12 15 18 9"></polyline>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2 hidden" id="download-info">
-                        <div id="download-files">
-                            <th:block th:each="files :  ${process.project.labeledFiles}">
-                                <p class="mt-2 mx-0 last:pb-3" th:attr="data-filename=${files.fullPath}" th:text="'- ' + ${files.label}"></p>
-                            </th:block>
-                        </div>
-                        <div class="w-full" id="download-download">
-                            <div id="done" class="hidden">
-                                <p>Download the tar.gz file: <span id="download-link" class="rounded-md px-4 py-1.5 mx-1 bg-orange-300 hover:cursor-pointer hover:bg-orange-400">here</span></p>
-                            </div>
-
-                            <div class="flex items-center" id="still-performing">
-                                <p class="pr-1 italic text-[#323232]">Still zipping the files</p>
-                                <div role="status">
-                                    <svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-orange-500 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </th:block>
+        <div class="row-start-3 row-end-21 bg-gray-200 flex justify-center items-center rounded-md" id="skeleton-placeholder">
+            <div role="status" id="loader-skeleton">
+                <svg aria-hidden="true" class="inline w-10 h-10 mr-2 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <p class="hidden italic text-slate-700" id="placeholderText">There are no downloads to be found</p>
         </div>
+        <div class="col-span-full row-start-3 row-end-21 max-h-full overflow-y-auto flex flex-col gap-4" id="download-done"></div>
     </div>
 </div>
 
-<!-- The dropdowns for the navbar -->
-<div id="dropDownPersonal" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownPersonalButton">
-        <li>
-            <a href="all-files" class="block px-4 py-2 hover:bg-gray-200">All Files</a>
-        </li>
-        <li>
-            <a href="all-projects" class="block px-4 py-2 hover:bg-gray-200">All Projects</a>
-        </li>
-    </ul>
-</div>
-<div id="dropDownAnalyse" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-md shadow w-44 border-2 border-orange-200">
-    <ul class="py-1 text-base text-gray-700" aria-labelledby="dropdownAnalyseButton">
-        <li>
-            <a href="analyse" class="block px-4 py-2 hover:bg-gray-200">All Analyse</a>
-        </li>
-        <li>
-            <a href="new-analyse" class="block px-4 py-2 hover:bg-gray-200">New Analyse</a>
-        </li>
-        <li>
-            <a href="all-download" class="block px-4 py-2 hover:bg-gray-200">Downloads</a>
-        </li>
-    </ul>
-</div>
-
-<!-- Scripts -->
 <script>
     toastr.options = {
         "closeButton": true,
@@ -209,6 +110,7 @@
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     }
+    $('#download-done').hide();
     function filterDownloadFunction() {
         var input = $("#filterDownloadInput").val().toUpperCase();
         $.each($("#download-done #download-tile"), function(){
@@ -220,12 +122,186 @@
             }
         });
     }
+    function resetPlaceholder() {
+        let length = $("#download-done").children().length;
+        if (length < 1) {
+            $("#download-done").hide();
+            $("#skeleton-placeholder").show();
+            $("#loader-skeleton").hide();
+            $("#placeholderText").show();
+        }
+    }
+    function deleteDownload(element){
+        let id = $(element).parent().parent().parent().data("id");
+        let unique = $(element).parent().parent().parent().data("unique-id");
+        $.ajax({
+            type: 'GET',
+            url: 'delete',
+            data: {id: id, type: "process", unique: unique},
+            success: function () {
+                $(element).parent().parent().parent().remove();
+                toastr.success(`Successfully deleted the analysis`);
+                resetPlaceholder();
+            },
+            error: function () {
+                toastr.error('There was an error!');
+            }
+
+        });
+    }
     $(document).ready(function(){
+        $(function(){
+            let stillRunning = true;
+            let get_data = function () {
+                $.when(
+                    $.post('results', {type: "downloads"}, function( data ) {
+                        processing = data;
+                    }, "json")
+                ).then(function () {
+                    downloadResult(processing);
+                });
+            }
+            var downloadResult = function (data) {
+                stillRunning = false;
+                if (data.length < 1) {
+                    return;
+                }
+                $.each(data, function( i, val ) {
+                    if (val[1] == "running") {
+                        stillRunning = true;
+                    }
+                    let search = $( "#download-done #download-tile" ).filter( function () {
+                        return $(this).data("unique-id") == val[2];
+                    }).first();
+                    let elem = $(search).find("#download-info #download-links");
+                    let button = $(search).find("#download-title #status-button #status-icon");
+                    switch(val[1]) {
+                        case "missing":
+                            $(elem).find("#download-done").hide();
+                            $(elem).find("#download-running").hide();
+                            $(elem).find("#download-error").show();
+                            $(elem).find("#download-error p").text("The zip file is missing");
+                            $(button).children().hide();
+                            $(button).find("#missing-icon").show();
+                            break;
+                        case "error":
+                            $(elem).find("#download-done").hide();
+                            $(elem).find("#download-running").hide();
+                            $(elem).find("#download-error").show();
+                            $(elem).find("#download-error p").text("Something went wrong while zipping!");
+                            $(button).children().hide();
+                            $(button).find("#error-icon").show();
+                            break;
+                        case "done":
+                            $(elem).find("#download-done").show();
+                            $(elem).find("#download-running").hide();
+                            $(elem).find("#download-error").hide();
+                            $(elem).find("#download-done p").remove();
+                            $(elem).find("#download-done a").remove();
+                            $('<a>',{
+                                text: 'Click here to download the link',
+                                href: `download?zipDownload=${val[2]}.tar.gz`
+                            }).appendTo($(elem).find("#download-done"));
+                            $(button).children().hide();
+                            $(button).find("#done-icon").show();
+                            break;
+                        case "running":
+                            $(elem).find("#download-done").hide();
+                            $(elem).find("#download-running").show();
+                            $(elem).find("#download-error").hide();
+                            $(button).children().hide();
+                            $(button).find("#running-icon").show();
+                            break;
+                        default:
+                            break;
+                    }
+                });
+            }
+            window.setInterval(function (){
+                if (stillRunning) {
+                    get_data();
+                }
+            }, 1000);
+        })
+        $(function(){
+            $.when(
+                $.post('all-downloads', function( data ) {
+                    processing = data;
+                }, "json")
+            ).then(function () {
+                addDownload(processing);
+            });
+            let addDownload = function (data) {
+                if (data.length < 1) {
+                    $('#loader-skeleton').hide();
+                    $('#placeholderText').show();
+                    return;
+                }
+                $("#skeleton-placeholder").hide()
+                $("#download-done").show();
+                $.each(data, function( i, val ) {
+                    let download_container = $("<div />", {
+                        "id": "download-tile",
+                        "class": "m-2 py-0 px-2.5 rounded-md shadow-3xl",
+                        "data-unique-id": `${val["uniqueID"]}`,
+                        "data-id": `${val["id"]}`
+                    })
+                    let project = val["project"];
+                    let files_container = $("<div />", {"id": "download-files"});
+                    $.each(project["labeledFiles"], function( index, file ) {
+                        files_container.append(
+                            $("<p />", {"class": "mt-2 mx-0 last:pb-3", "data-filename": `${file["fullPath"]}`, "text": `- ${file["label"]}`})
+                        )
+                    });
+                    download_container.append(
+                        $("<div />", {
+                            "id": "download-title",
+                            "class": "flex items-center justify-between"
+                        }).append(
+                            $("<p />", {"class": "font-bold mx-0 my-4", "id": "title-header", "text": `${project["name"]}`}),
+                            $("<div />", {"class": "flex items-center justify-center", "id": "status-button"}).append(
+                                $("<div />", {"id": "status-icon"}).append(
+                                    '<span id="loading-icon" class="inline-flex items-center bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full"><span class="w-2 h-2 mr-1 bg-blue-500 rounded-full"></span> Loading </span>',
+                                    '<span id="error-icon" class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full"><span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span> Error </span>',
+                                    '<span id="missing-icon" class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full"><span class="w-2 h-2 mr-1 bg-red-500 rounded-full"></span> Missing </span>',
+                                    '<span id="done-icon" class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full"><span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span> Done </span>',
+                                    '<span id="running-icon" class="inline-flex items-center bg-orange-100 text-orange-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full"><span class="w-2 h-2 mr-1 bg-green-500 rounded-full"></span> Running </span>'
+                                ),
+                                $("<div />", {"class": "h-6 w-6 group mr-1", "id": "delete-download-button", "onclick": "deleteDownload(this)"}).append('<svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black group-hover:cursor-pointer icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><line x1="4" y1="7" x2="20" y2="7"></line><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path></svg>'),
+                                $("<div />", {"id": "show-download-icon", "class": "h-6 w-6 group"}).append('<svg xmlns="http://www.w3.org/2000/svg" class="group-hover:stroke-black group-hover:cursor-pointer icon icon-tabler icon-tabler-chevron-down" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(160, 160, 160)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><polyline points="6 9 12 15 18 9"></polyline></svg>')
+                            )
+                        ),
+                        $("<div />", {
+                            "id": "download-info",
+                            "class": "hidden"
+                        }).append(
+                            files_container,
+                            $("<div />", {"class":"w-full", "id": "download-links"}).append(
+                                $("<div />", {"class":"hidden", "id": "download-done"}).append(
+                                    $("<p />", {"text": "Zipping is done"})
+                                ),
+                                $("<div />", {"class":"hidden", "id": "download-error"}).append(
+                                    $("<p />", {"text": "Something went wrong"})
+                                ),
+                                $("<div />", {"class":"flex items-center", "id": "download-running"}).append(
+                                    $("<p />", {"text": "Still zipping the file(s)", "class": "pr-1 italic text-[#323232]"}),
+                                    $("<div />", {"role": "status"}).append('<svg aria-hidden="true" class="inline w-6 h-6 mr-2 text-orange-500 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>')
+                                )
+                            )
+                        )
+                    )
+                    $(download_container).find("#download-title #status-button #status-icon").children().hide();
+                    $(download_container).find("#download-title #status-button #status-icon #loading-icon").show();
+                    $("#download-done").append(download_container);
+                });
+            }
+        });
         $(document).on('click', "#show-download-icon", function () {
             $(this).parent().parent().parent().find("#download-info").toggle("fast");
             $(this).toggleClass('rotated');
         });
     });
 </script>
+
 </body>
 </html>

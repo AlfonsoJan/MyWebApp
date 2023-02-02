@@ -1,7 +1,7 @@
 package nl.bioinf.ngswebapp.servlets;
 
 import nl.bioinf.ngswebapp.dao.DatabaseException;
-import nl.bioinf.ngswebapp.dao.VerySimpleDbConnector;
+import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.service.JobRunner;
 
 import javax.servlet.annotation.WebServlet;
@@ -19,30 +19,28 @@ public class RunFastQCServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String resourcePath = request.getServletContext().getInitParameter("file.location");
         String outPath = request.getServletContext().getInitParameter("analyse.folder");
-        String[] files = request.getParameterValues("fileNames[]");
-        String project = request.getParameter("project");
+
+        int projectId = Integer.parseInt(request.getParameter("projectId"));
         String analyseType = request.getParameter("analyseType").toLowerCase();
 
-        for (int i = 0; i < files.length; i++) {
-            files[i] = resourcePath + files[i];
-        }
-
-        UUID randomID;
-        while (true) {
-            randomID = UUID.randomUUID();
-            Path path = Path.of(outPath + randomID);
-            if (Files.notExists(path)) {
-                break;
-            }
-        }
         try {
-            VerySimpleDbConnector connector = NewAnalyseServlet.getConnector();
-            int projectId = connector.getProject(project, 1).getProjectId();
-            connector.insertProcess(analyseType, 1, projectId, randomID.toString());
-        } catch (SQLException | DatabaseException e) {
+            String[] files = NewFileTabServlet.getConnector().getFilesProject(1, projectId).toArray(new String[0]);
+            for (int i = 0; i < files.length; i++) {
+                files[i] = resourcePath + files[i];
+            }
+            UUID randomID;
+            while (true) {
+                randomID = UUID.randomUUID();
+                Path path = Path.of(outPath + randomID);
+                if (Files.notExists(path)) {
+                    break;
+                }
+            }
+            NewFileTabServlet.getConnector().insertProcess(analyseType, randomID.toString(), projectId);
+            JobRunner fastqc = new JobRunner(randomID, resourcePath, files, analyseType, outPath);
+            fastqc.startJob();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        JobRunner fastqc = new JobRunner(randomID, resourcePath, files, analyseType, outPath);
-        fastqc.startJob();
     }
 }

@@ -4,23 +4,11 @@ public class LabeledFile {
     private final int fileId;
     private String label;
     private String fullPath;
-    private int projectId;
 
-    public LabeledFile(int id, String fullPath) {
-        this.fileId = id;
-        this.fullPath = fullPath;
-    }
-
-    public LabeledFile(int id, String label, String fullPath, int projectId) {
+    public LabeledFile(int id, String label, String fullPath) {
         this.fileId = id;
         this.label = label;
         this.fullPath = fullPath;
-        this.projectId = projectId;
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(fileId) + ";" + label + ";" + fullPath + ";" + String.valueOf(projectId);
     }
 
     public int getFileId() {
@@ -41,13 +29,5 @@ public class LabeledFile {
 
     public void setLabel(String label) {
         this.label = label;
-    }
-
-    public int getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
     }
 }
