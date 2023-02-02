@@ -13,6 +13,14 @@ import java.util.concurrent.TimeUnit;
 
 public class FastqFiles {
 
+    /**
+     * Gets all the files from the path where the NGS output files
+     * are located in!
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
     public static ArrayList<ArrayList<String>> getFiles(String filePath) throws IOException {
         ArrayList<ArrayList<String>> listOfFiles = new ArrayList<>();
         File[] filesList = new File(filePath).listFiles();

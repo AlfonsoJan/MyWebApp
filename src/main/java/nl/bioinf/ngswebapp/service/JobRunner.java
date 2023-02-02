@@ -23,6 +23,12 @@ public class JobRunner implements CommandConstructor {
         this.outPath = outPath;
     }
 
+    /**
+     * Constructs prefix depending on file type
+     *
+     * @return
+     * @throws IOException
+     */
     private String[] constructCommandPrefix() throws IOException {
         String uniquePath = outPath + uniqueId;
         switch (jobType) {
