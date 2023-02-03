@@ -3,10 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+    <!--  The location fo all the new files  -->
     <context-param>
         <param-name>file.location</param-name>
         <param-value>/students/2022-2023/Thema10/ngs_dummyfiles/</param-value>
     </context-param>
+    <!--  The location where all the analyses/download are stored  -->
     <context-param>
         <param-name>analyse.folder</param-name>
         <param-value>/students/2022-2023/Thema10/ngs_dummyfiles/temp/</param-value>
