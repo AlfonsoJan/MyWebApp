@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.db_objects;
+/**
+ * This class holds the data of the projects
+ * @author John Busker
+ * @version 1.0
+ */
 
 import java.util.ArrayList;
 

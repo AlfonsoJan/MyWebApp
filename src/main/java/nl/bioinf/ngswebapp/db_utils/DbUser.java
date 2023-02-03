@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.db_utils;
+/**
+ * This class creates the database user
+ * @author John Busker
+ * @version 1.0
+ */
 
 public class DbUser{
     String url;

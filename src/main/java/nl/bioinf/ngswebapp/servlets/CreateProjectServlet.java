@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
+/**
+ * A servlet to add files to your account
+ * @author John Busker
+ * @version 1.0
+ */
 
 import nl.bioinf.ngswebapp.dao.DatabaseConnector;
 import nl.bioinf.ngswebapp.dao.DatabaseException;

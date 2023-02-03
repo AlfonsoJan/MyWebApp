@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
+/**
+ * A servlet to change the name
+ * @author John Busker
+ * @version 1.0
+ */
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;

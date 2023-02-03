@@ -1,5 +1,11 @@
 package nl.bioinf.ngswebapp.service;
 
+/**
+ * This class creates the job
+ * @author John Busker
+ * @version 1.0
+ */
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

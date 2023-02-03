@@ -1,5 +1,11 @@
 package nl.bioinf.ngswebapp.dao;
 
+/**
+ * This class throws the database exceptions
+ * @author John Busker
+ * @version 1.0
+ */
+
 public class DatabaseException extends Exception {
     public DatabaseException() {
         super();

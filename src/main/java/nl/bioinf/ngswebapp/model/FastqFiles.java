@@ -1,4 +1,10 @@
 package nl.bioinf.ngswebapp.model;
+/**
+ * This class holds the data of .fastq files
+ * @author John Busker
+ * @version 1.0
+ */
+
 
 import nl.bioinf.ngswebapp.servlets.NewFileTabServlet;
 

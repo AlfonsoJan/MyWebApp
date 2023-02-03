@@ -1,4 +1,10 @@
 package nl.bioinf.ngswebapp.service;
+/**
+ * Interface the check if its is done
+ * @author John Busker
+ * @version 1.0
+ */
+
 
 import nl.bioinf.ngswebapp.db_objects.Process;
 

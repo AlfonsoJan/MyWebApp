@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
+/**
+ * A servlet to return the results of the downloads/analyse
+ * @author John Busker
+ * @version 1.0
+ */
 
 import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.db_objects.Process;

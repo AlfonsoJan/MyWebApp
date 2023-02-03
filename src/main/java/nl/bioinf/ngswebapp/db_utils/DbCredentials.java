@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.db_utils;
+/**
+ * This class creates the database credentials
+ * @author John Busker
+ * @version 1.0
+ */
 
 import java.io.File;
 import java.io.FileInputStream;

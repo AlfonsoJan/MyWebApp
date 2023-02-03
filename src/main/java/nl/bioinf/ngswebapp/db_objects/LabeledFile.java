@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.db_objects;
+/**
+ * This class holds the data of the labeled files
+ * @author John Busker
+ * @version 1.0
+ */
 
 public class LabeledFile {
     private final int fileId;

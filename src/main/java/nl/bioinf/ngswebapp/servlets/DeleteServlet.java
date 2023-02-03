@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.servlets;
+/**
+ * A servlet to delete
+ * @author John Busker
+ * @version 1.0
+ */
 
 import nl.bioinf.ngswebapp.dao.DatabaseException;
 import nl.bioinf.ngswebapp.dao.DatabaseConnector;
@@ -73,6 +78,12 @@ public class DeleteServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Delete the analyse folder
+     * @param location
+     * @param uniqueCode
+     * @throws IOException
+     */
     public void deleteAnalyseFolder(String location, String uniqueCode) throws IOException {
         Path pathFolder = Paths.get(location + uniqueCode);
         if (Files.exists(pathFolder)) {
@@ -80,6 +91,12 @@ public class DeleteServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Delete the analyse folder
+     * @param location
+     * @param uniqueCode
+     * @throws IOException
+     */
     public void deleteAnalyseFolder(String location, ArrayList<String> uniqueCode) throws IOException {
         for (String unique: uniqueCode) {
             Path pathFolder = Paths.get(location + unique);

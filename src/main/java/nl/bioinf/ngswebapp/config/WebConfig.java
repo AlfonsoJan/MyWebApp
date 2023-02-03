@@ -24,6 +24,10 @@ public class WebConfig implements ServletContextListener {
         System.out.println("Shutting down!");
     }
 
+    /**
+     * Sets and create the template engine
+     * @param servletContext
+     */
     private static void createTemplateEngine(ServletContext servletContext) {
         ServletContextTemplateResolver templateResolver =
                 new ServletContextTemplateResolver(servletContext);

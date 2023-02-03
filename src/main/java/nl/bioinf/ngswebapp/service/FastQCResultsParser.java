@@ -1,4 +1,10 @@
 package nl.bioinf.ngswebapp.service;
+/**
+ * Parse the results to check if the fastq or download is done
+ * @author John Busker
+ * @version 1.0
+ */
+
 
 import nl.bioinf.ngswebapp.db_objects.LabeledFile;
 import nl.bioinf.ngswebapp.db_objects.Process;
@@ -13,6 +19,16 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FastQCResultsParser implements FastQCResults {
+    /**
+     * This class is needed to map with 2 params
+     * @param list1
+     * @param location
+     * @param combiner
+     * @return
+     * @param <T>
+     * @param <U>
+     * @param <R>
+     */
     private static <T, U, R> List<R> listCombiner(
             List<T> list1, String location, BiFunction<T, U, R> combiner) {
         List<R> result = new ArrayList<>();

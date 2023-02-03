@@ -1,4 +1,10 @@
 package nl.bioinf.ngswebapp.servlets;
+/**
+ * A servlet to create the page for all the files
+ * @author John Busker
+ * @version 1.0
+ */
+
 
 import com.google.gson.Gson;
 import nl.bioinf.ngswebapp.config.WebConfig;
@@ -39,6 +45,18 @@ public class AllPersonalFilesServlet extends HttpServlet {
         templateEngine.process("all-files", ctx, response.getWriter());
     }
 
+    /**
+     * This return all the files dynamically
+     * @param request   an {@link HttpServletRequest} object that
+     *                  contains the request the client has made
+     *                  of the servlet
+     *
+     * @param response  an {@link HttpServletResponse} object that
+     *                  contains the response the servlet sends
+     *                  to the client
+     *
+     * @throws IOException
+     */
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<LabeledFile> labeledFiles;
         try {

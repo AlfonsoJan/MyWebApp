@@ -1,4 +1,9 @@
 package nl.bioinf.ngswebapp.dao;
+/**
+ * Creates the database connector
+ * @author John Busker
+ * @version 1.0
+ */
 
 import nl.bioinf.ngswebapp.db_objects.Process;
 import nl.bioinf.ngswebapp.db_utils.DbCredentials;
@@ -259,6 +264,12 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Returns a list with all the unique hash codes of a project
+     * @param projectID
+     * @return A list with all the unique hash codes of a project
+     * @throws SQLException
+     */
     public ArrayList<String> getUniqueCodeAll(int projectID) throws SQLException {
         ArrayList<String> uniqueList = new ArrayList<String>();
         PreparedStatement ps = this.preparedStatements.get(GET_PROCESS_UNIQUE_ID_USING_PROJECT_ID);
@@ -270,6 +281,12 @@ public class DatabaseConnector {
         return uniqueList;
     }
 
+    /**
+     * Return the project id when given a file id
+     * @param fileId
+     * @return The project id when given a file id
+     * @throws SQLException
+     */
     public int getProjectIdFromFile(int fileId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_NAME_USING_FILE_ID);
         ps.setInt(1, fileId);
@@ -280,11 +297,23 @@ public class DatabaseConnector {
         return -1;
     }
 
+    /**
+     * Delete a process given the has code
+     * @param code
+     * @throws SQLException
+     */
     public void deleteProcessUnique(String code) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(DROP_PROCESS_UNIQUE);
         ps.setString(1, code);
         ps.executeUpdate();
     }
+
+    /**
+     * Deletes the whole project from given a file id
+     * @param id
+     * @param fileId
+     * @throws SQLException
+     */
     public void deleteWholeProjectUsingFileID(int id, int fileId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_ID_USING_FILE_ID);
         ps.setInt(1, fileId);
@@ -307,6 +336,12 @@ public class DatabaseConnector {
         ps.executeUpdate();
     }
 
+    /**
+     * Returns if the file is the last file from a project
+     * @param projectId
+     * @return True or false if it is the last file
+     * @throws SQLException
+     */
     public boolean isLastFIle(int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_FILE_LENGTH);
         ps.setInt(1, projectId);
@@ -315,6 +350,14 @@ public class DatabaseConnector {
         int fileLength = rs.getInt("file_num");
         return fileLength < 2;
     }
+
+    /**
+     * Deletes the file from a project if it is not the last one
+     * @param id
+     * @param fileId
+     * @return
+     * @throws SQLException
+     */
     public boolean deleteFileFromProject(int id, int fileId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_NAME_USING_FILE_ID);
         ps.setInt(1, fileId);
@@ -328,12 +371,24 @@ public class DatabaseConnector {
         return false;
     }
 
+    /**
+     * Deletes the process given the project id
+     * @param projectId
+     * @throws SQLException
+     */
     public void deleteProcess(int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(DELETE_DOWNLOAD_PROCESS);
         ps.setInt(1, projectId);
         ps.executeUpdate();
     }
 
+    /**
+     * Return a list with all process given a user id and a string type
+     * @param id
+     * @param type
+     * @return List with all process given a user id and a string type
+     * @throws SQLException
+     */
     public ArrayList<Process> getProcess(int id, String type) throws SQLException {
         ArrayList<Process> results = new ArrayList<>();
         PreparedStatement ps = this.preparedStatements.get(GET_PROCESS_USER);
@@ -367,6 +422,13 @@ public class DatabaseConnector {
         return results;
     }
 
+    /**
+     * Insert a process given the type, hash code and project id
+     * @param type
+     * @param uniqueId
+     * @param projectId
+     * @throws SQLException
+     */
     public void insertProcess(String type, String uniqueId, int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(INSERT_INTO_PROCESS);
         ps.setString(1, type);
@@ -375,6 +437,13 @@ public class DatabaseConnector {
         ps.executeUpdate();
     }
 
+    /**
+     * Return a list with all the file names
+     * @param id
+     * @param projectId
+     * @return A list with all the file names
+     * @throws SQLException
+     */
     public List<String> getFilesProject(int id, int projectId) throws SQLException {
         List<String> fileList = new ArrayList<>();
         PreparedStatement ps = this.preparedStatements.get(INSERT_PROJECT_USING_ID);
@@ -387,6 +456,12 @@ public class DatabaseConnector {
         return fileList;
     }
 
+    /**
+     * Deletes the project
+     * @param id
+     * @param projectId
+     * @throws SQLException
+     */
     public void deleteProject(int id, int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(DELETE_DOWNLOAD_PROCESS);
         ps.setInt(1, projectId);
@@ -402,6 +477,13 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Checks if a project has a analyse
+     * @param id
+     * @param projectId
+     * @return If the project has a analyse
+     * @throws SQLException
+     */
     public boolean checkIfProjectHasAnalyse (int id, int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(CHECK_IF_PROJECT_HAS_ANALYSE);
         ps.setInt(1, id);
@@ -414,6 +496,13 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Checks if a project is empty
+     * @param id
+     * @param projectId
+     * @return If the project is empty
+     * @throws SQLException
+     */
     public boolean checkIfProjectEmpty (int id, int projectId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(CHECK_IF_PROJECT_EMPTY);
         ps.setInt(1, id);
@@ -426,6 +515,12 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Returns a list with all the projects
+     * @param id
+     * @return get all the projects
+     * @throws SQLException
+     */
     public List<Project> getAllProjects(int id) throws SQLException {
         List<Project> projectList = new ArrayList<>();
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_USING_ID);
@@ -449,6 +544,12 @@ public class DatabaseConnector {
         return projectList;
     }
 
+    /**
+     * Deletes a file from a project
+     * @param id
+     * @param fileId
+     * @throws SQLException
+     */
     public void deleteFromProject(int id, int fileId) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_NAME_USING_FILE_ID);
         ps.setInt(1, fileId);
@@ -473,6 +574,12 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Updates the label name given the file id
+     * @param name
+     * @param id
+     * @throws SQLException
+     */
     public void updateLabelName(String name, int id) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(UPDATE_FILE);
         ps.setString(1, name);
@@ -480,12 +587,25 @@ public class DatabaseConnector {
         ps.executeUpdate();
     }
 
+    /**
+     * Updates the project name given the porject id
+     * @param name
+     * @param id
+     * @throws SQLException
+     */
     public void updateProjectName(String name, int id) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(UPDATE_PROJECT);
         ps.setString(1, name);
         ps.setInt(2, id);
         ps.executeUpdate();
     }
+
+    /**
+     * Returns a list with the labeled files
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public List<LabeledFile> getAllLabeledFiles(int id) throws SQLException {
         List<LabeledFile> labeledFiles = new ArrayList<>();
         PreparedStatement ps = this.preparedStatements.get(GET_ALL_LABELED_FILES_USER);
@@ -497,6 +617,13 @@ public class DatabaseConnector {
         return labeledFiles;
     }
 
+    /**
+     * Create a project object with all the files
+     * @param id
+     * @param name
+     * @param fileNames
+     * @throws SQLException
+     */
     public void insertProject(int id, String name, String[] fileNames) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_ID_USING_NAME);
         ps.setString(1, name);
@@ -525,12 +652,24 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * Creates a new project
+     * @param name
+     * @throws SQLException
+     */
     public void createProject(String name) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(CREATE_PROJECT);
         ps.setString(1, name);
         ps.executeUpdate();
     }
 
+    /**
+     * Checks if a project exist
+     * @param id
+     * @param name
+     * @return
+     * @throws SQLException
+     */
     public boolean checkIfProjectExist(int id, String name) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(CHECK_IF_PROJECT_EXIST);
         ps.setInt(1, id);
@@ -545,6 +684,12 @@ public class DatabaseConnector {
         }
     }
 
+    /**
+     * gets the project name
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public List<String> getProjectNames(int id) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_PROJECT_NAMES_USING_ID);
         ps.setInt(1, id);
@@ -556,6 +701,12 @@ public class DatabaseConnector {
         return projectNames;
     }
 
+    /**
+     * count how many times a file is used
+     * @param path
+     * @return
+     * @throws SQLException
+     */
     public Enums.Used getTimesHardFileIsUsed(String path) throws SQLException {
         PreparedStatement ps = this.preparedStatements.get(GET_ALL_LABEL_FILES);
 
