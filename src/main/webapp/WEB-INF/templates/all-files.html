@@ -169,8 +169,8 @@
     }
     function deleteFileAll(id, name, element){
         toastr.info(
-            '<div class="flex gap-1 justify-between items-center"><button type="button" id="deleteFileButton" class="rounded-md bg-blue-700 hover:bg-blue-900 p-2">Delete Everything</button></div>',
-            '<p class="text-white text-bold pb-1.5">Since it is the last file continuing will also deletes the project and all analyses run on it.</p>', {
+            '<div class="flex gap-1 justify-between items-center"><button type="button" id="deleteFileButton" class="rounded-md bg-blue-700 hover:bg-blue-900 p-2">Remove Everything</button></div>',
+            '<p class="text-white text-bold pb-1.5">Since it is the last file continuing will also remove the project and all analyses run on it.</p>', {
                 allowHtml: true,
                 onShown: function (toast) {
                     $('#deleteFileButton').one('click', function(){
